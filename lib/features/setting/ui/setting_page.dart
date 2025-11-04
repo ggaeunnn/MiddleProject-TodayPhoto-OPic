@@ -145,7 +145,7 @@ class _SettingPageState extends State<_SettingPage> {
                                     spacing: 10,
                                     children: [
                                       Icon(
-                                        Icons.add_alert_rounded,
+                                        Icons.notifications,
                                         color: Color(0xff95b7db),
                                       ),
                                       Text(
