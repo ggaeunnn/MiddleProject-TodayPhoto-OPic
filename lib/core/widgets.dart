@@ -5,32 +5,30 @@ class OpicAppbar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            margin: EdgeInsets.all(10),
-            child: Image.asset('assets/images/logo_long_skyblue.png'),
-          ),
-          Row(
-            children: [
-              Container(
-                child: IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.notifications_none),
-                ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Container(
+          margin: EdgeInsets.all(10),
+          child: Image.asset('assets/images/logo_long_skyblue.png'),
+        ),
+        Row(
+          children: [
+            Container(
+              child: IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.notifications_none),
               ),
-              Container(
-                child: IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.exit_to_app),
-                ),
+            ),
+            Container(
+              child: IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.exit_to_app),
               ),
-            ],
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
