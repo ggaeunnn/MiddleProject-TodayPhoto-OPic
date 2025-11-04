@@ -3,6 +3,12 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   await dotenv.load(fileName: 'assets/config/.env');
+  // runApp(
+  //   MaterialApp(
+  //     debugShowCheckedModeBanner: false,
+  //     home: AlarmListPage(userId: 123),
+  //   ),
+  // );
   runApp(MyApp());
 }
 
