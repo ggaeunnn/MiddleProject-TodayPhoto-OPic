@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../core/widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingPage extends StatelessWidget {
   final int userId;
@@ -23,8 +22,6 @@ class _SettingPageState extends State<_SettingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: OpicAppbar(),
-      bottomNavigationBar: OpicBottomNav(),
       backgroundColor: Color(0xfffafafa),
       body: SafeArea(
         child: Column(
@@ -40,7 +37,7 @@ class _SettingPageState extends State<_SettingPage> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 15.0,
-                  vertical: 10.0,
+                  vertical: 5.0,
                 ),
                 child: Row(
                   spacing: 10,
@@ -145,7 +142,7 @@ class _SettingPageState extends State<_SettingPage> {
                                     spacing: 10,
                                     children: [
                                       Icon(
-                                        Icons.add_alert_rounded,
+                                        Icons.notifications,
                                         color: Color(0xff95b7db),
                                       ),
                                       Text(
@@ -166,43 +163,59 @@ class _SettingPageState extends State<_SettingPage> {
                               ),
                             ),
                           ),
-                          Container(
-                            decoration: BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                  color: Color(0xff95b7db),
-                                  width: 0.3,
+                          GestureDetector(
+                            onTap: () async {
+                              final Uri emailUri = Uri(
+                                scheme: 'mailto',
+
+                                /// 문의사항 접수 이메일 주소 적어야 함!
+                                path: 'report@email.com',
+                              );
+                              if (await canLaunchUrl(emailUri)) {
+                                await launchUrl(
+                                  emailUri,
+                                  mode: LaunchMode.externalApplication,
+                                );
+                              }
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: Color(0xff95b7db),
+                                    width: 0.3,
+                                  ),
                                 ),
                               ),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    spacing: 10,
-                                    children: [
-                                      Icon(
-                                        Icons.report_problem_rounded,
-                                        color: Color(0xff95b7db),
-                                      ),
-                                      Text(
-                                        "문의사항",
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          color: Color(0xff515151),
+                              child: Padding(
+                                padding: const EdgeInsets.all(15.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      spacing: 10,
+                                      children: [
+                                        Icon(
+                                          Icons.report_problem_rounded,
+                                          color: Color(0xff95b7db),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  Icon(
-                                    Icons.arrow_forward_ios_rounded,
-                                    color: Color(0xff515151),
-                                    size: 20,
-                                  ),
-                                ],
+                                        Text(
+                                          "문의사항",
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            color: Color(0xff515151),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Icon(
+                                      Icons.arrow_forward_ios_rounded,
+                                      color: Color(0xff515151),
+                                      size: 20,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
