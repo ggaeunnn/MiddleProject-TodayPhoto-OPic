@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/widgets.dart';
+
 class SettingPage extends StatelessWidget {
   final int userId;
   const SettingPage({super.key, required this.userId});
@@ -21,13 +23,20 @@ class _SettingPageState extends State<_SettingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: OpicAppbar(),
+      bottomNavigationBar: OpicBottomNav(),
       backgroundColor: Color(0xfffafafa),
       body: SafeArea(
         child: Column(
           children: [
             Container(
+              decoration: BoxDecoration(
+                color: Color(0xfffafafa),
+                border: Border(
+                  top: BorderSide(color: Color(0xff95b7db), width: 0.5),
+                ),
+              ),
               width: double.maxFinite,
-              color: Color(0xfffafafa),
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 15.0,
@@ -36,7 +45,17 @@ class _SettingPageState extends State<_SettingPage> {
                 child: Row(
                   spacing: 10,
                   children: [
-                    Icon(Icons.arrow_back_rounded, color: Color(0xff515151)),
+                    IconButton(
+                      icon: Icon(
+                        Icons.arrow_back_rounded,
+                        color: Color(0xff515151),
+                      ),
+                      onPressed: () {},
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      hoverColor: Colors.transparent,
+                      focusColor: Colors.transparent,
+                    ),
                     Text(
                       "설정",
                       style: TextStyle(
