@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+<<<<<<< Updated upstream
 import 'package:opicproject/features/auth/ui/login_page.dart';
 
 import 'features/setting/ui/setting_page.dart';
+=======
+import 'package:opicproject/features/setting/ui/setting_page.dart';
+>>>>>>> Stashed changes
 
 void main() async {
   await dotenv.load(fileName: 'assets/config/.env');
