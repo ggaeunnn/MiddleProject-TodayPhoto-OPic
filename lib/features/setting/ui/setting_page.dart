@@ -4,6 +4,7 @@ import 'package:opicproject/features/setting/component/edit_nickname_pop_up.dart
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/models/user_model.dart';
+import '../../../core/widgets.dart';
 
 /// user 더미데이터 가져오기
 final List<User> dummyUsers = User.getDummyUsers();
@@ -31,6 +32,8 @@ class _SettingPageState extends State<_SettingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xfffafafa),
+      appBar: OpicAppbar(),
+      bottomNavigationBar: OpicBottomNav(),
       body: SafeArea(
         child: Column(
           children: [
@@ -43,10 +46,7 @@ class _SettingPageState extends State<_SettingPage> {
               ),
               width: double.maxFinite,
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 15.0,
-                  vertical: 5.0,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
                 child: Row(
                   spacing: 10,
                   children: [

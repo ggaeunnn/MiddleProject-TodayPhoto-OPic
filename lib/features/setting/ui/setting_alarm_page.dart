@@ -30,10 +30,7 @@ class _SettingAlarmPageState extends State<SettingAlarmPage> {
               ),
               width: double.maxFinite,
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 15.0,
-                  vertical: 5.0,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
                 child: Row(
                   spacing: 10,
                   children: [
