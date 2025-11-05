@@ -1,18 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:opicproject/features/auth/ui/login_page.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:opicproject/features/onboarding/data/onboarding_repository.dart';
+import 'package:opicproject/features/onboarding/data/onboarding_service.dart';
+import 'package:opicproject/features/onboarding/ui/onboarding_screen.dart';
+import 'package:opicproject/features/onboarding/viewmodel/onboarding_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   await dotenv.load(fileName: 'assets/config/.env');
-  WidgetsFlutterBinding.ensureInitialized();
-
-  await Supabase.initialize(
-    url: 'https://koodearpvrdjlxcclvvj.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtvb2RlYXJwdnJkamx4Y2NsdnZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE4NzIyNzAsImV4cCI6MjA3NzQ0ODI3MH0.p-QLJ0Ji599xy_1_ixAmvORlftkzg9V8DPFA8OF-sAU',
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          //TODO:현재 서비스와 레포지토리를 넣어줘야 하는데 번거로움 get_it라이브러리로 di고려
+          create: (context) => OnboardingViewModel(
+            OnboardingService(OnboardingDataRepository()),
+          ),
+        ),
+      ],
+      //child: const MyApp(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: OnboardingScreen(),
+      ),
+    ),
   );
-  runApp(MaterialApp(debugShowCheckedModeBanner: false, home: OpicLoginPage()));
   // runApp(MyApp());
 }
 
