@@ -9,7 +9,7 @@ class PostDetailPage extends StatefulWidget {
 }
 
 class _PostDetailPageState extends State<PostDetailPage> {
-  int commentCount = 0;
+  // int commentCount = 0;
   int likeCount = 0;
   bool buttonLike = true;
   bool buttonReport = true;
@@ -17,6 +17,8 @@ class _PostDetailPageState extends State<PostDetailPage> {
   DateTime now = DateTime.now();
   late String formattedDate = DateFormat('yyyy-MM-dd').format(now);
   String todayTopic = "겨울풍경";
+  List<String> commentList = [];
+  final _commentListContoller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +82,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                           Spacer(),
                           TextButton.icon(
                             onPressed: () {
+                              // yes_or_no_pop_up();
                               myDialog(context);
                             },
                             icon: Icon(Icons.outlined_flag),
@@ -105,7 +108,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       SizedBox(height: 10),
                       Container(
                         width: double.infinity,
-                        height: 120,
+                        // height: 120,
                         color: Color(0xFFFCFCF0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,17 +116,80 @@ class _PostDetailPageState extends State<PostDetailPage> {
                             Row(
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.all(8.0),
+                                  padding: EdgeInsets.all(8),
                                   child: Text("댓글"),
                                 ),
                                 Text(
-                                  " ${commentCount}",
+                                  " ${commentList.length}",
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
+                            // SizedBox(height: 20),
+                            Center(
+                              child: (commentList.isEmpty)
+                                  ? Text("첫 댓글을 남겨보세요!")
+                                  : ListView.builder(
+                                      itemCount: commentList.length,
+                                      shrinkWrap: true,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                            Padding(
+                                              padding: EdgeInsets.all(10),
+                                            );
+                                            return Container(
+                                              color: Colors.yellow,
+                                              width: double.infinity,
+                                              child: Column(
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      IconButton(
+                                                        onPressed: () {
+                                                          //댓글 쓴 사람 피드로 이동
+                                                        },
+                                                        icon: Icon(
+                                                          Icons.person,
+                                                        ),
+                                                      ),
+                                                      Text("${loginUserName}"),
+                                                      Spacer(),
+                                                      Text(
+                                                        "${formattedDate}",
+                                                        style: TextStyle(
+                                                          fontSize: 10,
+                                                          color: Color(
+                                                            0xFF515151,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                              right: 8,
+                                                            ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Container(
+                                                    child: Text(
+                                                      "${commentList[index]}",
+                                                      textAlign:
+                                                          TextAlign.start,
+                                                    ),
+                                                  ),
+                                                  // Padding(
+                                                  //   padding: EdgeInsets.only(
+                                                  //     bottom: 5,
+                                                  //   ),
+                                                  // ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                    ),
+                            ),
                             SizedBox(height: 20),
-                            Center(child: Text("첫 댓글을 남겨보세요!")),
                           ],
                         ),
                       ),
@@ -144,17 +210,14 @@ class _PostDetailPageState extends State<PostDetailPage> {
                     width: 430,
                     color: Colors.white,
                     child: TextField(
+                      //이거 추가함
+                      controller: _commentListContoller,
                       decoration: InputDecoration(
                         hintText: "댓글을 입력하세요..",
                         border: InputBorder.none,
                         hintStyle: TextStyle(fontSize: 13, color: Colors.grey),
                       ),
                     ),
-
-                    // Text(
-                    //   "댓글을 입력하세요.. ",
-                    //   style: TextStyle(color: Color(0xFFD9D9D9)),
-                    // ),
                   ),
                   Padding(padding: EdgeInsets.only(left: 10)),
                   Container(
@@ -168,7 +231,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       color: Colors.white,
                       onPressed: () {
                         setState(() {
-                          //댓글이 등록되기
+                          commentList.add("${_commentListContoller.text}");
                         });
                       },
                     ),
@@ -180,6 +243,12 @@ class _PostDetailPageState extends State<PostDetailPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _commentListContoller.dispose();
+    super.dispose();
   }
 }
 
