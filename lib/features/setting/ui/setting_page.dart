@@ -32,8 +32,6 @@ class _SettingPageState extends State<_SettingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xfffafafa),
-      appBar: OpicAppbar(),
-      bottomNavigationBar: OpicBottomNav(),
       body: SafeArea(
         child: Column(
           children: [
@@ -46,7 +44,10 @@ class _SettingPageState extends State<_SettingPage> {
               ),
               width: double.maxFinite,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 15.0,
+                  vertical: 5.0,
+                ),
                 child: Row(
                   spacing: 10,
                   children: [
@@ -98,7 +99,7 @@ class _SettingPageState extends State<_SettingPage> {
                       color: Color(0xff95b7db),
                     ),
                     Text(
-                      loginUser.nickname,
+                      "닉네임자리",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
