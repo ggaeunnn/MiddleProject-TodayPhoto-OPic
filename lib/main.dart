@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-<<<<<<< Updated upstream
 import 'package:opicproject/features/auth/ui/login_page.dart';
+import 'package:opicproject/features/setting/ui/setting_alarm_page.dart';
 
-import 'features/setting/ui/setting_page.dart';
-=======
-import 'package:opicproject/features/setting/ui/setting_page.dart';
->>>>>>> Stashed changes
 
 void main() async {
   await dotenv.load(fileName: 'assets/config/.env');
   runApp(
     MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SettingPage(userId: 123),
+      home: SettingAlarmPage(userId: 123),
     ),
   );
   // runApp(MyApp());
@@ -58,7 +54,7 @@ class MyHomePage extends StatefulWidget {
   // how it looks.
 
   // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
+  // case the title) provided by the parent (iqn this case the App widget) and
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
 
