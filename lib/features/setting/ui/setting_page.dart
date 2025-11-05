@@ -5,6 +5,7 @@ import 'package:opicproject/features/setting/component/edit_nickname_pop_up.dart
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/models/user_model.dart';
+import '../../../core/widgets.dart';
 
 final List<User> dummyUsers = User.getDummyUsers();
 final loginUser = dummyUsers[0];
