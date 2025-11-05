@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class PostDetailPage extends StatefulWidget {
@@ -32,7 +33,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
             children: [
               IconButton(
                 onPressed: () {
-                  // 게시물 목록으로 가기
+                  context.go('/home');
                 },
                 icon: Icon(Icons.keyboard_backspace),
               ),
@@ -96,7 +97,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                           Text("주제:"),
                           TextButton(
                             onPressed: () {
-                              //주제 클릭 시 게시물 목록으로 이동
+                              context.go('/home');
                             },
                             child: Text(
                               "${todayTopic}",
@@ -146,7 +147,9 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                                     children: [
                                                       IconButton(
                                                         onPressed: () {
-                                                          //댓글 쓴 사람 피드로 이동
+                                                          context.go(
+                                                            '/friend_feed',
+                                                          );
                                                         },
                                                         icon: Icon(
                                                           Icons.person,
@@ -207,7 +210,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                 children: [
                   Container(
                     height: 35,
-                    width: 430,
+                    width: 350,
                     color: Colors.white,
                     child: TextField(
                       //이거 추가함

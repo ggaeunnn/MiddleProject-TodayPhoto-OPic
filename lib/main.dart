@@ -1,19 +1,53 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:go_router/go_router.dart';
 import 'package:opicproject/features/auth/ui/login_page.dart';
 
+import 'features/alarm//ui/alarm_list_page.dart';
+import 'features/feed//ui/feed.dart';
+import 'features/friend//ui/friend_page.dart';
+import 'features/home/home.dart';
+import 'features/post/ui/post_detail_page.dart';
+import 'features/setting//ui/setting_alarm_page.dart';
 import 'features/setting/ui/setting_page.dart';
 
 void main() async {
-  await dotenv.load(fileName: 'assets/config/.env');
-  runApp(
-    MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: SettingPage(userId: 0),
-    ),
-  );
-  // runApp(MyApp());
+  // await dotenv.load(fileName: 'assets/config/.env');
+  // runApp(
+  //   MaterialApp(debugShowCheckedModeBanner: false, home: PostDetailPage()),
+  // );
+  runApp(MyApp());
 }
+
+final GoRouter _router = GoRouter(
+  routes: [
+    GoRoute(path: '/', builder: (context, state) => OpicLoginPage()),
+    // GoRoute(
+    //   path: '/register_page',
+    //   builder: (context, state) => OpicRegisterPage(),
+    // ),
+    GoRoute(
+      path: '/post_detail_page',
+      builder: (context, state) => PostDetailPage(),
+    ),
+    GoRoute(
+      path: '/alarm_list_page',
+      builder: (context, state) => AlarmListPage(userId: 0),
+    ),
+    GoRoute(path: '/feed', builder: (context, state) => MyFeedScreen()),
+    // GoRoute(path: '/friend_feed', builder: (context, state) => FriendFeed()),
+    // GoRoute(path: '/my_feed', builder: (context, state) => MyFeed()),
+    GoRoute(path: '/friend_page', builder: (context, state) => FriendPage()),
+    GoRoute(path: '/home', builder: (context, state) => HomeScreen()),
+    GoRoute(
+      path: '/setting_alarm_page',
+      builder: (context, state) => SettingAlarmPage(),
+    ),
+    GoRoute(
+      path: '/setting_page',
+      builder: (context, state) => SettingPage(userId: 0),
+    ),
+  ],
+);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -21,7 +55,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
+      routerConfig: _router,
       title: 'Flutter Demo',
       theme: ThemeData(
         // This is the theme of your application.
@@ -41,7 +76,8 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: OpicLoginPage(),
+      //여기 일단 주석처리 해봐야징
+      // home: OpicLoginPage(),
     );
   }
 }
