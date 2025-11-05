@@ -1,7 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:opicproject/main.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class OpicLoginPage extends StatelessWidget {
+class OpicLoginPage extends StatefulWidget {
   const OpicLoginPage({super.key});
+
+  @override
+  State<OpicLoginPage> createState() => _OpicLoginPageState();
+}
+
+class _OpicLoginPageState extends State<OpicLoginPage> {
+  String? _userId;
+
+  @override
+  void initState() {
+    super.initState();
+
+    supabase.auth.onAuthStateChange.listen((data) {
+      setState(() {
+        _userId = data.session?.user.id;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,8 +89,43 @@ class SigninGoogle extends StatelessWidget {
         shadowColor: Colors.transparent,
         overlayColor: Colors.transparent,
       ),
-      onPressed: () {
-        // 구글 로그인
+      onPressed: () async {
+        /// Web Client ID that you registered with Google Cloud.
+        const webClientId =
+            '692210323507-s9fg7qm083lr7sndilqqdn06ciq1klgt.apps.googleusercontent.com';
+
+        /// iOS Client ID that you registered with Google Cloud.
+        const iosClientId =
+            '692210323507-dfkoaem59ng2bvtajg3ajf6td9daqdsu.apps.googleusercontent.com';
+        final scopes = ['email', 'profile'];
+        final googleSignIn = GoogleSignIn.instance;
+        await googleSignIn.initialize(
+          serverClientId: webClientId,
+          clientId: iosClientId,
+        );
+        final googleUser = await googleSignIn
+            .attemptLightweightAuthentication();
+        // or await googleSignIn.authenticate(); which will return a GoogleSignInAccount or throw an exception
+        if (googleUser == null) {
+          throw AuthException('Failed to sign in with Google.');
+        }
+
+        /// Authorization is required to obtain the access token with the appropriate scopes for Supabase authentication,
+        /// while also granting permission to access user information.
+        final authorization =
+            await googleUser.authorizationClient.authorizationForScopes(
+              scopes,
+            ) ??
+            await googleUser.authorizationClient.authorizeScopes(scopes);
+        final idToken = googleUser.authentication.idToken;
+        if (idToken == null) {
+          throw AuthException('No ID Token found.');
+        }
+        await supabase.auth.signInWithIdToken(
+          provider: OAuthProvider.google,
+          idToken: idToken,
+          accessToken: authorization.accessToken,
+        );
       },
       child: Image.asset('assets/images/sign_in_google.png'),
     );
