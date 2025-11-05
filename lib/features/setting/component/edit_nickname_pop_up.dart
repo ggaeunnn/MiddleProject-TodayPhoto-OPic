@@ -1,24 +1,9 @@
 import 'package:flutter/material.dart';
 
-class YesOrClosePopUp extends StatelessWidget {
-  final String title;
-  final String text;
-  final String confirmText;
-  final String cancelText;
-  final VoidCallback onConfirm;
-  final VoidCallback onCancel;
-  final Color confirmButtonColor = Color(0xff95b7db);
-  final Color cancelButtonColor = Color(0xffe8e8dc);
+class EditNicknamePopUp extends StatelessWidget {
+  final String currentNickname;
 
-  YesOrClosePopUp({
-    super.key,
-    required this.title,
-    required this.text,
-    required this.confirmText,
-    this.cancelText = '닫기',
-    required this.onConfirm,
-    required this.onCancel,
-  });
+  const EditNicknamePopUp({super.key, required this.currentNickname});
 
   @override
   Widget build(BuildContext context) {
@@ -31,23 +16,32 @@ class YesOrClosePopUp extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              title,
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 15,
-                color: Color(0xff515151),
-              ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 16),
-            Text(
-              text,
+              "새로운 닉네임을 입력 한 뒤 저장을 눌러주세요",
               style: TextStyle(
                 fontWeight: FontWeight.w500,
                 fontSize: 14,
                 color: Color(0xff515151),
               ),
-              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 24),
+            TextField(
+              obscureText: false,
+              decoration: InputDecoration(
+                labelText: '닉네임',
+                hintText: '닉네임을 입력하세요',
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(width: 1, color: Color(0xff95b7db)),
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(width: 1, color: Color(0xffe8e8dc)),
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
+                ),
+              ),
+              keyboardType: TextInputType.text,
             ),
             SizedBox(height: 24),
             Row(
@@ -58,10 +52,9 @@ class YesOrClosePopUp extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).pop();
-                      onConfirm();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: confirmButtonColor,
+                      backgroundColor: Color(0xff95b7db),
                       foregroundColor: Color(0xfffefefe),
                       padding: EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
@@ -69,7 +62,7 @@ class YesOrClosePopUp extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      confirmText,
+                      "저장하기",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
@@ -83,10 +76,9 @@ class YesOrClosePopUp extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).pop();
-                      onCancel();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: cancelButtonColor,
+                      backgroundColor: Color(0xffe8e8dc),
                       foregroundColor: Color(0xfffefefe),
                       padding: EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
@@ -94,7 +86,7 @@ class YesOrClosePopUp extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      cancelText,
+                      "닫기",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
