@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:opicproject/features/setting/component/switch_row.dart';
 
-class SettingAlarmPage extends StatelessWidget {
-  const SettingAlarmPage({super.key, userId});
-
+class SettingAlarmPage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return const Placeholder(child: _SettingAlarmPage());
-  }
+  State<SettingAlarmPage> createState() => _SettingAlarmPageState();
 }
 
-class _SettingAlarmPage extends StatefulWidget {
-  const _SettingAlarmPage({super.key});
+class _SettingAlarmPageState extends State<SettingAlarmPage> {
+  bool allAlarm = true;
+  bool newTopic = true;
+  bool likePost = true;
+  bool newComment = true;
+  bool newRequest = true;
+  bool newFriend = true;
 
-  @override
-  State<_SettingAlarmPage> createState() => _SettingAlarmPageState();
-}
-
-class _SettingAlarmPageState extends State<_SettingAlarmPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,25 +92,23 @@ class _SettingAlarmPageState extends State<_SettingAlarmPage> {
                               ),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "전체 알람",
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          color: Color(0xff515151),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 15.0,
+                                vertical: 5.0,
+                              ),
+                              child: SwitchRow(
+                                title: '전체 알람',
+                                value: allAlarm,
+                                onChanged: (v) => setState(() {
+                                  allAlarm = v;
+                                  if (!v) {
+                                    newTopic = false;
+                                    likePost = false;
+                                    newComment = false;
+                                    newRequest = false;
+                                    newFriend = false;
+                                  }
+                                }),
                               ),
                             ),
                           ),
@@ -127,25 +122,14 @@ class _SettingAlarmPageState extends State<_SettingAlarmPage> {
                               ),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "전체 알람",
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          color: Color(0xff515151),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 15.0,
+                                vertical: 5.0,
+                              ),
+                              child: SwitchRow(
+                                title: '새로운 주제',
+                                value: newTopic,
+                                onChanged: (v) => setState(() => newTopic = v),
                               ),
                             ),
                           ),
@@ -159,25 +143,14 @@ class _SettingAlarmPageState extends State<_SettingAlarmPage> {
                               ),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "전체 알람",
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          color: Color(0xff515151),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 15.0,
+                                vertical: 5.0,
+                              ),
+                              child: SwitchRow(
+                                title: '좋아요',
+                                value: likePost,
+                                onChanged: (v) => setState(() => likePost = v),
                               ),
                             ),
                           ),
@@ -191,25 +164,15 @@ class _SettingAlarmPageState extends State<_SettingAlarmPage> {
                               ),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "전체 알람",
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          color: Color(0xff515151),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 15.0,
+                                vertical: 5.0,
+                              ),
+                              child: SwitchRow(
+                                title: '댓글',
+                                value: newComment,
+                                onChanged: (v) =>
+                                    setState(() => newComment = v),
                               ),
                             ),
                           ),
@@ -223,25 +186,15 @@ class _SettingAlarmPageState extends State<_SettingAlarmPage> {
                               ),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "전체 알람",
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          color: Color(0xff515151),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 15.0,
+                                vertical: 5.0,
+                              ),
+                              child: SwitchRow(
+                                title: '친구 요청 도착',
+                                value: newRequest,
+                                onChanged: (v) =>
+                                    setState(() => newRequest = v),
                               ),
                             ),
                           ),
@@ -255,25 +208,14 @@ class _SettingAlarmPageState extends State<_SettingAlarmPage> {
                               ),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "전체 알람",
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          color: Color(0xff515151),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 15.0,
+                                vertical: 5.0,
+                              ),
+                              child: SwitchRow(
+                                title: '친구 요청 수락',
+                                value: newFriend,
+                                onChanged: (v) => setState(() => newFriend = v),
                               ),
                             ),
                           ),
