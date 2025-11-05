@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:opicproject/features/alarm/component/alarm_row_comment.dart';
 import 'package:opicproject/features/alarm/component/alarm_row_friend_accept.dart';
 import 'package:opicproject/features/alarm/component/alarm_row_friend_request.dart';
@@ -52,7 +53,13 @@ class _AlarmListPageState extends State<_AlarmListPage> {
                         Icons.arrow_back_rounded,
                         color: Color(0xff515151),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        if (context.canPop()) {
+                          context.pop();
+                        } else {
+                          context.go('/');
+                        }
+                      },
                       splashColor: Colors.transparent,
                       highlightColor: Colors.transparent,
                       hoverColor: Colors.transparent,

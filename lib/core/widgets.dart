@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class OpicAppbar extends StatelessWidget implements PreferredSizeWidget {
   const OpicAppbar({super.key});
@@ -19,7 +20,9 @@ class OpicAppbar extends StatelessWidget implements PreferredSizeWidget {
               children: [
                 Container(
                   child: IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      context.push('/alarm_list_page');
+                    },
                     icon: Icon(Icons.notifications_none),
                   ),
                 ),

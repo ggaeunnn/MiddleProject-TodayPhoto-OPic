@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:opicproject/features/auth/ui/login_page.dart';
 
 import 'features/alarm//ui/alarm_list_page.dart';
+import 'features/auth/ui/login_page.dart';
 import 'features/feed//ui/feed.dart';
 import 'features/friend//ui/friend_page.dart';
 import 'features/home/home.dart';
