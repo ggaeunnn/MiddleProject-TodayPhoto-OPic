@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:opicproject/features/auth/ui/login_page.dart';
-import 'package:opicproject/features/home/home.dart';
-import 'package:opicproject/features/setting/ui/setting_alarm_page.dart';
 
 void main() async {
   await dotenv.load(fileName: 'assets/config/.env');
-  runApp(MaterialApp(debugShowCheckedModeBanner: false, home: HomeScreen()));
+  runApp(MaterialApp(debugShowCheckedModeBanner: false, home: OpicLoginPage()));
   // runApp(MyApp());
 }
 
