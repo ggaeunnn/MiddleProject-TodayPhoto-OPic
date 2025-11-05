@@ -15,6 +15,16 @@ void main() async {
   // runApp(MyApp());
 }
 
+final GoRouter _router = GoRouter(
+  routes: [
+    GoRoute(path: '/', builder: (context, state) => OpicLoginPage()),
+    GoRoute(
+      path: '/post_detail',
+      builder: (context, state) => PostDetailPage(),
+    ),
+  ],
+);
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
