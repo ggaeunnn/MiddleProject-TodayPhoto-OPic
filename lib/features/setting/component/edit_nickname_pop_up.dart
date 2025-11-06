@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class EditNicknamePopUp extends StatelessWidget {
   final String currentNickname;
@@ -51,7 +52,7 @@ class EditNicknamePopUp extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      context.pop();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xff95b7db),
@@ -75,7 +76,7 @@ class EditNicknamePopUp extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      context.pop();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xffe8e8dc),

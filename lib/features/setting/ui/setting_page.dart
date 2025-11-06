@@ -294,10 +294,10 @@ class _SettingPageState extends State<_SettingPage> {
                                   text: "회원 탈퇴 시 삭제되는 데이터는 복구할 수 없습니다",
                                   confirmText: "탈퇴하기",
                                   onConfirm: () {
-                                    Navigator.of(context).pop();
+                                    context.pop();
                                   },
                                   onCancel: () {
-                                    Navigator.of(context).pop();
+                                    context.pop();
                                   },
                                 ),
                               );
