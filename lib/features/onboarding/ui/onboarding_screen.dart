@@ -143,7 +143,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   height: 56,
                   child: ElevatedButton(
                     onPressed: () {
-                      context.go('/home');
+                      _handlePageAction(viewModel);
                     },
                     // => _handlePageAction(viewModel),
                     style: ElevatedButton.styleFrom(

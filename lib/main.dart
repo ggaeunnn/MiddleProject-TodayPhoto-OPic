@@ -55,7 +55,11 @@ final GoRouter _router = GoRouter(
 void main() async {
   //getIt 로케이터 초기화
   initLocator();
-
+  await Supabase.initialize(
+    url: 'https://koodearpvrdjlxcclvvj.supabase.co',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtvb2RlYXJwdnJkamx4Y2NsdnZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE4NzIyNzAsImV4cCI6MjA3NzQ0ODI3MH0.p-QLJ0Ji599xy_1_ixAmvORlftkzg9V8DPFA8OF-sAU',
+  );
   await dotenv.load(fileName: 'assets/config/.env');
   runApp(
     MultiProvider(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-
-import '../../../core/models/post_report_model.dart';
+import 'package:post_detail/edit_popup.dart';
+import 'package:post_detail/post_report.dart';
 
 class PostDetailPage extends StatefulWidget {
   const PostDetailPage({super.key});
@@ -17,7 +17,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
   bool buttonLike = true;
   bool buttonReport = true;
   String loginUserName = "친구1";
-  String postWriter = "친구2";
+  String postWriter = "친구1";
   DateTime now = DateTime.now();
   late String formattedDate = DateFormat('yyyy-MM-dd').format(now);
   late String commentDate = DateFormat('yyyy-MM-dd hh-mm').format(now);
@@ -113,7 +113,16 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                           ),
                                         ),
                                       ),
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          barrierColor: Colors.black
+                                              .withOpacity(0.6),
+                                          builder: (context) => EditPopup(
+                                            // currentNickname: loginUser.nickname,
+                                          ),
+                                        );
+                                      },
                                       icon: Icon(
                                         Icons.edit,
                                         color: Colors.white,
