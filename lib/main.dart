@@ -5,7 +5,6 @@ import 'package:opicproject/core/manager/locator.dart';
 import 'package:opicproject/features/auth/ui/login_page.dart';
 import 'package:opicproject/features/feed/data/feed_service.dart';
 import 'package:opicproject/features/feed/viewmodel/feed_viewmodel.dart';
-import 'package:opicproject/features/onboarding/data/onboarding_repository.dart';
 import 'package:opicproject/features/onboarding/data/onboarding_service.dart';
 import 'package:opicproject/features/onboarding/ui/onboarding_screen.dart';
 import 'package:opicproject/features/onboarding/viewmodel/onboarding_viewmodel.dart';
