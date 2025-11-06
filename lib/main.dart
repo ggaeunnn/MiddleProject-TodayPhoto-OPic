@@ -22,18 +22,18 @@ final GoRouter _router = GoRouter(
   routes: [
     GoRoute(path: '/', builder: (context, state) => OnboardingScreen()),
 
-    GoRoute(path: '/login', builder: (context, state) => OpicLoginPage()),
+    GoRoute(path: '/login', builder: (context, state) => LoginScreen()),
     // GoRoute(
     //   path: '/register_page',
     //   builder: (context, state) => OpicRegisterPage(),
     // ),
     GoRoute(
       path: '/post_detail_page',
-      builder: (context, state) => PostDetailPage(),
+      builder: (context, state) => PostDetailScreen(),
     ),
     GoRoute(
       path: '/alarm_list_page',
-      builder: (context, state) => AlarmListPage(userId: 0),
+      builder: (context, state) => AlarmListScreen(userId: 0),
     ),
     GoRoute(path: '/feed', builder: (context, state) => MyFeedScreen()),
     // GoRoute(path: '/friend_feed', builder: (context, state) => FriendFeed()),
@@ -42,16 +42,23 @@ final GoRouter _router = GoRouter(
     GoRoute(path: '/home', builder: (context, state) => MainPage()),
     GoRoute(
       path: '/setting_alarm_page',
-      builder: (context, state) => SettingAlarmPage(),
+      builder: (context, state) => SettingAlarmScreen(),
     ),
     GoRoute(
       path: '/setting_page',
-      builder: (context, state) => SettingPage(userId: 0),
+      builder: (context, state) => SettingScreen(userId: 0),
     ),
   ],
 );
 
 void main() async {
+  //getIt 로케이터 초기화
+  initLocator();
+  await Supabase.initialize(
+    url: 'https://koodearpvrdjlxcclvvj.supabase.co',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtvb2RlYXJwdnJkamx4Y2NsdnZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE4NzIyNzAsImV4cCI6MjA3NzQ0ODI3MH0.p-QLJ0Ji599xy_1_ixAmvORlftkzg9V8DPFA8OF-sAU',
+  );
   await dotenv.load(fileName: 'assets/config/.env');
 
   WidgetsFlutterBinding.ensureInitialized();
@@ -66,10 +73,12 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          //TODO:현재 서비스와 레포지토리를 넣어줘야 하는데 번거로움 get_it라이브러리로 di고려
-          create: (context) => OnboardingViewModel(
-            OnboardingService(OnboardingDataRepository()),
-          ),
+          //getIt을 통한 서비스 주입
+          create: (context) =>
+              OnboardingViewModel(locator<OnboardingService>()),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => FeedViewModel(locator<FeedService>()),
         ),
         ChangeNotifierProvider(
           create: (context) => PageCountViewmodel(),

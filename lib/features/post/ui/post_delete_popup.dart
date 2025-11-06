@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class EditNicknamePopUp extends StatelessWidget {
-  final String currentNickname;
-
-  const EditNicknamePopUp({super.key, required this.currentNickname});
+class DeletePopup extends StatelessWidget {
+  const DeletePopup({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,35 +14,29 @@ class EditNicknamePopUp extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              "새로운 닉네임을 입력 한 뒤 저장을 눌러주세요",
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
-                color: Color(0xff515151),
+            Container(
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("게시물 삭제", style: TextStyle(fontWeight: FontWeight.bold)),
+                  SizedBox(height: 15),
+                  Text(
+                    "정말 게시물을 삭제하시겠습니까?",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                      color: Color(0xff515151),
+                    ),
+                  ),
+                ],
               ),
             ),
+
             SizedBox(height: 24),
-            TextField(
-              obscureText: false,
-              decoration: InputDecoration(
-                labelText: '닉네임',
-                hintText: '닉네임을 입력하세요',
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(width: 1, color: Color(0xff95b7db)),
-                  borderRadius: BorderRadius.all(Radius.circular(16)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(width: 1, color: Color(0xffe8e8dc)),
-                  borderRadius: BorderRadius.all(Radius.circular(16)),
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(16)),
-                ),
-              ),
-              keyboardType: TextInputType.text,
-            ),
-            SizedBox(height: 24),
+
+            Padding(padding: EdgeInsets.only(bottom: 10)),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -63,7 +55,7 @@ class EditNicknamePopUp extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      "저장하기",
+                      "삭제하기",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,

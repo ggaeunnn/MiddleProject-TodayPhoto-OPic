@@ -1,5 +1,8 @@
 //feed page
 import 'package:flutter/material.dart';
+import 'package:opicproject/core/models/post_model.dart';
+import 'package:opicproject/features/feed/viewmodel/feed_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class MyFeedScreen extends StatelessWidget {
   const MyFeedScreen({super.key});

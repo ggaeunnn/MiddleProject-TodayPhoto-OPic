@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:opicproject/features/post/ui/post_delete_popup.dart';
+import 'package:opicproject/features/post/ui/post_edit_popup.dart';
+import 'package:opicproject/features/post_report/ui/post_report_page.dart';
 
-class PostDetailPage extends StatefulWidget {
-  const PostDetailPage({super.key});
+class PostDetailScreen extends StatefulWidget {
+  const PostDetailScreen({super.key});
 
   @override
-  State<PostDetailPage> createState() => _PostDetailPageState();
+  State<PostDetailScreen> createState() => _PostDetailScreenState();
 }
 
-class _PostDetailPageState extends State<PostDetailPage> {
+class _PostDetailScreenState extends State<PostDetailScreen> {
   // int commentCount = 0;
   int likeCount = 0;
   bool buttonLike = true;
   bool buttonReport = true;
   String loginUserName = "친구1";
+  String postWriter = "친구1";
   DateTime now = DateTime.now();
   late String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+  late String commentDate = DateFormat('yyyy-MM-dd hh-mm').format(now);
   String todayTopic = "겨울풍경";
   List<String> commentList = [];
   final _commentListContoller = TextEditingController();
@@ -44,7 +49,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                     children: [
                       Row(
                         children: [
-                          Text("${loginUserName}"),
+                          Text("${postWriter}"),
                           Spacer(),
                           Text(
                             "${formattedDate}",
@@ -56,11 +61,19 @@ class _PostDetailPageState extends State<PostDetailPage> {
                         ],
                       ),
                       SizedBox(height: 10),
-                      Container(
-                        height: 350,
+
+                      //사진
+                      Image.network(
+                        'https://images.unsplash.com/photo-1455156218388-5e61b526818b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fCVFQSVCMiVBOCVFQyU5QSVCOHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=500',
                         width: double.infinity,
-                        color: Colors.grey,
+                        height: 350,
+                        fit: BoxFit.fill,
                       ),
+                      // Container(
+                      //   height: 350,
+                      //   width: double.infinity,
+                      //   color: Colors.grey,
+                      // ),
                       SizedBox(height: 10),
                       Row(
                         children: [
@@ -75,20 +88,108 @@ class _PostDetailPageState extends State<PostDetailPage> {
                             onPressed: () {
                               setState(() {
                                 buttonLike = !buttonLike;
+                                if (buttonLike) {
+                                  likeCount -= 1;
+                                } else {
+                                  likeCount += 1;
+                                }
                               });
                             },
                           ),
                           Text("좋아요 ", style: TextStyle(fontSize: 13)),
                           Text("${likeCount}", style: TextStyle(fontSize: 13)),
                           Spacer(),
-                          TextButton.icon(
-                            onPressed: () {
-                              // yes_or_no_pop_up();
-                              myDialog(context);
-                            },
-                            icon: Icon(Icons.outlined_flag),
-                            label: Text('신고하기'),
-                          ),
+
+                          // 내 게시물이라면 수정하기/삭제하기
+                          (loginUserName == postWriter)
+                              ? Row(
+                                  children: [
+                                    ElevatedButton.icon(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Color(0xFF95B7DB),
+                                        fixedSize: Size(105, 10),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          barrierColor: Colors.black
+                                              .withOpacity(0.6),
+                                          builder: (context) => EditPopup(
+                                            // currentNickname: loginUser.nickname,
+                                          ),
+                                        );
+                                      },
+                                      icon: Icon(
+                                        Icons.edit,
+                                        color: Colors.white,
+                                        size: 12,
+                                      ),
+                                      label: Text(
+                                        "수정하기",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(padding: EdgeInsets.all(5)),
+                                    ElevatedButton.icon(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Color(0xFFFFC8C8),
+                                        fixedSize: Size(105, 10),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          barrierColor: Colors.black
+                                              .withOpacity(0.6),
+                                          builder: (context) => DeletePopup(
+                                            // currentNickname: loginUser.nickname,
+                                          ),
+                                        );
+                                      },
+                                      icon: Icon(
+                                        Icons.delete_outline,
+                                        color: Color(0xFFFF826F),
+                                        size: 12,
+                                      ),
+                                      label: Text(
+                                        "삭제하기",
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              :
+                                // 다른 사람 게시물이라면 신고하기
+                                TextButton.icon(
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      barrierColor: Colors.black.withOpacity(
+                                        0.6,
+                                      ),
+                                      builder: (context) => PostReportScreen(
+                                        // currentNickname: loginUser.nickname,
+                                      ),
+                                    );
+                                  },
+                                  icon: Icon(Icons.outlined_flag),
+                                  label: Text('신고하기'),
+                                ),
                         ],
                       ),
                       Divider(),
@@ -135,12 +236,12 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                       shrinkWrap: true,
                                       itemBuilder:
                                           (BuildContext context, int index) {
-                                            Padding(
-                                              padding: EdgeInsets.all(10),
-                                            );
                                             return Container(
-                                              color: Colors.yellow,
-                                              width: double.infinity,
+                                              padding: EdgeInsets.only(
+                                                left: 10,
+                                              ),
+                                              width: 100,
+                                              color: Colors.white,
                                               child: Column(
                                                 children: [
                                                   Row(
@@ -158,7 +259,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                                       Text("${loginUserName}"),
                                                       Spacer(),
                                                       Text(
-                                                        "${formattedDate}",
+                                                        "${commentDate}",
                                                         style: TextStyle(
                                                           fontSize: 10,
                                                           color: Color(
@@ -175,6 +276,10 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                                     ],
                                                   ),
                                                   Container(
+                                                    padding: EdgeInsets.only(
+                                                      left: 20,
+                                                    ),
+                                                    width: double.infinity,
                                                     child: Text(
                                                       "${commentList[index]}",
                                                       textAlign:
@@ -235,6 +340,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       onPressed: () {
                         setState(() {
                           commentList.add("${_commentListContoller.text}");
+                          _commentListContoller.clear();
                         });
                       },
                     ),
@@ -253,38 +359,4 @@ class _PostDetailPageState extends State<PostDetailPage> {
     _commentListContoller.dispose();
     super.dispose();
   }
-}
-
-void myDialog(context) {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return Dialog(
-        child: Container(
-          height: 300,
-          width: 300,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text("신고사유를 적어주세요"),
-              SizedBox(height: 20),
-              Container(
-                color: Colors.white,
-                height: 150,
-                width: 200,
-                child: Text("신고사유적기"),
-              ),
-              // IconButton(
-              //   onPressed: () {
-              //     Navigator.of(context).pop();
-              //   },
-              //   icon: const Icon(Icons.close),
-              // ),
-            ],
-          ),
-        ),
-      );
-    },
-  );
 }

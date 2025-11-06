@@ -4,14 +4,14 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:opicproject/main.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class OpicLoginPage extends StatefulWidget {
-  const OpicLoginPage({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<OpicLoginPage> createState() => _OpicLoginPageState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _OpicLoginPageState extends State<OpicLoginPage> {
+class _LoginScreenState extends State<LoginScreen> {
   String? _userId;
 
   @override

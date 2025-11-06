@@ -98,31 +98,35 @@ class PostCard extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               //좋아요
-              const Icon(Icons.favorite, color: Colors.red, size: 20),
+              const Icon(Icons.favorite, color: Color(0xffff826f), size: 20),
               const SizedBox(width: 4),
-              Text('${post.likes}', style: const TextStyle(color: Colors.red)),
+              Text(
+                '${post.likes}',
+                style: const TextStyle(color: Color(0xffff826f)),
+              ),
 
               const SizedBox(width: 16),
 
               // 댓글
               const Icon(
-                Icons.chat_bubble_outline,
-                color: Colors.grey,
+                Icons.chat_bubble_outline_rounded,
+                color: Color(0xffccccc8),
                 size: 20,
               ),
               const SizedBox(width: 4),
               Text(
                 '${post.comments}',
-                style: const TextStyle(color: Colors.grey),
+                style: const TextStyle(color: Color(0xffccccc8)),
               ),
             ],
           ),
         ),
 
         //계시글 구분선
-        const Divider(height: 20, thickness: 1, color: Colors.grey),
+        const Divider(height: 20, thickness: 0.7, color: Color(0xff95b7db)),
       ],
     );
   }
