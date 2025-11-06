@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/component/yes_or_close_pop_up.dart';
+import 'package:opicproject/core/models/user_model.dart';
 import 'package:opicproject/features/setting/component/edit_nickname_pop_up.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import '../../../core/models/user_model.dart';
-import '../../../core/widgets.dart';
 
 final List<User> dummyUsers = User.getDummyUsers();
 final loginUser = dummyUsers[0];

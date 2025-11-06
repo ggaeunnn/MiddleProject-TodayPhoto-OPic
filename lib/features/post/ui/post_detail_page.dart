@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:opicproject/features/post/ui/post_delete_popup.dart';
 import 'package:opicproject/features/post/ui/post_edit_popup.dart';
-
-import '../../post_report/ui/post_report_page.dart';
+import 'package:opicproject/features/post_report/ui/post_report_page.dart';
 
 class PostDetailScreen extends StatefulWidget {
   const PostDetailScreen({super.key});

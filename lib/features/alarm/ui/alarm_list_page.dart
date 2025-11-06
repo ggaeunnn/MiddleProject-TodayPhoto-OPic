@@ -3,9 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:opicproject/features/alarm/component/alarm_row_comment.dart';
 import 'package:opicproject/features/alarm/component/alarm_row_friend_accept.dart';
 import 'package:opicproject/features/alarm/component/alarm_row_friend_request.dart';
-
-import '../component/alarm_row_like.dart';
-import '../component/alarm_row_topic.dart';
+import 'package:opicproject/features/alarm/component/alarm_row_like.dart';
+import 'package:opicproject/features/alarm/component/alarm_row_topic.dart';
 
 class AlarmListScreen extends StatelessWidget {
   final int userId;
