@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:post_detail/post_report.dart';
 
 class PostDetailPage extends StatefulWidget {
   const PostDetailPage({super.key});
@@ -15,7 +16,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
   bool buttonLike = true;
   bool buttonReport = true;
   String loginUserName = "친구1";
-  String postWriter = "친구1";
+  String postWriter = "친구2";
   DateTime now = DateTime.now();
   late String formattedDate = DateFormat('yyyy-MM-dd').format(now);
   late String commentDate = DateFormat('yyyy-MM-dd hh-mm').format(now);
@@ -156,7 +157,15 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                 // 다른 사람 게시물이라면 신고하기
                                 TextButton.icon(
                                   onPressed: () {
-                                    myDialog(context);
+                                    showDialog(
+                                      context: context,
+                                      barrierColor: Colors.black.withOpacity(
+                                        0.6,
+                                      ),
+                                      builder: (context) => PostReport(
+                                        // currentNickname: loginUser.nickname,
+                                      ),
+                                    );
                                   },
                                   icon: Icon(Icons.outlined_flag),
                                   label: Text('신고하기'),
@@ -330,32 +339,4 @@ class _PostDetailPageState extends State<PostDetailPage> {
     _commentListContoller.dispose();
     super.dispose();
   }
-}
-
-void myDialog(context) {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return Dialog(
-        child: Container(
-          height: 300,
-          width: 300,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text("신고사유를 적어주세요", textAlign: TextAlign.center),
-              SizedBox(height: 20),
-              Container(
-                color: Colors.white,
-                height: 150,
-                width: 200,
-                child: Text("신고사유적기"),
-              ),
-            ],
-          ),
-        ),
-      );
-    },
-  );
 }
