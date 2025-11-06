@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:post_detail/post_report.dart';
+
+import '../../../core/models/post_report_model.dart';
 
 class PostDetailPage extends StatefulWidget {
   const PostDetailPage({super.key});
