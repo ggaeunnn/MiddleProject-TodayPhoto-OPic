@@ -15,6 +15,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
   bool buttonLike = true;
   bool buttonReport = true;
   String loginUserName = "친구1";
+  String postWriter = "친구1";
   DateTime now = DateTime.now();
   late String formattedDate = DateFormat('yyyy-MM-dd').format(now);
   late String commentDate = DateFormat('yyyy-MM-dd hh-mm').format(now);
@@ -45,7 +46,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                     children: [
                       Row(
                         children: [
-                          Text("${loginUserName}"),
+                          Text("${postWriter}"),
                           Spacer(),
                           Text(
                             "${formattedDate}",
@@ -57,11 +58,19 @@ class _PostDetailPageState extends State<PostDetailPage> {
                         ],
                       ),
                       SizedBox(height: 10),
-                      Container(
-                        height: 350,
+
+                      //사진
+                      Image.network(
+                        'https://images.unsplash.com/photo-1455156218388-5e61b526818b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fCVFQSVCMiVBOCVFQyU5QSVCOHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=500',
                         width: double.infinity,
-                        color: Colors.grey,
+                        height: 350,
+                        fit: BoxFit.fill,
                       ),
+                      // Container(
+                      //   height: 350,
+                      //   width: double.infinity,
+                      //   color: Colors.grey,
+                      // ),
                       SizedBox(height: 10),
                       Row(
                         children: [
@@ -87,14 +96,71 @@ class _PostDetailPageState extends State<PostDetailPage> {
                           Text("좋아요 ", style: TextStyle(fontSize: 13)),
                           Text("${likeCount}", style: TextStyle(fontSize: 13)),
                           Spacer(),
-                          TextButton.icon(
-                            onPressed: () {
-                              // yes_or_no_pop_up();
-                              myDialog(context);
-                            },
-                            icon: Icon(Icons.outlined_flag),
-                            label: Text('신고하기'),
-                          ),
+
+                          // 내 게시물이라면 수정하기/삭제하기
+                          (loginUserName == postWriter)
+                              ? Row(
+                                  children: [
+                                    ElevatedButton.icon(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Color(0xFF95B7DB),
+                                        fixedSize: Size(105, 10),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                      ),
+                                      onPressed: () {},
+                                      icon: Icon(
+                                        Icons.edit,
+                                        color: Colors.white,
+                                        size: 12,
+                                      ),
+                                      label: Text(
+                                        "수정하기",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(padding: EdgeInsets.all(5)),
+                                    ElevatedButton.icon(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Color(0xFFFFC8C8),
+                                        fixedSize: Size(105, 10),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                      ),
+                                      onPressed: () {},
+                                      icon: Icon(
+                                        Icons.delete_outline,
+                                        color: Color(0xFFFF826F),
+                                        size: 12,
+                                      ),
+                                      label: Text(
+                                        "삭제하기",
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              :
+                                // 다른 사람 게시물이라면 신고하기
+                                TextButton.icon(
+                                  onPressed: () {
+                                    myDialog(context);
+                                  },
+                                  icon: Icon(Icons.outlined_flag),
+                                  label: Text('신고하기'),
+                                ),
                         ],
                       ),
                       Divider(),
@@ -278,7 +344,7 @@ void myDialog(context) {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text("신고사유를 적어주세요"),
+              const Text("신고사유를 적어주세요", textAlign: TextAlign.center),
               SizedBox(height: 20),
               Container(
                 color: Colors.white,
@@ -286,12 +352,6 @@ void myDialog(context) {
                 width: 200,
                 child: Text("신고사유적기"),
               ),
-              // IconButton(
-              //   onPressed: () {
-              //     Navigator.of(context).pop();
-              //   },
-              //   icon: const Icon(Icons.close),
-              // ),
             ],
           ),
         ),
