@@ -8,6 +8,7 @@ class User {
   final int platformId;
   final String? exitAt;
   final String token;
+  final String uuid;
 
   User({
     required this.id,
@@ -16,6 +17,7 @@ class User {
     required this.email,
     required this.platformId,
     required this.token,
+    required this.uuid,
     this.exitAt,
   });
 
@@ -28,6 +30,7 @@ class User {
       platformId: json['platform_id'] as int,
       exitAt: null,
       token: json['token'] as String,
+      uuid: json['uuid'] as String,
     );
   }
 
@@ -41,6 +44,7 @@ class User {
         platformId: 1,
         exitAt: null,
         token: "token1",
+        uuid: "uuid1",
       ),
       User(
         id: 1,
@@ -50,6 +54,7 @@ class User {
         platformId: 2,
         exitAt: null,
         token: "token2",
+        uuid: "uuid2",
       ),
     ];
   }

@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:opicproject/features/setting/component/switch_row.dart';
 
 class SettingAlarmPage extends StatefulWidget {
+  const SettingAlarmPage({super.key});
+
   @override
   State<SettingAlarmPage> createState() => _SettingAlarmPageState();
 }

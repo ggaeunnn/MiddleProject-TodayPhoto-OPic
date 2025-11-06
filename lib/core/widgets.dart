@@ -45,8 +45,30 @@ class OpicAppbar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => Size.fromHeight(50);
 }
 
-class OpicBottomNav extends StatelessWidget {
+/// 하단네비게이션
+
+class OpicBottomNav extends StatefulWidget {
   const OpicBottomNav({super.key});
+
+  @override
+  State<OpicBottomNav> createState() => _OpicBottomNavState();
+}
+
+class _OpicBottomNavState extends State<OpicBottomNav> {
+  int _selectedIndex = 0;
+
+  static const List<Widget> _widgetOptions = <Widget>[
+    Text('Index 0: 홈'),
+    Text('Index 1: 친구'),
+    Text('Index 2: 내 피드'),
+    Text('Index 3: 설정'),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +86,8 @@ class OpicBottomNav extends StatelessWidget {
         BottomNavigationBarItem(icon: Icon(Icons.image), label: '내 피드'),
         BottomNavigationBarItem(icon: Icon(Icons.settings), label: '설정'),
       ],
+      currentIndex: _selectedIndex,
+      onTap: _onItemTapped,
     );
   }
 }
