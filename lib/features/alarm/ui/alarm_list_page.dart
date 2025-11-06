@@ -7,24 +7,24 @@ import 'package:opicproject/features/alarm/component/alarm_row_friend_request.da
 import '../component/alarm_row_like.dart';
 import '../component/alarm_row_topic.dart';
 
-class AlarmListPage extends StatelessWidget {
+class AlarmListScreen extends StatelessWidget {
   final int userId;
-  const AlarmListPage({super.key, required this.userId});
+  const AlarmListScreen({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder(child: _AlarmListPage());
+    return const Placeholder(child: _AlarmListScreen());
   }
 }
 
-class _AlarmListPage extends StatefulWidget {
-  const _AlarmListPage({super.key});
+class _AlarmListScreen extends StatefulWidget {
+  const _AlarmListScreen({super.key});
 
   @override
-  State<_AlarmListPage> createState() => _AlarmListPageState();
+  State<_AlarmListScreen> createState() => _AlarmListScreenState();
 }
 
-class _AlarmListPageState extends State<_AlarmListPage> {
+class _AlarmListScreenState extends State<_AlarmListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
