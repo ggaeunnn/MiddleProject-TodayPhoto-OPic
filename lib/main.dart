@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
+import 'package:opicproject/core/manager/locator.dart';
 import 'package:opicproject/features/auth/ui/login_page.dart';
+import 'package:opicproject/features/feed/data/feed_service.dart';
+import 'package:opicproject/features/feed/viewmodel/feed_viewmodel.dart';
 import 'package:opicproject/features/onboarding/data/onboarding_repository.dart';
 import 'package:opicproject/features/onboarding/data/onboarding_service.dart';
 import 'package:opicproject/features/onboarding/ui/onboarding_screen.dart';
@@ -51,15 +54,20 @@ final GoRouter _router = GoRouter(
 );
 
 void main() async {
+  //getIt 로케이터 초기화
+  initLocator();
+
   await dotenv.load(fileName: 'assets/config/.env');
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          //TODO:현재 서비스와 레포지토리를 넣어줘야 하는데 번거로움 get_it라이브러리로 di고려
-          create: (context) => OnboardingViewModel(
-            OnboardingService(OnboardingDataRepository()),
-          ),
+          //getIt을 통한 서비스 주입
+          create: (context) =>
+              OnboardingViewModel(locator<OnboardingService>()),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => FeedViewModel(locator<FeedService>()),
         ),
       ],
       //child: const MyApp(),
