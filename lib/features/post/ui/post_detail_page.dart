@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:post_detail/edit_popup.dart';
-import 'package:post_detail/post_report.dart';
+import 'package:opicproject/features/post/ui/post_edit_popup.dart';
+
+import '../../post_report/ui/post_report_page.dart';
 
 class PostDetailPage extends StatefulWidget {
   const PostDetailPage({super.key});
@@ -172,7 +173,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                       barrierColor: Colors.black.withOpacity(
                                         0.6,
                                       ),
-                                      builder: (context) => PostReport(
+                                      builder: (context) => PostReportPage(
                                         // currentNickname: loginUser.nickname,
                                       ),
                                     );

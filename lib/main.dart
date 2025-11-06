@@ -6,7 +6,6 @@ import 'package:opicproject/features/auth/ui/login_page.dart';
 import 'package:opicproject/features/feed/data/feed_service.dart';
 import 'package:opicproject/features/feed/viewmodel/feed_viewmodel.dart';
 import 'package:opicproject/features/onboarding/data/onboarding_service.dart';
-import 'package:opicproject/features/onboarding/ui/onboarding_screen.dart';
 import 'package:opicproject/features/onboarding/viewmodel/onboarding_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -21,8 +20,7 @@ import 'features/setting/ui/setting_page.dart';
 
 final GoRouter _router = GoRouter(
   routes: [
-    GoRoute(path: '/', builder: (context, state) => OnboardingScreen()),
-
+    // GoRoute(path: '/', builder: (context, state) => OnboardingScreen()),
     GoRoute(path: '/login', builder: (context, state) => OpicLoginPage()),
     // GoRoute(
     //   path: '/register_page',
@@ -39,7 +37,7 @@ final GoRouter _router = GoRouter(
     GoRoute(path: '/feed', builder: (context, state) => MyFeedScreen()),
     // GoRoute(path: '/friend_feed', builder: (context, state) => FriendFeed()),
     // GoRoute(path: '/my_feed', builder: (context, state) => MyFeed()),
-    GoRoute(path: '/friend_page', builder: (context, state) => FriendPage()),
+    GoRoute(path: '/', builder: (context, state) => FriendPage()),
     GoRoute(path: '/home', builder: (context, state) => HomeScreen()),
     GoRoute(
       path: '/setting_alarm_page',
