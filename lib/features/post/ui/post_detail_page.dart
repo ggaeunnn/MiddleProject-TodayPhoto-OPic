@@ -17,6 +17,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
   String loginUserName = "친구1";
   DateTime now = DateTime.now();
   late String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+  late String commentDate = DateFormat('yyyy-MM-dd hh-mm').format(now);
   String todayTopic = "겨울풍경";
   List<String> commentList = [];
   final _commentListContoller = TextEditingController();
@@ -75,6 +76,11 @@ class _PostDetailPageState extends State<PostDetailPage> {
                             onPressed: () {
                               setState(() {
                                 buttonLike = !buttonLike;
+                                if (buttonLike) {
+                                  likeCount -= 1;
+                                } else {
+                                  likeCount += 1;
+                                }
                               });
                             },
                           ),
@@ -135,12 +141,12 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                       shrinkWrap: true,
                                       itemBuilder:
                                           (BuildContext context, int index) {
-                                            Padding(
-                                              padding: EdgeInsets.all(10),
-                                            );
                                             return Container(
-                                              color: Colors.yellow,
-                                              width: double.infinity,
+                                              padding: EdgeInsets.only(
+                                                left: 10,
+                                              ),
+                                              width: 100,
+                                              color: Colors.white,
                                               child: Column(
                                                 children: [
                                                   Row(
@@ -158,7 +164,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                                       Text("${loginUserName}"),
                                                       Spacer(),
                                                       Text(
-                                                        "${formattedDate}",
+                                                        "${commentDate}",
                                                         style: TextStyle(
                                                           fontSize: 10,
                                                           color: Color(
@@ -175,6 +181,10 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                                     ],
                                                   ),
                                                   Container(
+                                                    padding: EdgeInsets.only(
+                                                      left: 20,
+                                                    ),
+                                                    width: double.infinity,
                                                     child: Text(
                                                       "${commentList[index]}",
                                                       textAlign:
@@ -235,6 +245,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       onPressed: () {
                         setState(() {
                           commentList.add("${_commentListContoller.text}");
+                          _commentListContoller.clear();
                         });
                       },
                     ),
