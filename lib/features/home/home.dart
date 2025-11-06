@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:opicproject/core/models/home_post_model.dart';
+import 'package:opicproject/core/models/post_model.dart';
 import 'package:opicproject/core/widgets.dart';
 
 class HomeScreen extends StatelessWidget {
