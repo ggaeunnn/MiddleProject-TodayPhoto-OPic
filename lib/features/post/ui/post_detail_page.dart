@@ -148,7 +148,16 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                           ),
                                         ),
                                       ),
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          barrierColor: Colors.black
+                                              .withOpacity(0.6),
+                                          builder: (context) => DeletePopup(
+                                            // currentNickname: loginUser.nickname,
+                                          ),
+                                        );
+                                      },
                                       icon: Icon(
                                         Icons.delete_outline,
                                         color: Color(0xFFFF826F),
