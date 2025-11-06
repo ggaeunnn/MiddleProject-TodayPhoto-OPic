@@ -39,10 +39,10 @@ class OpicAppbar extends StatelessWidget implements PreferredSizeWidget {
                           text: "",
                           confirmText: "로그아웃",
                           onConfirm: () {
-                            Navigator.of(context).pop();
+                            context.pop();
                           },
                           onCancel: () {
-                            Navigator.of(context).pop();
+                            context.pop();
                           },
                         ),
                       );
