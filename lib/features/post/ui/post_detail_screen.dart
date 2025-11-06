@@ -3,16 +3,16 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:opicproject/features/post/ui/post_edit_popup.dart';
 
-import '../../post_report/ui/post_report_page.dart';
+import '../../post_report/ui/post_report_screen.dart';
 
-class PostDetailPage extends StatefulWidget {
-  const PostDetailPage({super.key});
+class PostDetailScreen extends StatefulWidget {
+  const PostDetailScreen({super.key});
 
   @override
-  State<PostDetailPage> createState() => _PostDetailPageState();
+  State<PostDetailScreen> createState() => _PostDetailScreenState();
 }
 
-class _PostDetailPageState extends State<PostDetailPage> {
+class _PostDetailScreenState extends State<PostDetailScreen> {
   // int commentCount = 0;
   int likeCount = 0;
   bool buttonLike = true;
@@ -173,7 +173,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                       barrierColor: Colors.black.withOpacity(
                                         0.6,
                                       ),
-                                      builder: (context) => PostReportPage(
+                                      builder: (context) => PostReportScreen(
                                         // currentNickname: loginUser.nickname,
                                       ),
                                     );

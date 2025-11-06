@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/manager/locator.dart';
-import 'package:opicproject/features/auth/ui/login_page.dart';
+import 'package:opicproject/features/auth/ui/login_screen.dart';
 import 'package:opicproject/features/feed/data/feed_service.dart';
 import 'package:opicproject/features/feed/viewmodel/feed_viewmodel.dart';
 import 'package:opicproject/features/onboarding/data/onboarding_service.dart';
@@ -10,42 +10,42 @@ import 'package:opicproject/features/onboarding/viewmodel/onboarding_viewmodel.d
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'features/alarm//ui/alarm_list_page.dart';
+import 'features/alarm//ui/alarm_list_screen.dart';
 import 'features/feed//ui/feed.dart';
-import 'features/friend//ui/friend_page.dart';
-import 'features/home/home.dart';
-import 'features/post/ui/post_detail_page.dart';
-import 'features/setting//ui/setting_alarm_page.dart';
-import 'features/setting/ui/setting_page.dart';
+import 'features/friend//ui/friend_screen.dart';
+import 'features/home/ui/home.dart';
+import 'features/post/ui/post_detail_screen.dart';
+import 'features/setting//ui/setting_alarm_screen.dart';
+import 'features/setting/ui/setting_screen.dart';
 
 final GoRouter _router = GoRouter(
   routes: [
     // GoRoute(path: '/', builder: (context, state) => OnboardingScreen()),
-    GoRoute(path: '/login', builder: (context, state) => OpicLoginPage()),
+    GoRoute(path: '/login', builder: (context, state) => LoginScreen()),
     // GoRoute(
     //   path: '/register_page',
     //   builder: (context, state) => OpicRegisterPage(),
     // ),
     GoRoute(
       path: '/post_detail_page',
-      builder: (context, state) => PostDetailPage(),
+      builder: (context, state) => PostDetailScreen(),
     ),
     GoRoute(
       path: '/alarm_list_page',
-      builder: (context, state) => AlarmListPage(userId: 0),
+      builder: (context, state) => AlarmListScreen(userId: 0),
     ),
     GoRoute(path: '/feed', builder: (context, state) => MyFeedScreen()),
     // GoRoute(path: '/friend_feed', builder: (context, state) => FriendFeed()),
     // GoRoute(path: '/my_feed', builder: (context, state) => MyFeed()),
-    GoRoute(path: '/', builder: (context, state) => FriendPage()),
+    GoRoute(path: '/', builder: (context, state) => FriendScreen()),
     GoRoute(path: '/home', builder: (context, state) => HomeScreen()),
     GoRoute(
       path: '/setting_alarm_page',
-      builder: (context, state) => SettingAlarmPage(),
+      builder: (context, state) => SettingAlarmScreen(),
     ),
     GoRoute(
       path: '/setting_page',
-      builder: (context, state) => SettingPage(userId: 0),
+      builder: (context, state) => SettingScreen(userId: 0),
     ),
   ],
 );

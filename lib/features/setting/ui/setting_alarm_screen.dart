@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/features/setting/component/switch_row.dart';
 
-class SettingAlarmPage extends StatefulWidget {
-  const SettingAlarmPage({super.key});
+class SettingAlarmScreen extends StatefulWidget {
+  const SettingAlarmScreen({super.key});
 
   @override
-  State<SettingAlarmPage> createState() => _SettingAlarmPageState();
+  State<SettingAlarmScreen> createState() => _SettingAlarmScreenState();
 }
 
-class _SettingAlarmPageState extends State<SettingAlarmPage> {
+class _SettingAlarmScreenState extends State<SettingAlarmScreen> {
   bool allAlarm = true;
   bool newTopic = true;
   bool likePost = true;
