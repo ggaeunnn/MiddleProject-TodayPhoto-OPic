@@ -1,6 +1,6 @@
 import 'dart:math';
 
-class HomePost {
+class Post {
   final int topicId;
   final String topic;
   final int postId;
@@ -10,7 +10,7 @@ class HomePost {
   final int likes;
   final int comments;
 
-  HomePost({
+  Post({
     required this.topicId,
     required this.topic,
     required this.postId,
@@ -21,8 +21,8 @@ class HomePost {
     this.comments = 0,
   });
 
-  factory HomePost.fromJson(Map<String, dynamic> json) {
-    return HomePost(
+  factory Post.fromJson(Map<String, dynamic> json) {
+    return Post(
       topicId: json['topic_id'] as int,
       topic: json['topic'] as String,
       postId: json['post_id'] as int,
@@ -33,11 +33,11 @@ class HomePost {
       likes: json['like_count'] as int? ?? 0,
     );
   }
-  static final List<HomePost> fixedDummyPosts = generateDummyData(4);
+  static final List<Post> fixedDummyPosts = generateDummyData(4);
   //더미데이터 리스트 생성 데이터 베이스 붙히면 나중에 지워야함
-  static List<HomePost> generateDummyData(int count) {
+  static List<Post> generateDummyData(int count) {
     final Random random = Random();
-    final List<HomePost> dummyList = [];
+    final List<Post> dummyList = [];
 
     // 더미 데이터에 사용할 리스트
     final List<String> dummyTopics = [
@@ -57,7 +57,7 @@ class HomePost {
 
     for (int i = 0; i < count; i++) {
       dummyList.add(
-        HomePost(
+        Post(
           topicId: random.nextInt(5) + 1,
           topic: dummyTopics[random.nextInt(dummyTopics.length)],
           postId: 100 + i,
