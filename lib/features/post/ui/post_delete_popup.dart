@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class PostReportScreen extends StatelessWidget {
-  const PostReportScreen({super.key});
+class DeletePopup extends StatelessWidget {
+  const DeletePopup({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +20,10 @@ class PostReportScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("신고하기", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text("게시물 삭제", style: TextStyle(fontWeight: FontWeight.bold)),
                   SizedBox(height: 15),
                   Text(
-                    "신고 사유를 입력해주세요",
+                    "정말 게시물을 삭제하시겠습니까?",
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 14,
@@ -34,22 +34,9 @@ class PostReportScreen extends StatelessWidget {
               ),
             ),
 
-            SizedBox(height: 12),
-            Container(
-              padding: EdgeInsets.only(left: 15),
-              color: Color(0xFFFCFCF0),
-              height: 150,
-              child: TextField(
-                maxLines: null,
-                obscureText: false,
-                decoration: InputDecoration(
-                  hintText: '신고 사유룰 자세히 작성해주세요...',
-                  border: InputBorder.none,
-                ),
-                keyboardType: TextInputType.text,
-              ),
-            ),
             SizedBox(height: 24),
+
+            Padding(padding: EdgeInsets.only(bottom: 10)),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -68,7 +55,7 @@ class PostReportScreen extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      "신고하기",
+                      "삭제하기",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,

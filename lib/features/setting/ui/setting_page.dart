@@ -10,24 +10,24 @@ import '../../../core/widgets.dart';
 final List<User> dummyUsers = User.getDummyUsers();
 final loginUser = dummyUsers[0];
 
-class SettingPage extends StatelessWidget {
+class SettingScreen extends StatelessWidget {
   final int userId;
-  const SettingPage({super.key, required this.userId});
+  const SettingScreen({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder(child: _SettingPage());
+    return const Placeholder(child: _SettingScreen());
   }
 }
 
-class _SettingPage extends StatefulWidget {
-  const _SettingPage({super.key});
+class _SettingScreen extends StatefulWidget {
+  const _SettingScreen({super.key});
 
   @override
-  State<_SettingPage> createState() => _SettingPageState();
+  State<_SettingScreen> createState() => _SettingScreenState();
 }
 
-class _SettingPageState extends State<_SettingPage> {
+class _SettingScreenState extends State<_SettingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
