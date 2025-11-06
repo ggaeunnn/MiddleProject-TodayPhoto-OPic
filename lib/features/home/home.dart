@@ -7,11 +7,11 @@ class HomeScreen extends StatelessWidget {
   //const HomeScreen({super.key});
   HomeScreen({super.key});
   //TODO:임시 더미 데이터  나중에 지워야함
-  final List<HomePost> _posts = HomePost.fixedDummyPosts;
+  final List<Post> _posts = Post.fixedDummyPosts;
 
   //TODO:현재 주제 뷰모델 사용시 삭제예정
-  final String currentTopic = HomePost.fixedDummyPosts.isNotEmpty
-      ? HomePost.fixedDummyPosts.first.topic
+  final String currentTopic = Post.fixedDummyPosts.isNotEmpty
+      ? Post.fixedDummyPosts.first.topic
       : '주제 없음';
 
   @override
@@ -80,7 +80,7 @@ class HomeScreen extends StatelessWidget {
 
 //계시물 컴포넌트
 class PostCard extends StatelessWidget {
-  final HomePost post;
+  final Post post;
 
   const PostCard({super.key, required this.post});
 
