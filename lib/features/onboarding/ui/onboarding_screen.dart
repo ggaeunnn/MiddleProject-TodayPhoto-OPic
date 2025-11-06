@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/models/onboarding_model.dart';
-import 'package:opicproject/features/home/home.dart';
 import 'package:opicproject/features/onboarding/viewmodel/onboarding_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -26,7 +26,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       //온보딩 완료상태저장
       viewModel.completeOnboarding();
       //홈화면 이동
-      _navigateToHome();
+      // _navigateToHome();
+      context.go('/home');
     } else {
       //다음페이지가 있다면 넘어가기
       _pageController.nextPage(
@@ -37,12 +38,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   // TODO:고라우터 방식으로 변경 필요
-  void _navigateToHome() {
-    if (!mounted) return;
-    Navigator.of(
-      context,
-    ).pushReplacement(MaterialPageRoute(builder: (context) => HomeScreen()));
-  }
+  // void _navigateToHome() {
+  //   if (!mounted) return;
+  //   Navigator.of(
+  //     context,
+  //   ).pushReplacement(MaterialPageRoute(builder: (context) => HomeScreen()));
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +60,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         if (viewModel.hasSeenOnboarding) {
           // 비동기 초기화 중 상태가 변경되었을 경우, 여기서 즉시 이동
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            _navigateToHome();
+            // _navigateToHome();
+            context.go('/home');
           });
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
@@ -102,7 +104,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   : TextButton(
                       onPressed: () {
                         viewModel.completeOnboarding();
-                        _navigateToHome();
+                        // _navigateToHome();
+                        context.go('/home');
                       },
                       child: const Text(
                         '건너뛰기',
@@ -139,7 +142,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: () => _handlePageAction(viewModel),
+                    onPressed: () {
+                      context.go('/home');
+                    },
+                    // => _handlePageAction(viewModel),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFFFD700),
                       shape: RoundedRectangleBorder(
