@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:opicproject/main.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -58,16 +59,31 @@ class _OpicLoginPageState extends State<OpicLoginPage> {
                   ],
                 ),
               ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: 50),
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    height: 50,
-                    child: SigninGoogle(),
+              Column(
+                children: [
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 50),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        height: 50,
+                        child: SigninGoogle(),
+                      ),
+                    ),
                   ),
-                ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 50),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        height: 50,
+                        child: SignOutGoogle(),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -107,7 +123,11 @@ class SigninGoogle extends StatelessWidget {
             .attemptLightweightAuthentication();
         // or await googleSignIn.authenticate(); which will return a GoogleSignInAccount or throw an exception
         if (googleUser == null) {
+          Fluttertoast.showToast(msg: "로그인 실패");
           throw AuthException('Failed to sign in with Google.');
+        }
+        if (googleUser != null) {
+          Fluttertoast.showToast(msg: "로그인 성공");
         }
 
         /// Authorization is required to obtain the access token with the appropriate scopes for Supabase authentication,
@@ -119,7 +139,11 @@ class SigninGoogle extends StatelessWidget {
             await googleUser.authorizationClient.authorizeScopes(scopes);
         final idToken = googleUser.authentication.idToken;
         if (idToken == null) {
+          Fluttertoast.showToast(msg: "로그인 실패");
           throw AuthException('No ID Token found.');
+        }
+        if (idToken != null) {
+          Fluttertoast.showToast(msg: "로그인 성공");
         }
         await supabase.auth.signInWithIdToken(
           provider: OAuthProvider.google,
@@ -130,4 +154,25 @@ class SigninGoogle extends StatelessWidget {
       child: Image.asset('assets/images/sign_in_google.png'),
     );
   }
+}
+
+class SignOutGoogle extends StatelessWidget {
+  const SignOutGoogle({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: _SignOutGoogle,
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(const Color(0xff0165E1)),
+      ),
+      child: const Text('로그아웃'),
+    );
+  }
+}
+
+Future<void> _SignOutGoogle() async {
+  await supabase.auth.signOut(); // 수파베이스
+  await GoogleSignIn.instance.signOut(); // 구글 로그인 해당
+  Fluttertoast.showToast(msg: "로그아웃 성공");
 }

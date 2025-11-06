@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:opicproject/core/models/post_model.dart';
-import 'package:opicproject/core/widgets.dart';
 
 class HomeScreen extends StatelessWidget {
   //TODO:뷰모델 사용시 위의 const생성자로 교체
@@ -16,64 +15,62 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: OpicAppbar(),
-
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          //주제 영역
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 8.0,
-            ),
-            child: Row(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '오늘의 주제',
-                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      currentTopic,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        decoration: TextDecoration.underline,
+    return Container(
+      child: Scaffold(
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            //주제 영역
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 8.0,
+              ),
+              child: Row(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '오늘의 주제',
+                        style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                       ),
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                const Icon(Icons.bookmark_border, color: Colors.grey),
-              ],
+                      const SizedBox(height: 4),
+                      Text(
+                        currentTopic,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+                  const Icon(Icons.bookmark_border, color: Colors.grey),
+                ],
+              ),
             ),
-          ),
 
-          //계시물 영역
-          Expanded(
-            child: ListView.builder(
-              itemCount: _posts.length,
-              itemBuilder: (context, index) {
-                return PostCard(post: _posts[index]);
-              },
+            //계시물 영역
+            Expanded(
+              child: ListView.builder(
+                itemCount: _posts.length,
+                itemBuilder: (context, index) {
+                  return PostCard(post: _posts[index]);
+                },
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
 
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          //TODO: 게시글 작성 페이지 이동 또는 팝업을 통한 선택
-        },
-        child: const Icon(Icons.edit),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            //TODO: 게시글 작성 페이지 이동 또는 팝업을 통한 선택
+          },
+          child: const Icon(Icons.edit),
+        ),
       ),
-
-      bottomNavigationBar: OpicBottomNav(),
     );
   }
 }
