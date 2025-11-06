@@ -35,7 +35,7 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     Text(
                       '오늘의 주제',
-                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                      style: TextStyle(fontSize: 14, color: Color(0xffd9d9d9)),
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -49,18 +49,21 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
                 const Spacer(),
-                const Icon(Icons.bookmark_border, color: Colors.grey),
+                const Icon(Icons.bookmark_border, color: Color(0xffd9d9d9)),
               ],
             ),
           ),
 
           //계시물 영역
           Expanded(
-            child: ListView.builder(
-              itemCount: _posts.length,
-              itemBuilder: (context, index) {
-                return PostCard(post: _posts[index]);
-              },
+            child: Container(
+              decoration: BoxDecoration(color: Color(0xfffcfcf0)),
+              child: ListView.builder(
+                itemCount: _posts.length,
+                itemBuilder: (context, index) {
+                  return PostCard(post: _posts[index]);
+                },
+              ),
             ),
           ),
         ],
@@ -101,31 +104,35 @@ class PostCard extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               //좋아요
-              const Icon(Icons.favorite, color: Colors.red, size: 20),
+              const Icon(Icons.favorite, color: Color(0xffff826f), size: 20),
               const SizedBox(width: 4),
-              Text('${post.likes}', style: const TextStyle(color: Colors.red)),
+              Text(
+                '${post.likes}',
+                style: const TextStyle(color: Color(0xffff826f)),
+              ),
 
               const SizedBox(width: 16),
 
               // 댓글
               const Icon(
-                Icons.chat_bubble_outline,
-                color: Colors.grey,
+                Icons.chat_bubble_outline_rounded,
+                color: Color(0xffccccc8),
                 size: 20,
               ),
               const SizedBox(width: 4),
               Text(
                 '${post.comments}',
-                style: const TextStyle(color: Colors.grey),
+                style: const TextStyle(color: Color(0xffccccc8)),
               ),
             ],
           ),
         ),
 
         //계시글 구분선
-        const Divider(height: 20, thickness: 1, color: Colors.grey),
+        const Divider(height: 20, thickness: 0.7, color: Color(0xff95b7db)),
       ],
     );
   }
