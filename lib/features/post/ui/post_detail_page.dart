@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:opicproject/features/post/ui/post_edit_popup.dart';
 import 'package:post_detail/edit_popup.dart';
 import 'package:post_detail/post_report.dart';
 
