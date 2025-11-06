@@ -51,7 +51,7 @@ class EditNicknamePopUp extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      context.pop();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xff95b7db),
@@ -75,7 +75,7 @@ class EditNicknamePopUp extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      context.pop();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xffe8e8dc),
