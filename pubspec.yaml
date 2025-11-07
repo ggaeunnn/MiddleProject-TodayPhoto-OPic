@@ -43,6 +43,7 @@ dependencies:
   dio: ^5.9.0
   supabase_flutter: ^2.6.0
   get_it: ^9.0.5
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

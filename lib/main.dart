@@ -22,17 +22,17 @@ import 'features/setting/ui/setting_page.dart';
 
 final GoRouter _router = GoRouter(
   routes: [
-    GoRoute(path: '/', builder: (context, state) => OnboardingScreen()),
+    GoRoute(
+      path: '/post_detail_page',
+      builder: (context, state) => OnboardingScreen(),
+    ),
 
     GoRoute(path: '/login', builder: (context, state) => LoginScreen()),
     // GoRoute(
     //   path: '/register_page',
     //   builder: (context, state) => OpicRegisterPage(),
     // ),
-    GoRoute(
-      path: '/post_detail_page',
-      builder: (context, state) => PostDetailScreen(),
-    ),
+    GoRoute(path: '/', builder: (context, state) => PostDetailScreen()),
     GoRoute(
       path: '/alarm_list_page',
       builder: (context, state) => AlarmListScreen(userId: 0),
