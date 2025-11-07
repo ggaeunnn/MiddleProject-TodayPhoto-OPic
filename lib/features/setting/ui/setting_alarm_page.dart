@@ -44,7 +44,7 @@ class _SettingAlarmScreenState extends State<SettingAlarmScreen> {
                         color: AppColors.opicBlack,
                       ),
                       onPressed: () {
-                        context.go('/setting_page');
+                        context.pop();
                       },
                       splashColor: Colors.transparent,
                       highlightColor: Colors.transparent,
