@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/core/manager/supabase_manager.dart';
-import 'package:opicproject/main.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -50,41 +50,38 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     Text(
-                      "오늘의 한 장",
+                      "오늘 한 장",
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text("로그인해서 시작하세요"),
+                    Text("📸 로그인해서 시작하세요 😘"),
+                    SizedBox(height: 40),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 30),
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          height: 50,
+                          child: SigninGoogle(),
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 50),
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.7,
+                          height: 50,
+                          child: SignOutGoogle(),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-              ),
-              Column(
-                children: [
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: 50),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.9,
-                        height: 50,
-                        child: SigninGoogle(),
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: 50),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.9,
-                        height: 50,
-                        child: SignOutGoogle(),
-                      ),
-                    ),
-                  ),
-                ],
               ),
             ],
           ),
@@ -186,7 +183,7 @@ class SignOutGoogle extends StatelessWidget {
     return ElevatedButton(
       onPressed: _SignOutGoogle,
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(const Color(0xff0165E1)),
+        backgroundColor: MaterialStateProperty.all(AppColors.opicRed),
       ),
       child: const Text('로그아웃'),
     );
