@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/features/friend/component/friend_info_row.dart';
+import 'package:opicproject/features/friend/component/friend_request_row.dart';
 
 class FriendScreen extends StatefulWidget {
   const FriendScreen({super.key});
@@ -92,7 +93,12 @@ class _FriendScreenState extends State<FriendScreen> {
                 ),
               ),
             ),
-            Expanded(child: _friendList()),
+            Expanded(
+              child: Container(
+                color: AppColors.opicBackground,
+                child: showFriendRequests ? _friendRequest() : _friendList(),
+              ),
+            ),
           ],
         ),
       ),
@@ -163,7 +169,7 @@ Widget _tabButton({
 
 /// 친구 목록 화면
 Widget _friendList() {
-  final friends = [];
+  final friends = [1, 2, 3, 4, 5, 6, 7, 8, 9];
   if (friends.isEmpty) {
     return Container(
       color: AppColors.opicBackground,
@@ -189,3 +195,28 @@ Widget _friendList() {
 }
 
 /// 친구 요청 화면
+Widget _friendRequest() {
+  final friendRequests = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  if (friendRequests.isEmpty) {
+    return Container(
+      color: AppColors.opicBackground,
+      child: Center(
+        child: Text(
+          '새로운 친구 요청이 없습니다',
+          style: TextStyle(fontSize: 16, color: AppColors.opicBlack),
+        ),
+      ),
+    );
+  }
+
+  return ListView.builder(
+    itemCount: friendRequests.length,
+    itemBuilder: (context, index) {
+      final friendRequest = friendRequests[index];
+      return Container(
+        color: AppColors.opicBackground,
+        child: FriendRequestRow(userId: 1),
+      );
+    },
+  );
+}
