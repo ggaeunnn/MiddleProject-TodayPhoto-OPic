@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:opicproject/component/yes_or_close_pop_up.dart';
+import 'package:opicproject/core/app_colors.dart';
 
 class FriendInfoRow extends StatelessWidget {
   final int userId;
@@ -6,6 +9,141 @@ class FriendInfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.opicWhite,
+          borderRadius: BorderRadius.all(Radius.circular(24)),
+          border: Border.all(color: AppColors.opicSoftBlue, width: 0.5),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 15,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                spacing: 10,
+                children: [
+                  Icon(
+                    Icons.account_circle_rounded,
+                    size: 50,
+                    color: AppColors.opicBlue,
+                  ),
+                  Text(
+                    "userId",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 20,
+                      color: AppColors.opicBlack,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                spacing: 10,
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        context.pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.opicSoftBlue,
+                        foregroundColor: AppColors.opicWhite,
+                        padding: EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        spacing: 10,
+                        children: [
+                          Icon(
+                            Icons.photo,
+                            size: 20,
+                            color: AppColors.opicWhite,
+                          ),
+                          Text(
+                            "피드로 가기",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.opicWhite,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 5),
+                  ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        barrierColor: Colors.black.withOpacity(0.6),
+                        builder: (context) => YesOrClosePopUp(
+                          title: "친구를 삭제하시겠어요?",
+                          text: "삭제 시, 상대방과의 친구 관계가 끊어집니다",
+                          confirmText: "삭제하기",
+                          onConfirm: () {
+                            context.pop();
+                          },
+                          onCancel: () {
+                            context.pop();
+                          },
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.opicRed,
+                      foregroundColor: AppColors.opicWhite,
+                      padding: EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        spacing: 8,
+                        children: [
+                          Icon(
+                            Icons.highlight_remove_rounded,
+                            size: 20,
+                            color: AppColors.opicWhite,
+                          ),
+                          Text(
+                            "삭제",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.opicWhite,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
