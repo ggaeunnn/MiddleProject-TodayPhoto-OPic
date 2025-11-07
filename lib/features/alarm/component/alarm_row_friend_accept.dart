@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:opicproject/core/app_colors.dart';
 
 class AlarmRowFriendAccept extends StatelessWidget {
   const AlarmRowFriendAccept({super.key, alarmId, userId, requestId});
@@ -8,7 +9,9 @@ class AlarmRowFriendAccept extends StatelessWidget {
     return Container(
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: Color(0xffd9d9d9), width: 0.3)),
+        border: Border(
+          top: BorderSide(color: AppColors.opicLightBlack, width: 0.3),
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -17,8 +20,8 @@ class AlarmRowFriendAccept extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 20,
-              backgroundColor: Color(0xffe8e8dc),
-              child: Icon(Icons.check, size: 20, color: Color(0xff5b89b2)),
+              backgroundColor: AppColors.opicWarmGrey,
+              child: Icon(Icons.check, size: 20, color: AppColors.opicBlue),
             ),
             Column(
               spacing: 10,
@@ -34,7 +37,7 @@ class AlarmRowFriendAccept extends StatelessWidget {
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 13,
-                      color: Color(0xff515151),
+                      color: AppColors.opicBlack,
                     ),
                   ),
                 ),
@@ -43,7 +46,7 @@ class AlarmRowFriendAccept extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.w200,
                     fontSize: 10,
-                    color: Color(0xff515151),
+                    color: AppColors.opicBlack,
                   ),
                 ),
               ],

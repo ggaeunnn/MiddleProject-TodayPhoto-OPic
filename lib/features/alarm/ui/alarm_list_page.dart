@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/features/alarm/component/alarm_row_comment.dart';
 import 'package:opicproject/features/alarm/component/alarm_row_friend_accept.dart';
 import 'package:opicproject/features/alarm/component/alarm_row_friend_request.dart';
@@ -27,16 +28,16 @@ class _AlarmListScreenState extends State<_AlarmListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xfffafafa),
+      backgroundColor: AppColors.opicWhite,
       body: SafeArea(
         child: Column(
           children: [
             Container(
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
-                color: Color(0xfffafafa),
+                color: AppColors.opicWhite,
                 border: Border(
-                  bottom: BorderSide(color: Color(0xff95b7db), width: 0.5),
+                  bottom: BorderSide(color: AppColors.opicSoftBlue, width: 0.5),
                 ),
               ),
               child: Padding(
@@ -50,7 +51,7 @@ class _AlarmListScreenState extends State<_AlarmListScreen> {
                     IconButton(
                       icon: Icon(
                         Icons.arrow_back_rounded,
-                        color: Color(0xff515151),
+                        color: AppColors.opicBlack,
                       ),
                       onPressed: () {
                         if (context.canPop()) {
@@ -69,7 +70,7 @@ class _AlarmListScreenState extends State<_AlarmListScreen> {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
-                        color: Color(0xff515151),
+                        color: AppColors.opicBlack,
                       ),
                     ),
                   ],
