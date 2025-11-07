@@ -140,7 +140,11 @@ class _SettingScreenState extends State<_SettingScreen> {
                           children: [
                             GestureDetector(
                               onTap: () {
+<<<<<<< Updated upstream
                                 context.go('/setting_alarm_page');
+=======
+                                context.push('/setting_alarm_page');
+>>>>>>> Stashed changes
                               },
                               child: Container(
                                 decoration: BoxDecoration(
