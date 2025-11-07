@@ -65,7 +65,7 @@ class _SettingAlarmScreenState extends State<SettingAlarmScreen> {
             ),
             Expanded(
               child: Container(
-                color: AppColors.opicWhite,
+                color: AppColors.opicBackground,
                 alignment: Alignment.topCenter,
                 child: Column(
                   children: [
