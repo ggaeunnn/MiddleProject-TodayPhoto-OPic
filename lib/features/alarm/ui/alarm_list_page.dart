@@ -37,6 +37,7 @@ class _AlarmListScreenState extends State<_AlarmListScreen> {
               decoration: BoxDecoration(
                 color: AppColors.opicWhite,
                 border: Border(
+                  top: BorderSide(color: AppColors.opicSoftBlue, width: 0.5),
                   bottom: BorderSide(color: AppColors.opicSoftBlue, width: 0.5),
                 ),
               ),
