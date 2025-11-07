@@ -46,7 +46,7 @@ class _SettingScreenState extends State<_SettingScreen> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 15.0,
-                    vertical: 5.0,
+                    vertical: 10.0,
                   ),
                   child: Row(
                     spacing: 10,

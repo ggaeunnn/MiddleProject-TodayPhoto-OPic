@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:opicproject/component/yes_or_close_pop_up.dart';
 import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/features/post/ui/post_detail_page.dart';
 
-class FriendInfoRow extends StatelessWidget {
+class FriendRequestRow extends StatelessWidget {
   final int userId;
-  const FriendInfoRow({super.key, required this.userId});
+  const FriendRequestRow({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +54,7 @@ class FriendInfoRow extends StatelessWidget {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        context.pop();
+                        showToast("친구가 되었어요 😘");
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.opicSoftBlue,
@@ -72,12 +70,12 @@ class FriendInfoRow extends StatelessWidget {
                         spacing: 10,
                         children: [
                           Icon(
-                            Icons.photo,
+                            Icons.check_circle_outline_rounded,
                             size: 15,
                             color: AppColors.opicWhite,
                           ),
                           Text(
-                            "피드 방문하기",
+                            "수락",
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
@@ -88,54 +86,41 @@ class FriendInfoRow extends StatelessWidget {
                       ),
                     ),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        barrierColor: Colors.black.withOpacity(0.6),
-                        builder: (context) => YesOrClosePopUp(
-                          title: "친구를 삭제하시겠어요?",
-                          text: "삭제 시, 상대방과의 친구 관계가 끊어집니다",
-                          confirmText: "삭제하기",
-                          onConfirm: () {
-                            showToast("선택한 사용자를 친구 목록에서 삭제했어요");
-                            context.pop();
-                          },
-                          onCancel: () {
-                            context.pop();
-                          },
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        showToast("친구 요청을 거절했어요");
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.opicWarmGrey,
+                        foregroundColor: AppColors.opicWhite,
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.opicRed,
-                      foregroundColor: AppColors.opicWhite,
-                      padding: EdgeInsets.symmetric(vertical: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
                       ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        spacing: 8,
-                        children: [
-                          Icon(
-                            Icons.highlight_remove_rounded,
-                            size: 20,
-                            color: AppColors.opicWhite,
-                          ),
-                          Text(
-                            "삭제",
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.opicWhite,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 30),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          spacing: 8,
+                          children: [
+                            Icon(
+                              Icons.highlight_remove_rounded,
+                              size: 20,
+                              color: AppColors.opicBlack,
                             ),
-                          ),
-                        ],
+                            Text(
+                              "거절",
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.opicBlack,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

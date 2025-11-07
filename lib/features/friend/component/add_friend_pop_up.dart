@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/app_colors.dart';
+import 'package:opicproject/features/post/ui/post_detail_page.dart';
 
-class EditNicknamePopUp extends StatelessWidget {
-  final String currentNickname;
-
-  const EditNicknamePopUp({super.key, required this.currentNickname});
+class AddFriendPopUp extends StatelessWidget {
+  const AddFriendPopUp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +17,7 @@ class EditNicknamePopUp extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "새로운 닉네임을 입력 한 뒤 저장을 눌러주세요",
+              "친구 추가",
               style: TextStyle(
                 fontWeight: FontWeight.w500,
                 fontSize: 14,
@@ -31,7 +30,7 @@ class EditNicknamePopUp extends StatelessWidget {
               decoration: InputDecoration(
                 filled: true,
                 fillColor: AppColors.opicBackground,
-                hintText: '닉네임을 입력하세요',
+                hintText: '친구의 닉네임을 입력하세요',
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(width: 1, color: Color(0xff95b7db)),
                   borderRadius: BorderRadius.all(Radius.circular(16)),
@@ -55,6 +54,7 @@ class EditNicknamePopUp extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       context.pop();
+                      showToast("친구 요청을 보냈어요 💌");
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xff95b7db),
@@ -65,7 +65,7 @@ class EditNicknamePopUp extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      "저장하기",
+                      "친구 요청",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,

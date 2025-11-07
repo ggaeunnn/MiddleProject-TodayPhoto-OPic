@@ -313,20 +313,25 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Container(
-                    height: 35,
-                    width: 350,
-                    color: Colors.white,
-                    child: TextField(
-                      //이거 추가함
-                      controller: _commentListController,
-                      decoration: InputDecoration(
-                        hintText: "댓글을 입력하세요..",
-                        border: InputBorder.none,
-                        hintStyle: TextStyle(fontSize: 13, color: Colors.grey),
+                  Expanded(
+                    child: Container(
+                      height: 35,
+                      // width: 350,
+                      color: Colors.white,
+                      child: TextField(
+                        controller: _commentListController,
+                        decoration: InputDecoration(
+                          hintText: "댓글을 입력하세요..",
+                          border: InputBorder.none,
+                          hintStyle: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey,
+                          ),
+                        ),
                       ),
                     ),
                   ),
+
                   Padding(padding: EdgeInsets.only(left: 10)),
                   Container(
                     alignment: Alignment.center,
@@ -366,9 +371,9 @@ void showToast(String content) {
   Fluttertoast.showToast(
     msg: content,
     gravity: ToastGravity.BOTTOM,
-    backgroundColor: AppColors.opicLightBlack,
-    fontSize: 12,
-    textColor: AppColors.opicBlack,
+    backgroundColor: AppColors.opicBlue,
+    fontSize: 14,
+    textColor: AppColors.opicWhite,
     toastLength: Toast.LENGTH_SHORT,
   );
 }
