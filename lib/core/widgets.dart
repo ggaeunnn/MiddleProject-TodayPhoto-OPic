@@ -6,8 +6,6 @@ import 'package:opicproject/features/friend/ui/friend_page.dart';
 import 'package:opicproject/features/home/home.dart';
 import 'package:provider/provider.dart';
 
-import '../component/yes_or_close_pop_up.dart';
-
 class OpicAppbar extends StatelessWidget implements PreferredSizeWidget {
   const OpicAppbar({super.key});
 
@@ -114,7 +112,7 @@ class _OpicPageViewState extends State<OpicPageView> {
         }
       },
       controller: pageController,
-      children: [HomeScreen(), FriendPage(), MyFeedScreen()],
+      children: [HomeScreen(), FriendScreen(), MyFeedScreen()],
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/features/setting/component/switch_row.dart';
 
 class SettingAlarmScreen extends StatefulWidget {
@@ -20,15 +21,15 @@ class _SettingAlarmScreenState extends State<SettingAlarmScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xfffafafa),
+      backgroundColor: AppColors.opicWhite,
       body: SafeArea(
         child: Column(
           children: [
             Container(
               decoration: BoxDecoration(
-                color: Color(0xfffafafa),
+                color: AppColors.opicWhite,
                 border: Border(
-                  bottom: BorderSide(color: Color(0xff95b7db), width: 0.5),
+                  bottom: BorderSide(color: AppColors.opicSoftBlue, width: 0.5),
                 ),
               ),
               width: double.maxFinite,
@@ -40,7 +41,7 @@ class _SettingAlarmScreenState extends State<SettingAlarmScreen> {
                     IconButton(
                       icon: Icon(
                         Icons.arrow_back_rounded,
-                        color: Color(0xff515151),
+                        color: AppColors.opicBlack,
                       ),
                       onPressed: () {
                         context.go('/setting_page');
@@ -55,7 +56,7 @@ class _SettingAlarmScreenState extends State<SettingAlarmScreen> {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
-                        color: Color(0xff515151),
+                        color: AppColors.opicBlack,
                       ),
                     ),
                   ],
@@ -64,7 +65,7 @@ class _SettingAlarmScreenState extends State<SettingAlarmScreen> {
             ),
             Expanded(
               child: Container(
-                color: Color(0xfffcfcf0),
+                color: AppColors.opicWhite,
                 alignment: Alignment.topCenter,
                 child: Column(
                   children: [
@@ -72,10 +73,10 @@ class _SettingAlarmScreenState extends State<SettingAlarmScreen> {
                     Container(
                       width: MediaQuery.of(context).size.width * 0.9,
                       decoration: BoxDecoration(
-                        color: Color(0xfffafafa),
+                        color: AppColors.opicWhite,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: Color(0xff95b7db),
+                          color: AppColors.opicSoftBlue,
                           width: 0.7,
                         ),
                       ),
@@ -88,7 +89,7 @@ class _SettingAlarmScreenState extends State<SettingAlarmScreen> {
                             decoration: BoxDecoration(
                               border: Border(
                                 bottom: BorderSide(
-                                  color: Color(0xff95b7db),
+                                  color: AppColors.opicSoftBlue,
                                   width: 0.3,
                                 ),
                               ),
@@ -118,7 +119,7 @@ class _SettingAlarmScreenState extends State<SettingAlarmScreen> {
                             decoration: BoxDecoration(
                               border: Border(
                                 bottom: BorderSide(
-                                  color: Color(0xff95b7db),
+                                  color: AppColors.opicSoftBlue,
                                   width: 0.3,
                                 ),
                               ),
@@ -139,7 +140,7 @@ class _SettingAlarmScreenState extends State<SettingAlarmScreen> {
                             decoration: BoxDecoration(
                               border: Border(
                                 bottom: BorderSide(
-                                  color: Color(0xff95b7db),
+                                  color: AppColors.opicSoftBlue,
                                   width: 0.3,
                                 ),
                               ),
@@ -160,7 +161,7 @@ class _SettingAlarmScreenState extends State<SettingAlarmScreen> {
                             decoration: BoxDecoration(
                               border: Border(
                                 bottom: BorderSide(
-                                  color: Color(0xff95b7db),
+                                  color: AppColors.opicSoftBlue,
                                   width: 0.3,
                                 ),
                               ),
@@ -182,7 +183,7 @@ class _SettingAlarmScreenState extends State<SettingAlarmScreen> {
                             decoration: BoxDecoration(
                               border: Border(
                                 bottom: BorderSide(
-                                  color: Color(0xff95b7db),
+                                  color: AppColors.opicSoftBlue,
                                   width: 0.3,
                                 ),
                               ),
@@ -204,7 +205,7 @@ class _SettingAlarmScreenState extends State<SettingAlarmScreen> {
                             decoration: BoxDecoration(
                               border: Border(
                                 bottom: BorderSide(
-                                  color: Color(0xff95b7db),
+                                  color: AppColors.opicSoftBlue,
                                   width: 0.3,
                                 ),
                               ),
