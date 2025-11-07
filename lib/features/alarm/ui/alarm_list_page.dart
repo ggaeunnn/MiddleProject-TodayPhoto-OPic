@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/features/alarm/component/alarm_row_comment.dart';
-import 'package:opicproject/features/alarm/component/alarm_row_friend_accept.dart';
-import 'package:opicproject/features/alarm/component/alarm_row_friend_request.dart';
-import 'package:opicproject/features/alarm/component/alarm_row_like.dart';
-import 'package:opicproject/features/alarm/component/alarm_row_topic.dart';
 
 class AlarmListScreen extends StatelessWidget {
   final int userId;
@@ -87,15 +83,7 @@ class _AlarmListScreenState extends State<_AlarmListScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 20),
 
                   /// ListView 처리 필요
-                  child: Column(
-                    children: [
-                      AlarmRowLike(),
-                      AlarmRowTopic(),
-                      AlarmRowComment(),
-                      AlarmRowFriendRequest(),
-                      AlarmRowFriendAccept(),
-                    ],
-                  ),
+                  child: _alarmList(),
                 ),
               ),
             ),
@@ -104,4 +92,27 @@ class _AlarmListScreenState extends State<_AlarmListScreen> {
       ),
     );
   }
+}
+
+Widget _alarmList() {
+  final alarms = [];
+  if (alarms.isEmpty) {
+    return Container(
+      color: AppColors.opicBackground,
+      child: Center(
+        child: Text(
+          '새로운 알림이 없습니다',
+          style: TextStyle(fontSize: 16, color: AppColors.opicBlack),
+        ),
+      ),
+    );
+  }
+
+  return ListView.builder(
+    itemCount: alarms.length,
+    itemBuilder: (context, index) {
+      final alarm = alarms[index];
+      return Container(child: AlarmRowComment());
+    },
+  );
 }
