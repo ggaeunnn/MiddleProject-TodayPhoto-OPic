@@ -366,9 +366,9 @@ void showToast(String content) {
   Fluttertoast.showToast(
     msg: content,
     gravity: ToastGravity.BOTTOM,
-    backgroundColor: AppColors.opicLightBlack,
-    fontSize: 12,
-    textColor: AppColors.opicBlack,
+    backgroundColor: AppColors.opicBlue,
+    fontSize: 14,
+    textColor: AppColors.opicWhite,
     toastLength: Toast.LENGTH_SHORT,
   );
 }

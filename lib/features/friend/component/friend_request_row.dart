@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:opicproject/core/app_colors.dart';
+import 'package:opicproject/features/post/ui/post_detail_page.dart';
 
 class FriendRequestRow extends StatelessWidget {
   final int userId;
@@ -52,7 +53,9 @@ class FriendRequestRow extends StatelessWidget {
                 children: [
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        showToast("친구가 되었어요 😘");
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.opicSoftBlue,
                         foregroundColor: AppColors.opicWhite,
@@ -85,7 +88,9 @@ class FriendRequestRow extends StatelessWidget {
                   ),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        showToast("친구 요청을 거절했어요");
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.opicWarmGrey,
                         foregroundColor: AppColors.opicWhite,
