@@ -65,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Container(
                           width: MediaQuery.of(context).size.width * 0.9,
                           height: 50,
-                          child: SigninGoogle(),
+                          child: SignInGoogle(),
                         ),
                       ),
                     ),
@@ -91,8 +91,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-class SigninGoogle extends StatelessWidget {
-  const SigninGoogle({super.key});
+class SignInGoogle extends StatelessWidget {
+  const SignInGoogle({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -128,23 +128,11 @@ class SignOutGoogle extends StatelessWidget {
 
 Future<void> _nativeGoogleSignIn() async {
   final supabase = Supabase.instance.client;
-
-  /// TODO: update the Web client ID with your own.
-  ///
-  /// Web Client ID that you registered with Google Cloud.
-  const webClientId =
-      '692210323507-fje8vaudd98jvdsm3l1e5bkvmm9veg56.apps.googleusercontent.com';
-
-  /// TODO: update the iOS client ID with your own.
-  ///
-  /// iOS Client ID that you registered with Google Cloud.
-  const iosClientId =
-      '692210323507-k90qpkv7ndi9deqjtpco2u6phldg5e9q.apps.googleusercontent.com';
   final scopes = ['email', 'profile'];
   final googleSignIn = GoogleSignIn.instance;
   await googleSignIn.initialize(
-    serverClientId: webClientId,
-    clientId: iosClientId,
+    serverClientId:
+        '479616985373-kts5936rtob89ouk38mj1sjarf6aun7q.apps.googleusercontent.com',
   );
   final googleUser = await googleSignIn.attemptLightweightAuthentication();
   // await googleSignIn.authenticate();
@@ -153,8 +141,6 @@ Future<void> _nativeGoogleSignIn() async {
     throw AuthException('Failed to sign in with Google.');
   }
 
-  /// Authorization is required to obtain the access token with the appropriate scopes for Supabase authentication,
-  /// while also granting permission to access user information.
   final authorization =
       await googleUser.authorizationClient.authorizationForScopes(scopes) ??
       await googleUser.authorizationClient.authorizeScopes(scopes);
