@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:opicproject/component/yes_or_close_pop_up.dart';
 import 'package:opicproject/core/app_colors.dart';
 
 class FriendInfoRow extends StatelessWidget {
@@ -89,7 +90,21 @@ class FriendInfoRow extends StatelessWidget {
                   SizedBox(width: 5),
                   ElevatedButton(
                     onPressed: () {
-                      context.pop();
+                      showDialog(
+                        context: context,
+                        barrierColor: Colors.black.withOpacity(0.6),
+                        builder: (context) => YesOrClosePopUp(
+                          title: "친구를 삭제하시겠어요?",
+                          text: "삭제 시, 상대방과의 친구 관계가 끊어집니다",
+                          confirmText: "삭제하기",
+                          onConfirm: () {
+                            context.pop();
+                          },
+                          onCancel: () {
+                            context.pop();
+                          },
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.opicRed,

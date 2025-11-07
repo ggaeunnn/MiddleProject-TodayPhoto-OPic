@@ -5,23 +5,24 @@ import 'package:opicproject/core/models/page_model.dart';
 import 'package:opicproject/features/auth/ui/login_page.dart';
 import 'package:opicproject/features/home/main_page.dart';
 import 'package:opicproject/features/onboarding/data/onboarding_service.dart';
+import 'package:opicproject/features/onboarding/ui/onboarding_screen.dart';
 import 'package:opicproject/features/onboarding/viewmodel/onboarding_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/manager/locator.dart';
-import 'features/alarm//ui/alarm_list_page.dart';
-import 'features/feed//ui/feed.dart';
+import 'features/alarm/ui/alarm_list_page.dart';
 import 'features/feed/data/feed_service.dart';
+import 'features/feed/ui/feed.dart';
 import 'features/feed/viewmodel/feed_viewmodel.dart';
-import 'features/friend//ui/friend_page.dart';
+import 'features/friend/ui/friend_page.dart';
 import 'features/post/ui/post_detail_page.dart';
-import 'features/setting//ui/setting_alarm_page.dart';
+import 'features/setting/ui/setting_alarm_page.dart';
 import 'features/setting/ui/setting_page.dart';
 
 final GoRouter _router = GoRouter(
   routes: [
-    GoRoute(path: '/', builder: (context, state) => FriendScreen()),
+    GoRoute(path: '/', builder: (context, state) => OnboardingScreen()),
 
     GoRoute(path: '/login', builder: (context, state) => LoginScreen()),
     // GoRoute(
