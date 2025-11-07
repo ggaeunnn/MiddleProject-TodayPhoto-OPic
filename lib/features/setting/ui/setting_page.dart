@@ -30,8 +30,6 @@ class _SettingScreenState extends State<_SettingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xfffafafa),
-      appBar: OpicAppbar(),
-      bottomNavigationBar: OpicBottomNav(),
       body: SafeArea(
         child: Column(
           children: [
