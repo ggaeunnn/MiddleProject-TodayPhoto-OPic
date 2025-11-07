@@ -10,7 +10,7 @@ class FriendInfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.fromLTRB(12, 10, 12, 0),
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.opicWhite,
@@ -18,7 +18,7 @@ class FriendInfoRow extends StatelessWidget {
           border: Border.all(color: AppColors.opicSoftBlue, width: 0.5),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -33,14 +33,14 @@ class FriendInfoRow extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.account_circle_rounded,
-                    size: 50,
+                    size: 40,
                     color: AppColors.opicBlue,
                   ),
                   Text(
                     "userId",
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
-                      fontSize: 20,
+                      fontSize: 18,
                       color: AppColors.opicBlack,
                     ),
                   ),
@@ -72,13 +72,13 @@ class FriendInfoRow extends StatelessWidget {
                         children: [
                           Icon(
                             Icons.photo,
-                            size: 20,
+                            size: 15,
                             color: AppColors.opicWhite,
                           ),
                           Text(
-                            "피드로 가기",
+                            "피드 방문하기",
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500,
                               color: AppColors.opicWhite,
                             ),
@@ -128,7 +128,7 @@ class FriendInfoRow extends StatelessWidget {
                           Text(
                             "삭제",
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500,
                               color: AppColors.opicWhite,
                             ),
