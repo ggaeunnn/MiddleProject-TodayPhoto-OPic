@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:opicproject/core/app_colors.dart';
@@ -130,12 +131,8 @@ Future<void> _nativeGoogleSignIn() async {
   final supabase = Supabase.instance.client;
   final scopes = ['email', 'profile'];
   final googleSignIn = GoogleSignIn.instance;
-  await googleSignIn.initialize(
-    serverClientId:
-        '479616985373-kts5936rtob89ouk38mj1sjarf6aun7q.apps.googleusercontent.com',
-  );
+  await googleSignIn.initialize(serverClientId: dotenv.get("WEB_CLIENT_ID"));
   final googleUser = await googleSignIn.attemptLightweightAuthentication();
-  // await googleSignIn.authenticate();
   print("googleUser : $googleUser");
   if (googleUser == null) {
     throw AuthException('Failed to sign in with Google.');
@@ -160,9 +157,8 @@ Future<void> _nativeGoogleSignIn() async {
 }
 
 Future<void> _SignOutGoogle() async {
-  await SupabaseManager.shared.supabase.auth.signOut(
-    scope: SignOutScope.global,
-  ); // 수파베이스
+  final supabase = Supabase.instance.client;
+  await supabase.auth.signOut(); // 수파베이스
   await GoogleSignIn.instance.signOut(); // 구글 로그인 해당
   Fluttertoast.showToast(msg: "로그아웃 성공");
 }
