@@ -23,7 +23,7 @@ class FriendInfoRow extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 15,
+            spacing: 8,
             children: [
               Row(
                 mainAxisSize: MainAxisSize.max,
@@ -60,7 +60,7 @@ class FriendInfoRow extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.opicSoftBlue,
                         foregroundColor: AppColors.opicWhite,
-                        padding: EdgeInsets.symmetric(vertical: 14),
+                        padding: EdgeInsets.symmetric(vertical: 10),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -87,7 +87,6 @@ class FriendInfoRow extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(width: 5),
                   ElevatedButton(
                     onPressed: () {
                       showDialog(
@@ -109,7 +108,7 @@ class FriendInfoRow extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.opicRed,
                       foregroundColor: AppColors.opicWhite,
-                      padding: EdgeInsets.symmetric(vertical: 14),
+                      padding: EdgeInsets.symmetric(vertical: 10),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),

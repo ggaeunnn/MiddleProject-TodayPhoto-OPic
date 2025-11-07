@@ -22,17 +22,17 @@ import 'features/setting/ui/setting_page.dart';
 
 final GoRouter _router = GoRouter(
   routes: [
-    GoRoute(path: '/', builder: (context, state) => OnboardingScreen()),
+    GoRoute(
+      path: '/post_detail_page',
+      builder: (context, state) => OnboardingScreen(),
+    ),
 
     GoRoute(path: '/login', builder: (context, state) => LoginScreen()),
     // GoRoute(
     //   path: '/register_page',
     //   builder: (context, state) => OpicRegisterPage(),
     // ),
-    GoRoute(
-      path: '/post_detail_page',
-      builder: (context, state) => PostDetailScreen(),
-    ),
+    GoRoute(path: '/', builder: (context, state) => PostDetailScreen()),
     GoRoute(
       path: '/alarm_list_page',
       builder: (context, state) => AlarmListScreen(userId: 0),
@@ -65,12 +65,6 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Supabase.initialize(
-    url: 'https://koodearpvrdjlxcclvvj.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtvb2RlYXJwdnJkamx4Y2NsdnZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE4NzIyNzAsImV4cCI6MjA3NzQ0ODI3MH0.p-QLJ0Ji599xy_1_ixAmvORlftkzg9V8DPFA8OF-sAU',
-  );
-
   runApp(
     MultiProvider(
       providers: [
@@ -97,8 +91,6 @@ void main() async {
   );
   // runApp(MyApp());
 }
-
-final supabase = Supabase.instance.client;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

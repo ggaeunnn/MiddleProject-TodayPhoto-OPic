@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/features/post/ui/post_delete_popup.dart';
 import 'package:opicproject/features/post/ui/post_edit_popup.dart';
 import 'package:opicproject/features/post_report/ui/post_report_page.dart';
@@ -24,7 +26,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   late String commentDate = DateFormat('yyyy-MM-dd hh-mm').format(now);
   String todayTopic = "겨울풍경";
   List<String> commentList = [];
-  final _commentListContoller = TextEditingController();
+  final _commentListController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -119,9 +121,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                           context: context,
                                           barrierColor: Colors.black
                                               .withOpacity(0.6),
-                                          builder: (context) => EditPopup(
-                                            // currentNickname: loginUser.nickname,
-                                          ),
+                                          builder: (context) => EditPopup(),
                                         );
                                       },
                                       icon: Icon(
@@ -319,7 +319,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     color: Colors.white,
                     child: TextField(
                       //이거 추가함
-                      controller: _commentListContoller,
+                      controller: _commentListController,
                       decoration: InputDecoration(
                         hintText: "댓글을 입력하세요..",
                         border: InputBorder.none,
@@ -339,8 +339,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       color: Colors.white,
                       onPressed: () {
                         setState(() {
-                          commentList.add("${_commentListContoller.text}");
-                          _commentListContoller.clear();
+                          commentList.add("${_commentListController.text}");
+                          _commentListController.clear();
+                          showToast("댓글작성이 완료되었습니다.");
                         });
                       },
                     ),
@@ -356,7 +357,18 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 
   @override
   void dispose() {
-    _commentListContoller.dispose();
+    _commentListController.dispose();
     super.dispose();
   }
+}
+
+void showToast(String content) {
+  Fluttertoast.showToast(
+    msg: content,
+    gravity: ToastGravity.BOTTOM,
+    backgroundColor: AppColors.opicLightBlack,
+    fontSize: 12,
+    textColor: AppColors.opicBlack,
+    toastLength: Toast.LENGTH_SHORT,
+  );
 }

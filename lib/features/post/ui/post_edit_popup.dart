@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:opicproject/features/post/ui/post_detail_page.dart';
 
 class EditPopup extends StatelessWidget {
   const EditPopup({super.key});
@@ -111,6 +112,7 @@ class EditPopup extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       context.pop();
+                      showToast("게시물 수정이 완료되었습니다.");
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xff95b7db),

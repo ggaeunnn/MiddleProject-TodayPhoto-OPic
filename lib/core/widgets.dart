@@ -67,9 +67,6 @@ class _OpicBottomNavState extends State<OpicBottomNav> {
     return BottomNavigationBar(
       onTap: (index) {
         pageViewmodelRead.onPageChanged(index);
-        if (index == 3) {
-          context.push('/setting_page');
-        }
       },
       currentIndex: currentpage,
       showSelectedLabels: true,

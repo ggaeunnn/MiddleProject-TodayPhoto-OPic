@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:opicproject/core/manager/supabase_manager.dart';
 import 'package:opicproject/main.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -18,7 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
 
-    supabase.auth.onAuthStateChange.listen((data) {
+    SupabaseManager.shared.supabase.auth.onAuthStateChange.listen((data) {
       setState(() {
         _userId = data.session?.user.id;
       });
@@ -119,20 +120,46 @@ class SigninGoogle extends StatelessWidget {
           serverClientId: webClientId,
           clientId: iosClientId,
         );
-        final googleUser = await googleSignIn
-            .attemptLightweightAuthentication();
-        // or await googleSignIn.authenticate(); which will return a GoogleSignInAccount or throw an exception
+
+        //final googleUser = await googleSignIn.attemptLightweightAuthentication();
+        try {
+          final googleUser = await googleSignIn.authenticate();
+          print("google user ${googleUser}");
+          final authorization =
+              await googleUser.authorizationClient.authorizationForScopes(
+                scopes,
+              ) ??
+              await googleUser.authorizationClient.authorizeScopes(scopes);
+          final idToken = googleUser.authentication.idToken;
+          if (idToken == null) {
+            Fluttertoast.showToast(msg: "로그인 실패");
+            throw AuthException('No ID Token found.');
+          }
+
+          var aa = await SupabaseManager.shared.supabase.auth.signInWithIdToken(
+            provider: OAuthProvider.google,
+            idToken: idToken,
+            accessToken: authorization.accessToken,
+          );
+
+          print("supabase user: ${aa.user}");
+        } on GoogleSignInException catch (e) {
+          print(e.description);
+        }
+        // or await googleSignIn.authenticate();which will return a GoogleSignInAccount or throw an exception
+        /*
+        print("google user ${googleUser}");
         if (googleUser == null) {
           Fluttertoast.showToast(msg: "로그인 실패");
           throw AuthException('Failed to sign in with Google.');
         }
         if (googleUser != null) {
           Fluttertoast.showToast(msg: "로그인 성공");
-        }
+        }*/
 
         /// Authorization is required to obtain the access token with the appropriate scopes for Supabase authentication,
         /// while also granting permission to access user information.
-        final authorization =
+        /*final authorization =
             await googleUser.authorizationClient.authorizationForScopes(
               scopes,
             ) ??
@@ -144,12 +171,7 @@ class SigninGoogle extends StatelessWidget {
         }
         if (idToken != null) {
           Fluttertoast.showToast(msg: "로그인 성공");
-        }
-        await supabase.auth.signInWithIdToken(
-          provider: OAuthProvider.google,
-          idToken: idToken,
-          accessToken: authorization.accessToken,
-        );
+        }*/
       },
       child: Image.asset('assets/images/sign_in_google.png'),
     );
@@ -172,7 +194,7 @@ class SignOutGoogle extends StatelessWidget {
 }
 
 Future<void> _SignOutGoogle() async {
-  await supabase.auth.signOut(); // 수파베이스
+  await SupabaseManager.shared.supabase.auth.signOut(); // 수파베이스
   await GoogleSignIn.instance.signOut(); // 구글 로그인 해당
   Fluttertoast.showToast(msg: "로그아웃 성공");
 }

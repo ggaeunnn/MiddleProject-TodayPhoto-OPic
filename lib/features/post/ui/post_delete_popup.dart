@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:opicproject/features/post/ui/post_detail_page.dart';
 
 class DeletePopup extends StatelessWidget {
   const DeletePopup({super.key});
@@ -45,6 +46,7 @@ class DeletePopup extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       context.pop();
+                      showToast("게시물이 삭제되었습니다.");
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xff95b7db),
