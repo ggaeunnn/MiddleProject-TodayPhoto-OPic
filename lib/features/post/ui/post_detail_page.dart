@@ -31,7 +31,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("포스트 상세")),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(8.0),
@@ -86,7 +85,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                   : Icons.favorite,
                             ),
                             iconSize: 20,
-                            color: Colors.red,
+                            color: AppColors.opicRed,
                             onPressed: () {
                               setState(() {
                                 buttonLike = !buttonLike;
@@ -98,8 +97,13 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                               });
                             },
                           ),
-                          Text("좋아요 ", style: TextStyle(fontSize: 13)),
-                          Text("${likeCount}", style: TextStyle(fontSize: 13)),
+                          Text(
+                            "좋아요 ${likeCount} ",
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: AppColors.opicBlack,
+                            ),
+                          ),
                           Spacer(),
 
                           // 내 게시물이라면 수정하기/삭제하기
@@ -108,8 +112,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                   children: [
                                     ElevatedButton.icon(
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: Color(0xFF95B7DB),
-                                        fixedSize: Size(105, 10),
+                                        backgroundColor: AppColors.opicSoftBlue,
+                                        fixedSize: Size(110, 10),
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(
                                             12,
@@ -119,20 +123,20 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                       onPressed: () {
                                         showDialog(
                                           context: context,
-                                          barrierColor: Colors.black
+                                          barrierColor: AppColors.opicLightBlack
                                               .withOpacity(0.6),
                                           builder: (context) => EditPopup(),
                                         );
                                       },
                                       icon: Icon(
                                         Icons.edit,
-                                        color: Colors.white,
-                                        size: 12,
+                                        color: AppColors.opicWhite,
+                                        size: 13,
                                       ),
                                       label: Text(
                                         "수정하기",
                                         style: TextStyle(
-                                          color: Colors.white,
+                                          color: AppColors.opicWhite,
                                           fontSize: 12,
                                         ),
                                       ),
@@ -140,8 +144,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                     Padding(padding: EdgeInsets.all(5)),
                                     ElevatedButton.icon(
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: Color(0xFFFFC8C8),
-                                        fixedSize: Size(105, 10),
+                                        backgroundColor: AppColors.opicRed,
+                                        fixedSize: Size(110, 10),
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(
                                             12,
@@ -151,7 +155,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                       onPressed: () {
                                         showDialog(
                                           context: context,
-                                          barrierColor: Colors.black
+                                          barrierColor: AppColors.opicRed
                                               .withOpacity(0.6),
                                           builder: (context) => DeletePopup(
                                             // currentNickname: loginUser.nickname,
@@ -160,13 +164,13 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                       },
                                       icon: Icon(
                                         Icons.delete_outline,
-                                        color: Color(0xFFFF826F),
-                                        size: 12,
+                                        color: AppColors.opicWhite,
+                                        size: 13,
                                       ),
                                       label: Text(
                                         "삭제하기",
                                         style: TextStyle(
-                                          color: Colors.red,
+                                          color: AppColors.opicWhite,
                                           fontSize: 12,
                                         ),
                                       ),
@@ -187,7 +191,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                       ),
                                     );
                                   },
-                                  icon: Icon(Icons.outlined_flag),
+                                  icon: Icon(
+                                    Icons.outlined_flag,
+                                    color: AppColors.opicRed,
+                                  ),
                                   label: Text('신고하기'),
                                 ),
                         ],
@@ -195,14 +202,17 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       Divider(),
                       Row(
                         children: [
-                          Text("주제:"),
+                          Text(
+                            "주제:",
+                            style: TextStyle(color: AppColors.opicLightBlack),
+                          ),
                           TextButton(
                             onPressed: () {
                               context.go('/home');
                             },
                             child: Text(
                               "${todayTopic}",
-                              style: TextStyle(color: Color(0xFF95B7DB)),
+                              style: TextStyle(color: AppColors.opicSoftBlue),
                             ),
                           ),
                         ],
@@ -211,7 +221,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       Container(
                         width: double.infinity,
                         // height: 120,
-                        color: Color(0xFFFCFCF0),
+                        color: AppColors.opicBackground,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -241,7 +251,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                 left: 10,
                                               ),
                                               width: 100,
-                                              color: Colors.white,
+                                              color: AppColors.opicWhite,
                                               child: Column(
                                                 children: [
                                                   Row(
@@ -262,9 +272,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                         "${commentDate}",
                                                         style: TextStyle(
                                                           fontSize: 10,
-                                                          color: Color(
-                                                            0xFF515151,
-                                                          ),
+                                                          color: AppColors
+                                                              .opicBlack,
                                                         ),
                                                       ),
                                                       Padding(
@@ -317,7 +326,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     child: Container(
                       height: 35,
                       // width: 350,
-                      color: Colors.white,
+                      color: AppColors.opicWhite,
                       child: TextField(
                         controller: _commentListController,
                         decoration: InputDecoration(
@@ -325,7 +334,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           border: InputBorder.none,
                           hintStyle: TextStyle(
                             fontSize: 13,
-                            color: Colors.grey,
+                            color: AppColors.opicLightBlack,
                           ),
                         ),
                       ),
@@ -337,11 +346,11 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     alignment: Alignment.center,
                     width: 35,
                     height: 35,
-                    color: Color(0xFF95B7DB),
+                    color: AppColors.opicSoftBlue,
                     child: IconButton(
                       icon: Icon(Icons.send),
                       iconSize: 20,
-                      color: Colors.white,
+                      color: AppColors.opicWhite,
                       onPressed: () {
                         setState(() {
                           commentList.add("${_commentListController.text}");

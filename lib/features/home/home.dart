@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/core/models/post_model.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -21,38 +22,51 @@ class HomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             //주제 영역
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 8.0,
+            Container(
+              decoration: BoxDecoration(
+                color: AppColors.opicWhite,
+                border: Border(
+                  top: BorderSide(color: AppColors.opicSoftBlue, width: 0.5),
+                  bottom: BorderSide(color: AppColors.opicSoftBlue, width: 0.5),
+                ),
               ),
-              child: Row(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '오늘의 주제',
-                        style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        currentTopic,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.underline,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 8.0,
+                ),
+                child: Row(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '오늘의 주제',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: AppColors.opicLightBlack,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  const Icon(Icons.bookmark_border, color: Colors.grey),
-                ],
+                        const SizedBox(height: 4),
+                        Text(
+                          currentTopic,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            decoration: TextDecoration.underline,
+                            color: AppColors.opicBlack,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
+                    // const Icon(Icons.bookmark_border, color: Colors.grey),
+                  ],
+                ),
               ),
             ),
 
-            //계시물 영역
+            //게시물 영역
             Expanded(
               child: ListView.builder(
                 itemCount: _posts.length,
@@ -65,10 +79,12 @@ class HomeScreen extends StatelessWidget {
         ),
 
         floatingActionButton: FloatingActionButton(
+          shape: CircleBorder(),
+          backgroundColor: AppColors.opicSoftBlue,
           onPressed: () {
             //TODO: 게시글 작성 페이지 이동 또는 팝업을 통한 선택
           },
-          child: const Icon(Icons.edit),
+          child: const Icon(Icons.edit, color: AppColors.opicWhite),
         ),
       ),
     );
@@ -101,11 +117,11 @@ class PostCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               //좋아요
-              const Icon(Icons.favorite, color: Color(0xffff826f), size: 20),
+              const Icon(Icons.favorite, color: AppColors.opicRed, size: 20),
               const SizedBox(width: 4),
               Text(
                 '${post.likes}',
-                style: const TextStyle(color: Color(0xffff826f)),
+                style: const TextStyle(color: AppColors.opicRed),
               ),
 
               const SizedBox(width: 16),
@@ -113,20 +129,24 @@ class PostCard extends StatelessWidget {
               // 댓글
               const Icon(
                 Icons.chat_bubble_outline_rounded,
-                color: Color(0xffccccc8),
+                color: AppColors.opicCoolGrey,
                 size: 20,
               ),
               const SizedBox(width: 4),
               Text(
                 '${post.comments}',
-                style: const TextStyle(color: Color(0xffccccc8)),
+                style: const TextStyle(color: AppColors.opicCoolGrey),
               ),
             ],
           ),
         ),
 
         //계시글 구분선
-        const Divider(height: 20, thickness: 0.7, color: Color(0xff95b7db)),
+        const Divider(
+          height: 20,
+          thickness: 0.5,
+          color: AppColors.opicSoftBlue,
+        ),
       ],
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/core/models/page_model.dart';
 import 'package:opicproject/features/feed/ui/feed.dart';
 import 'package:opicproject/features/friend/ui/friend_page.dart';
@@ -28,7 +29,10 @@ class OpicAppbar extends StatelessWidget implements PreferredSizeWidget {
                   onPressed: () {
                     context.push('/alarm_list_page');
                   },
-                  icon: Icon(Icons.notifications_none),
+                  icon: Icon(
+                    Icons.notifications_none,
+                    color: AppColors.opicSoftBlue,
+                  ),
                 ),
               ),
               Container(
@@ -36,7 +40,7 @@ class OpicAppbar extends StatelessWidget implements PreferredSizeWidget {
                   onPressed: () {
                     context.push('/login');
                   },
-                  icon: Icon(Icons.exit_to_app),
+                  icon: Icon(Icons.exit_to_app, color: AppColors.opicSoftBlue),
                 ),
               ),
             ],
@@ -71,10 +75,10 @@ class _OpicBottomNavState extends State<OpicBottomNav> {
       currentIndex: currentpage,
       showSelectedLabels: true,
       showUnselectedLabels: true,
-      selectedIconTheme: IconThemeData(color: Color(0xFF95B7DB)),
-      unselectedIconTheme: IconThemeData(color: Colors.grey),
-      selectedItemColor: Color(0xFF95B7DB),
-      unselectedItemColor: Colors.grey,
+      selectedIconTheme: IconThemeData(color: AppColors.opicSoftBlue),
+      unselectedIconTheme: IconThemeData(color: AppColors.opicCoolGrey),
+      selectedItemColor: AppColors.opicSoftBlue,
+      unselectedItemColor: AppColors.opicCoolGrey,
       type: BottomNavigationBarType.fixed,
       items: [
         BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: '홈'),

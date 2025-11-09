@@ -1,8 +1,6 @@
 //feed page
 import 'package:flutter/material.dart';
-import 'package:opicproject/core/models/post_model.dart';
-import 'package:opicproject/features/feed/viewmodel/feed_viewmodel.dart';
-import 'package:provider/provider.dart';
+import 'package:opicproject/core/app_colors.dart';
 
 class MyFeedScreen extends StatelessWidget {
   const MyFeedScreen({super.key});
@@ -11,28 +9,6 @@ class MyFeedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false, // ShellRoute에서는 뒤로가기 버튼 제거
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.white,
-          title: const Text(
-            '오늘 한장',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.notifications_none, color: Colors.black),
-              onPressed: () {},
-            ),
-            IconButton(
-              icon: const Icon(
-                Icons.arrow_forward_outlined,
-                color: Colors.black,
-              ),
-              onPressed: () {},
-            ),
-          ],
-        ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -51,15 +27,15 @@ class MyFeedScreen extends StatelessWidget {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
-                          color: Colors.black,
+                          color: AppColors.opicBlack,
                         ),
                       ),
                       const SizedBox(width: 8),
                       Chip(
                         label: const Text('차단하기'),
-                        backgroundColor: Colors.pink[50],
+                        backgroundColor: AppColors.opicRed,
                         labelStyle: TextStyle(
-                          color: Colors.pink[700],
+                          color: AppColors.opicWhite,
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
                         ),
@@ -119,7 +95,7 @@ class MyFeedScreen extends StatelessWidget {
                     imageUrls[index % imageUrls.length],
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) => Container(
-                      color: Colors.grey[300],
+                      color: AppColors.opicBackground,
                       child: const Center(child: Text('이미지')),
                     ),
                   );

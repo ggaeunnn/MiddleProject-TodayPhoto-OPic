@@ -122,7 +122,7 @@ class SignOutGoogle extends StatelessWidget {
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all(AppColors.opicRed),
       ),
-      child: const Text('로그아웃'),
+      child: const Text('로그아웃', style: TextStyle(color: AppColors.opicWhite)),
     );
   }
 }
