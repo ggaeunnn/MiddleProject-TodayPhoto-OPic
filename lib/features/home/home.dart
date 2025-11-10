@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/core/models/post_model.dart';
+import 'package:opicproject/features/home/ui/add_post_popup.dart';
 
 class HomeScreen extends StatelessWidget {
   //TODO:뷰모델 사용시 위의 const생성자로 교체
@@ -82,7 +84,11 @@ class HomeScreen extends StatelessWidget {
           shape: CircleBorder(),
           backgroundColor: AppColors.opicSoftBlue,
           onPressed: () {
-            //TODO: 게시글 작성 페이지 이동 또는 팝업을 통한 선택
+            showDialog(
+              context: context,
+              barrierColor: AppColors.opicLightBlack.withOpacity(0.6),
+              builder: (context) => addPostPopup(),
+            );
           },
           child: const Icon(Icons.edit, color: AppColors.opicWhite),
         ),
@@ -103,11 +109,16 @@ class PostCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         //이미지
-        Image.network(
-          post.imageUrl,
-          width: double.infinity,
-          height: 300,
-          fit: BoxFit.cover,
+        InkWell(
+          onTap: () {
+            context.go('/');
+          },
+          child: Image.network(
+            post.imageUrl,
+            width: double.infinity,
+            height: 300,
+            fit: BoxFit.cover,
+          ),
         ),
 
         //좋아요 댓글 부분

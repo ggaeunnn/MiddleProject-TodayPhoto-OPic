@@ -9,13 +9,11 @@ import 'package:opicproject/features/post_report/ui/post_report_page.dart';
 
 class PostDetailScreen extends StatefulWidget {
   const PostDetailScreen({super.key});
-
   @override
   State<PostDetailScreen> createState() => _PostDetailScreenState();
 }
 
 class _PostDetailScreenState extends State<PostDetailScreen> {
-  // int commentCount = 0;
   int likeCount = 0;
   bool buttonLike = true;
   bool buttonReport = true;
@@ -70,11 +68,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         height: 350,
                         fit: BoxFit.fill,
                       ),
-                      // Container(
-                      //   height: 350,
-                      //   width: double.infinity,
-                      //   color: Colors.grey,
-                      // ),
                       SizedBox(height: 10),
                       Row(
                         children: [
