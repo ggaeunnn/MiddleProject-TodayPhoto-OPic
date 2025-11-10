@@ -3,6 +3,8 @@ import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/features/friend/component/add_friend_pop_up.dart';
 import 'package:opicproject/features/friend/component/friend_info_row.dart';
 import 'package:opicproject/features/friend/component/friend_request_row.dart';
+import 'package:opicproject/features/friend/data/friend_view_model.dart';
+import 'package:provider/provider.dart';
 
 class FriendScreen extends StatefulWidget {
   const FriendScreen({super.key});
@@ -103,7 +105,9 @@ class _FriendScreenState extends State<FriendScreen> {
             Expanded(
               child: Container(
                 color: AppColors.opicBackground,
-                child: showFriendRequests ? _friendRequest() : _friendList(),
+                child: showFriendRequests
+                    ? _friendRequest()
+                    : _friendList(context),
               ),
             ),
           ],
@@ -175,27 +179,32 @@ Widget _tabButton({
 }
 
 /// 친구 목록 화면
-Widget _friendList() {
-  final friends = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-  if (friends.isEmpty) {
-    return Container(
-      color: AppColors.opicBackground,
-      child: Center(
-        child: Text(
-          '친구 목록이 비어있습니다',
-          style: TextStyle(fontSize: 16, color: AppColors.opicBlack),
-        ),
-      ),
-    );
-  }
+Widget _friendList(BuildContext context) {
+  return Consumer<FriendViewModel>(
+    builder: (context, viewModel, child) {
+      final friendsCount = viewModel.friends.length;
 
-  return ListView.builder(
-    itemCount: friends.length,
-    itemBuilder: (context, index) {
-      final friend = friends[index];
-      return Container(
-        color: AppColors.opicBackground,
-        child: FriendInfoRow(userId: 1),
+      if (friendsCount == 0) {
+        return Container(
+          color: AppColors.opicBackground,
+          child: Center(
+            child: Text(
+              '친구 목록이 비어있습니다',
+              style: TextStyle(fontSize: 16, color: AppColors.opicBlack),
+            ),
+          ),
+        );
+      }
+
+      return ListView.builder(
+        itemCount: friendsCount,
+        itemBuilder: (context, index) {
+          final friend = viewModel.friends[index];
+          return Container(
+            color: AppColors.opicBackground,
+            child: FriendInfoRow(userId: 1),
+          );
+        },
       );
     },
   );

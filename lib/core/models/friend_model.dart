@@ -10,7 +10,7 @@ class Friend {
     required this.user2Id,
   });
 
-  factory Friend.fromJason(Map<String, dynamic> json) {
+  factory Friend.fromJson(Map<String, dynamic> json) {
     return Friend(
       id: json['id'] as int,
       createdAt: json['created_at'] as String,

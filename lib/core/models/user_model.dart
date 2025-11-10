@@ -24,12 +24,12 @@ class UserInfo {
   factory UserInfo.fromJson(Map<String, dynamic> json) {
     return UserInfo(
       id: json['id'] as int,
-      nickname: json['nickname'] as String? ?? '',
+      nickname: json['nickname'] as String,
       createdAt: json['created_at'] as String,
       email: json['email'] as String,
       platformId: json['platform_id'] as int,
-      exitAt: json['exit_at'] as String? ?? '',
-      token: json['token'] as String? ?? '',
+      exitAt: null,
+      token: json['token'] as String,
       uuid: json['uuid'] as String,
     );
   }
@@ -37,7 +37,7 @@ class UserInfo {
   static List<UserInfo> getDummyUsers() {
     return [
       UserInfo(
-        id: 0,
+        id: 9,
         nickname: "찍사",
         createdAt: DateTime.now().toString(),
         email: "random@mail.com",
@@ -47,7 +47,7 @@ class UserInfo {
         uuid: "uuid1",
       ),
       UserInfo(
-        id: 1,
+        id: 9,
         nickname: "찰칵",
         createdAt: DateTime.now().toString(),
         email: "user@test.com",
