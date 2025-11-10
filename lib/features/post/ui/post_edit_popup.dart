@@ -14,7 +14,6 @@ class EditPopup extends StatefulWidget {
 
 class _EditPopupState extends State<EditPopup> {
   File? selectedImage;
-
   final pick = ImagePicker();
 
   Future<void> openGallery() async {
@@ -22,6 +21,18 @@ class _EditPopupState extends State<EditPopup> {
     if (pickImage != null) {
       setState(() {
         selectedImage = File(pickImage.path);
+      });
+    }
+  }
+
+  File? takePicture;
+  final pickCamera = ImagePicker();
+
+  Future<void> camera() async {
+    XFile? pickImage = await pickCamera.pickImage(source: ImageSource.camera);
+    if (pickImage != null) {
+      setState(() {
+        takePicture = File(pickImage.path);
       });
     }
   }
@@ -62,9 +73,16 @@ class _EditPopupState extends State<EditPopup> {
             ),
 
             SizedBox(height: 12),
-            selectedImage == null
+            selectedImage == null && takePicture == null
                 ? Image.network(
                     'https://images.unsplash.com/photo-1455156218388-5e61b526818b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fCVFQSVCMiVBOCVFQyU5QSVCOHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=500',
+                    width: double.infinity,
+                    height: 350,
+                    fit: BoxFit.fill,
+                  )
+                : selectedImage == null
+                ? Image.file(
+                    takePicture!,
                     width: double.infinity,
                     height: 350,
                     fit: BoxFit.fill,
@@ -75,6 +93,7 @@ class _EditPopupState extends State<EditPopup> {
                     height: 350,
                     fit: BoxFit.fill,
                   ),
+
             SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
@@ -109,7 +128,7 @@ class _EditPopupState extends State<EditPopup> {
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: () {
-                  context.pop();
+                  camera();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xff95b7db),
