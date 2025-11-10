@@ -51,12 +51,16 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: 'assets/config/.env');
   //getIt 로케이터 초기화
-  initLocator();
+
   await Supabase.initialize(
     url: 'https://zoqxnpklgtcqkvskarls.supabase.co',
     anonKey:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvcXhucGtsZ3RjcWt2c2thcmxzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0OTk4NTYsImV4cCI6MjA3ODA3NTg1Nn0.qR8GmGNztCm44qqm7xJK4VvmI1RcIJybGKeMVBy8yaA',
   );
+
+  await dotenv.load(fileName: 'assets/config/.env');
+  initLocator();
+  WidgetsFlutterBinding.ensureInitialized();
 
   runApp(
     MultiProvider(

@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/features/feed/data/feed_repository.dart';
 import 'package:opicproject/features/feed/data/feed_service.dart';
 import 'package:opicproject/features/onboarding/data/onboarding_repository.dart';
@@ -24,4 +25,6 @@ initLocator() {
   locator.registerLazySingleton<FeedService>(
     () => FeedService(locator<FeedRepository>()),
   );
+
+  locator.registerSingleton<AuthManager>(AuthManager());
 }

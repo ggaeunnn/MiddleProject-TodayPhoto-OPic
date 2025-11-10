@@ -6,7 +6,7 @@ import 'package:opicproject/core/models/user_model.dart';
 import 'package:opicproject/features/setting/component/edit_nickname_pop_up.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-final List<User> dummyUsers = User.getDummyUsers();
+final List<UserInfo> dummyUsers = UserInfo.getDummyUsers();
 final loginUser = dummyUsers[0];
 
 class SettingScreen extends StatelessWidget {

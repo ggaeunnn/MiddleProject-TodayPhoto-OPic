@@ -1,6 +1,6 @@
 import 'dart:core';
 
-class User {
+class UserInfo {
   final int id;
   final String nickname;
   final String createdAt;
@@ -10,7 +10,7 @@ class User {
   final String token;
   final String? uuid;
 
-  User({
+  UserInfo({
     required this.id,
     required this.nickname,
     required this.createdAt,
@@ -21,8 +21,8 @@ class User {
     this.exitAt,
   });
 
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
+  factory UserInfo.fromJson(Map<String, dynamic> json) {
+    return UserInfo(
       id: json['id'] as int,
       nickname: json['nickname'] as String,
       createdAt: json['created_at'] as String,
@@ -34,9 +34,9 @@ class User {
     );
   }
 
-  static List<User> getDummyUsers() {
+  static List<UserInfo> getDummyUsers() {
     return [
-      User(
+      UserInfo(
         id: 0,
         nickname: "찍사",
         createdAt: DateTime.now().toString(),
@@ -46,7 +46,7 @@ class User {
         token: "token1",
         uuid: "uuid1",
       ),
-      User(
+      UserInfo(
         id: 1,
         nickname: "찰칵",
         createdAt: DateTime.now().toString(),

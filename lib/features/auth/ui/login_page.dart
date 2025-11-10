@@ -19,12 +19,12 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-
+    /*
     SupabaseManager.shared.supabase.auth.onAuthStateChange.listen((data) {
       setState(() {
         _userId = data.session?.user.id;
       });
-    });
+    });*/
   }
 
   @override
@@ -105,7 +105,73 @@ class SignInGoogle extends StatelessWidget {
         overlayColor: Colors.transparent,
       ),
       onPressed: () async {
-        await _nativeGoogleSignIn();
+        /// Web Client ID that you registered with Google Cloud.
+        /*const webClientId =
+            '479616985373-kts5936rtob89ouk38mj1sjarf6aun7q.apps.googleusercontent.com';
+
+        /// iOS Client ID that you registered with Google Cloud.
+        const iosClientId =
+            '692210323507-7b5ee32vdvfrp1ppn7rsanlcflcd20js.apps.googleusercontent.com';*/
+        String webClientId = dotenv.get("Web_Client_Id");
+        String clientId = dotenv.get("Client_Id");
+        final scopes = ['email', 'profile'];
+        final googleSignIn = GoogleSignIn.instance;
+        await googleSignIn.initialize(
+          serverClientId: webClientId,
+          clientId: clientId,
+        );
+
+        //final googleUser = await googleSignIn.attemptLightweightAuthentication();
+        try {
+          final googleUser = await googleSignIn.authenticate();
+          print("google user ${googleUser}");
+          final authorization =
+              await googleUser.authorizationClient.authorizationForScopes(
+                scopes,
+              ) ??
+              await googleUser.authorizationClient.authorizeScopes(scopes);
+          final idToken = googleUser.authentication.idToken;
+          if (idToken == null) {
+            Fluttertoast.showToast(msg: "로그인 실패");
+            throw AuthException('No ID Token found.');
+          }
+
+          var aa = await SupabaseManager.shared.supabase.auth.signInWithIdToken(
+            provider: OAuthProvider.google,
+            idToken: idToken,
+            accessToken: authorization.accessToken,
+          );
+
+          print("supabase user: ${aa.user}");
+        } on GoogleSignInException catch (e) {
+          print(e.description);
+        }
+        // or await googleSignIn.authenticate();which will return a GoogleSignInAccount or throw an exception
+        /*
+        print("google user ${googleUser}");
+        if (googleUser == null) {
+          Fluttertoast.showToast(msg: "로그인 실패");
+          throw AuthException('Failed to sign in with Google.');
+        }
+        if (googleUser != null) {
+          Fluttertoast.showToast(msg: "로그인 성공");
+        }*/
+
+        /// Authorization is required to obtain the access token with the appropriate scopes for Supabase authentication,
+        /// while also granting permission to access user information.
+        /*final authorization =
+            await googleUser.authorizationClient.authorizationForScopes(
+              scopes,
+            ) ??
+            await googleUser.authorizationClient.authorizeScopes(scopes);
+        final idToken = googleUser.authentication.idToken;
+        if (idToken == null) {
+          Fluttertoast.showToast(msg: "로그인 실패");
+          throw AuthException('No ID Token found.');
+        }
+        if (idToken != null) {
+          Fluttertoast.showToast(msg: "로그인 성공");
+        }*/
       },
       child: Image.asset('assets/images/sign_in_google.png'),
     );
