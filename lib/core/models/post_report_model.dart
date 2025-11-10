@@ -28,4 +28,16 @@ class PostReport {
       isChecked: json['is_checked'] as bool,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'created_at': createdAt,
+      'reported_post_id': reportedPostId,
+      'reporter_id': reporterId,
+      'report_reason': reportReason,
+      'checked_at': checkedAt,
+      'is_checked': isChecked,
+    };
+  }
 }

@@ -33,6 +33,7 @@ class Post {
       likes: json['like_count'] as int? ?? 0,
     );
   }
+
   static final List<Post> fixedDummyPosts = generateDummyData(4);
   //더미데이터 리스트 생성 데이터 베이스 붙히면 나중에 지워야함
   static List<Post> generateDummyData(int count) {

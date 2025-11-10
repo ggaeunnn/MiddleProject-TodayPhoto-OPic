@@ -12,4 +12,8 @@ class Topic {
       uploadedAt: json['uploaded_at'] as String,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {'id': id, 'content': content, 'uploaded_at': uploadedAt};
+  }
 }

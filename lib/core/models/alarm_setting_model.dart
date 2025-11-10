@@ -37,4 +37,19 @@ class AlarmSetting {
       editedAt: json['edited_at'] as String?,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'user_id': userId,
+      'created_at': createdAt,
+      'entire_alarm': entireAlarm,
+      'new_topic': newTopic,
+      'like_post': likePost,
+      'new_comment': newComment,
+      'new_request': newRequest,
+      'new_friend': newFriend,
+      'edit_at': editedAt,
+    };
+  }
 }

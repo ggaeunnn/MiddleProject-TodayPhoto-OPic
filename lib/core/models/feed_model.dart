@@ -31,4 +31,17 @@ class Feed {
       likes: json['like_count'] as int? ?? 0,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'topic_id': topicId,
+      'topic': topic,
+      'post_id': postId,
+      'user_id': userId,
+      'imageUrl': imageUrl,
+      'created_at': createdAt,
+      'comment_count': comments,
+      'like_count': likes,
+    };
+  }
 }
