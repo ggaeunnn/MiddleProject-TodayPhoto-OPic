@@ -50,7 +50,7 @@ class _DeletePopupState extends State<DeletePopup> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      context.pop();
+                      context.go('/home');
                       showToast("게시물이 삭제되었습니다.");
                     },
                     style: ElevatedButton.styleFrom(

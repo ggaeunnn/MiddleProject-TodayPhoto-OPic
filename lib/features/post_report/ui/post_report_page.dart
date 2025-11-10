@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:opicproject/features/post/ui/post_detail_page.dart';
 
 class PostReportScreen extends StatelessWidget {
   const PostReportScreen({super.key});
@@ -43,7 +44,7 @@ class PostReportScreen extends StatelessWidget {
                 maxLines: null,
                 obscureText: false,
                 decoration: InputDecoration(
-                  hintText: '신고 사유룰 자세히 작성해주세요...',
+                  hintText: '신고 사유를 자세히 작성해주세요...',
                   border: InputBorder.none,
                 ),
                 keyboardType: TextInputType.text,
@@ -58,6 +59,7 @@ class PostReportScreen extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       context.pop();
+                      showToast("신고가 완료되었습니다");
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xff95b7db),
