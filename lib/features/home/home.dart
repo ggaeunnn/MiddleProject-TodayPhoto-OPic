@@ -111,7 +111,7 @@ class PostCard extends StatelessWidget {
         //이미지
         InkWell(
           onTap: () {
-            context.go('/');
+            context.go('/post_detail_page');
           },
           child: Image.network(
             post.imageUrl,

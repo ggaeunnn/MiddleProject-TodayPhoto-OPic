@@ -18,7 +18,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   bool buttonLike = true;
   bool buttonReport = true;
   String loginUserName = "친구1";
-  String postWriter = "친구1";
+  String postWriter = "친구2";
   DateTime now = DateTime.now();
   late String formattedDate = DateFormat('yyyy-MM-dd').format(now);
   late String commentDate = DateFormat('yyyy-MM-dd hh-mm').format(now);
@@ -341,9 +341,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       color: AppColors.opicWhite,
                       onPressed: () {
                         setState(() {
-                          commentList.add("${_commentListController.text}");
-                          _commentListController.clear();
-                          showToast("댓글작성이 완료되었습니다.");
+                          if (_commentListController.text.isEmpty) {
+                          } else {
+                            commentList.add("${_commentListController.text}");
+                            _commentListController.clear();
+                            showToast("댓글작성이 완료되었습니다.");
+                          }
                         });
                       },
                     ),
