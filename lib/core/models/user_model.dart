@@ -37,7 +37,7 @@ class UserInfo {
   static List<UserInfo> getDummyUsers() {
     return [
       UserInfo(
-        id: 9,
+        id: 1,
         nickname: "찍사",
         createdAt: DateTime.now().toString(),
         email: "random@mail.com",
@@ -47,7 +47,7 @@ class UserInfo {
         uuid: "uuid1",
       ),
       UserInfo(
-        id: 9,
+        id: 2,
         nickname: "찰칵",
         createdAt: DateTime.now().toString(),
         email: "user@test.com",

@@ -14,9 +14,10 @@ class FriendViewModel extends ChangeNotifier {
   List<Friend> get friends => _friends;
 
   bool shouldShowScrollUpButton = false;
+  int? _loginUserId;
 
-  FriendViewModel(BuildContext context, int loginUser) {
-    fetchFriends(1, loginUser);
+  FriendViewModel(BuildContext context, int loginUserId) {
+    fetchFriends(1, loginUserId);
 
     Timer? _debounce;
 
@@ -47,9 +48,15 @@ class FriendViewModel extends ChangeNotifier {
           scrollController.position.maxScrollExtent) {
         debugPrint('Scroll End');
         //여기에 바닥감지시 실행할 코드를 작성한다.
-        fetchMoreFriends(loginUser);
+        fetchMoreFriends(loginUserId);
       }
     });
+  }
+
+  Future<void> initialize(int loginUserId) async {
+    _loginUserId = loginUserId;
+    currentPage = 1;
+    await fetchFriends(currentPage, loginUserId);
   }
 
   void moveScrollUp() {
@@ -62,21 +69,21 @@ class FriendViewModel extends ChangeNotifier {
   }
 
   // 리포지토리에서 데이터 가져오는데 이제 시작하자마자 가져오기
-  Future<void> fetchFriends(int startIndex, int loginUser) async {
-    _friends = await _repository.fetchFriends(1, loginUser);
+  Future<void> fetchFriends(int startIndex, int loginUserId) async {
+    _friends = await _repository.fetchFriends(1, loginUserId);
 
     //구독자(?)에게 알림보내기
     notifyListeners();
     debugPrint("FriendViewModel _initFriends 호출됨");
   }
 
-  Future<void> refresh(int loginUser) async {
+  Future<void> refresh(int loginUserId) async {
     _friends = [];
     notifyListeners();
     // 1.7초 딜레이
     await Future.delayed(const Duration(milliseconds: 1000));
     currentPage = 1;
-    _friends = await this._repository.fetchFriends(currentPage, loginUser);
+    _friends = await this._repository.fetchFriends(currentPage, loginUserId);
     notifyListeners();
   }
 

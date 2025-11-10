@@ -33,10 +33,13 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/alarm_list_page',
-      builder: (context, state) => AlarmListScreen(userId: 0),
+      builder: (context, state) => AlarmListScreen(userId: 10),
     ),
     GoRoute(path: '/feed', builder: (context, state) => MyFeedScreen()),
-    GoRoute(path: '/friend_page', builder: (context, state) => FriendScreen()),
+    GoRoute(
+      path: '/friend_page',
+      builder: (context, state) => FriendScreen(loginUserId: 10),
+    ),
     GoRoute(path: '/home', builder: (context, state) => MainPage()),
     GoRoute(
       path: '/setting_alarm_page',
@@ -76,7 +79,7 @@ void main() async {
           child: MainPage(),
         ),
         ChangeNotifierProvider(
-          create: (context) => FriendViewModel(context, 9),
+          create: (context) => FriendViewModel(context, 10),
         ),
         ChangeNotifierProvider(
           create: (context) => AuthViewModel(),
