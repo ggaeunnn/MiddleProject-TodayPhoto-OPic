@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:opicproject/core/manager/supabase_manager.dart';
 import 'package:opicproject/core/models/user_model.dart';
@@ -84,6 +85,7 @@ class AuthManager {
   Future<void> fetchUser(String uuid) async {
     UserInfo result = await GetIt.instance<AuthRepository>()
         .fetchUserDataWithUUID(uuid);
+    debugPrint("유저 가져오기:${result.email}");
     userInfo = result;
   }
 }

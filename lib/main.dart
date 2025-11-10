@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/models/page_model.dart';
 import 'package:opicproject/features/auth/ui/login_page.dart';
+import 'package:opicproject/features/auth/viewmodel/auth_viewmodel.dart';
 import 'package:opicproject/features/home/main_page.dart';
 import 'package:opicproject/features/onboarding/data/onboarding_service.dart';
 import 'package:opicproject/features/onboarding/ui/onboarding_screen.dart';
@@ -76,6 +77,10 @@ void main() async {
         ChangeNotifierProvider(
           create: (context) => PageCountViewmodel(),
           child: MainPage(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => AuthViewModel(),
+          child: LoginScreen(),
         ),
       ],
       child: MaterialApp.router(
