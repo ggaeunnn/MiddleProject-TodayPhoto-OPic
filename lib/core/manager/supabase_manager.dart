@@ -21,7 +21,7 @@ class SupabaseManager {
 
     final Map<String, dynamic>? data = await supabase
         .from("topic")
-        .select('*')
+        .select('content')
         .gte('uploaded_at', startOfDay.toIso8601String())
         .lt('uploaded_at', startOfNextDay.toIso8601String())
         .maybeSingle();
@@ -31,4 +31,6 @@ class SupabaseManager {
     }
     return Topic.fromJson(data);
   }
+
+  /// 유저 정보 가져오기
 }

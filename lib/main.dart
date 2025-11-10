@@ -22,13 +22,13 @@ import 'features/setting/ui/setting_page.dart';
 
 final GoRouter _router = GoRouter(
   routes: [
-    GoRoute(
-      path: '/post_detail_page',
-      builder: (context, state) => OnboardingScreen(),
-    ),
+    GoRoute(path: '/', builder: (context, state) => OnboardingScreen()),
 
     GoRoute(path: '/login', builder: (context, state) => LoginScreen()),
-    GoRoute(path: '/', builder: (context, state) => PostDetailScreen()),
+    GoRoute(
+      path: '/post_detail_page',
+      builder: (context, state) => PostDetailScreen(),
+    ),
     GoRoute(
       path: '/alarm_list_page',
       builder: (context, state) => AlarmListScreen(userId: 0),

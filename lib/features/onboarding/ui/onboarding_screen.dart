@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/core/models/onboarding_model.dart';
 import 'package:opicproject/features/onboarding/viewmodel/onboarding_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -20,16 +21,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     super.dispose();
   }
 
-  //마지막페이지 여부에 따라 진행
   void _handlePageAction(OnboardingViewModel viewModel) {
     if (viewModel.isLastPage) {
-      //온보딩 완료상태저장
       viewModel.completeOnboarding();
-      //홈화면 이동
-      // _navigateToHome();
       context.go('/home');
     } else {
-      //다음페이지가 있다면 넘어가기
       _pageController.nextPage(
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeIn,
@@ -37,30 +33,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     }
   }
 
-  // TODO:고라우터 방식으로 변경 필요
-  // void _navigateToHome() {
-  //   if (!mounted) return;
-  //   Navigator.of(
-  //     context,
-  //   ).pushReplacement(MaterialPageRoute(builder: (context) => HomeScreen()));
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<OnboardingViewModel>(
       builder: (context, viewModel, child) {
-        //뷰모델상태가 초기화완료상태가아니라면 대기
         if (!viewModel.isInitialized) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
 
-        //온보딩이상태가 완료되었다면 홈으로
         if (viewModel.hasSeenOnboarding) {
-          // 비동기 초기화 중 상태가 변경되었을 경우, 여기서 즉시 이동
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            // _navigateToHome();
             context.go('/home');
           });
           return const Scaffold(
@@ -78,113 +62,125 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  // 화면 구성 위젯
   Widget _buildOnboardingUI(
     BuildContext context,
     OnboardingViewModel viewModel,
     bool isLastPage,
     List<Onboarding> contents,
   ) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF8AAAC8), Color(0xFFB1C4DA)],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+    return Stack(
+      children: [
+        // 1. 전체 화면 배경 이미지 PageView
+        PageView.builder(
+          controller: _pageController,
+          itemCount: contents.length,
+          onPageChanged: viewModel.updatePage,
+          itemBuilder: (context, index) {
+            return OnboardingPage(content: contents[index]);
+          },
         ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
-        child: Column(
-          children: [
-            Align(
+
+        // 2. 상단 우측 - 건너뛰기 버튼
+        Positioned(
+          top: 0,
+          right: 0,
+          left: 0,
+          child: SafeArea(
+            child: Align(
               alignment: Alignment.topRight,
-              child: isLastPage
-                  ? const SizedBox.shrink()
-                  : TextButton(
-                      onPressed: () {
-                        viewModel.completeOnboarding();
-                        // _navigateToHome();
-                        context.go('/home');
-                      },
-                      child: const Text(
-                        '건너뛰기',
-                        style: TextStyle(color: Colors.white70, fontSize: 16),
-                      ),
-                    ),
-            ),
-
-            // PageView
-            Expanded(
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: contents.length,
-                onPageChanged:
-                    viewModel.updatePage, // 페이지 변경 시 ViewModel 상태 업데이트
-                itemBuilder: (context, index) {
-                  return OnboardingPage(content: contents[index]);
-                },
-              ),
-            ),
-
-            Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(
-                    contents.length,
-                    (index) => _buildDot(index, context, viewModel.currentPage),
-                  ),
-                ),
-                const SizedBox(height: 40),
-
-                SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      _handlePageAction(viewModel);
-                    },
-                    // => _handlePageAction(viewModel),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFFD700),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          isLastPage ? '시작하기' : '다음',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            color: Colors.black87,
-                            fontWeight: FontWeight.bold,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 16, right: 24),
+                child: isLastPage
+                    ? const SizedBox.shrink()
+                    : TextButton(
+                        onPressed: () {
+                          viewModel.completeOnboarding();
+                          context.go('/home');
+                        },
+                        child: const Text(
+                          '건너뛰기',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            shadows: [
+                              Shadow(blurRadius: 4, color: Colors.black26),
+                            ],
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        if (!isLastPage)
-                          const Icon(
-                            Icons.arrow_forward_ios,
-                            size: 16,
-                            color: Colors.black87,
-                          ),
-                      ],
+                      ),
+              ),
+            ),
+          ),
+        ),
+
+        // 3. 하단 - 인디케이터 및 버튼
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // 페이지 인디케이터
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(
+                      contents.length,
+                      (index) =>
+                          _buildDot(index, context, viewModel.currentPage),
                     ),
                   ),
-                ),
-                const SizedBox(height: 20),
-              ],
+                  const SizedBox(height: 40),
+
+                  // 다음/시작하기 버튼
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed: () => _handlePageAction(viewModel),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.opicYellow,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        elevation: 4,
+                        shadowColor: Colors.black38,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            isLastPage ? '시작하기' : '다음',
+                            style: const TextStyle(
+                              fontSize: 15,
+                              color: Colors.black87,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          if (!isLastPage)
+                            const Icon(
+                              Icons.arrow_forward_ios,
+                              size: 16,
+                              color: AppColors.opicBlack,
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 
-  // 페이지 인디케이터 (점) 위젯
   Container _buildDot(int index, BuildContext context, int currentPage) {
     return Container(
       height: 8,
@@ -193,51 +189,42 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         color: currentPage == index ? Colors.white : Colors.white54,
+        boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 4)],
       ),
     );
   }
 }
 
-//개별 온보딩페이지
+// 개별 온보딩 페이지 - 전체 화면 이미지
 class OnboardingPage extends StatelessWidget {
   final Onboarding content;
 
   const OnboardingPage({super.key, required this.content});
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Expanded(
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 400),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Image.network(
-                content.imageUrl,
-                fit: BoxFit.cover,
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      child: Image.network(
+        content.imageUrl,
+        fit: BoxFit.cover, // 전체 화면을 꽉 채움
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
 
-                  return const Center(
-                    child: CircularProgressIndicator(color: Colors.white),
-                  );
-                },
-                errorBuilder: (context, error, stackTrace) {
-                  return const Center(
-                    child: Icon(
-                      Icons.error_outline,
-                      color: Colors.red,
-                      size: 50,
-                    ),
-                  );
-                },
-              ),
+          return const Center(
+            child: CircularProgressIndicator(color: Colors.white),
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            color: const Color(0xFF8AAAC8),
+            child: const Center(
+              child: Icon(Icons.error_outline, color: Colors.white, size: 50),
             ),
-          ),
-        ),
-        const SizedBox(height: 150),
-      ],
+          );
+        },
+      ),
     );
   }
 }
