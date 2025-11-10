@@ -24,12 +24,12 @@ class UserInfo {
   factory UserInfo.fromJson(Map<String, dynamic> json) {
     return UserInfo(
       id: json['id'] as int,
-      nickname: json['nickname'] as String,
+      nickname: json['nickname'] as String? ?? '',
       createdAt: json['created_at'] as String,
       email: json['email'] as String,
       platformId: json['platform_id'] as int,
-      exitAt: null,
-      token: json['token'] as String,
+      exitAt: json['exit_at'] as String? ?? '',
+      token: json['token'] as String? ?? '',
       uuid: json['uuid'] as String,
     );
   }
