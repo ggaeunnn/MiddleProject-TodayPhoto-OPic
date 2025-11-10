@@ -8,7 +8,7 @@ class User {
   final int platformId;
   final String? exitAt;
   final String token;
-  final String uuid;
+  final String? uuid;
 
   User({
     required this.id,

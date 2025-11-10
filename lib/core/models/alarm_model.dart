@@ -25,6 +25,17 @@ class Alarm {
       isChecked: json['is_checked'] as bool,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'created_at': createdAt,
+      'user_id': userId,
+      'type': type,
+      'content': content,
+      'is_checked': isChecked,
+    };
+  }
 }
 
 enum AlarmType {

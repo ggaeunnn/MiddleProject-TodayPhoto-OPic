@@ -28,4 +28,16 @@ class Comment {
       isDeleted: json['is_deleted'] as bool,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'created_at': createdAt,
+      'post_id': postId,
+      'user_id': userId,
+      'text': text,
+      'deleted_at': deletedAt,
+      'is_deleted': isDeleted,
+    };
+  }
 }

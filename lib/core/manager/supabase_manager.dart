@@ -31,6 +31,4 @@ class SupabaseManager {
     }
     return Topic.fromJson(data);
   }
-
-  /// 유저 정보 가져오기
 }

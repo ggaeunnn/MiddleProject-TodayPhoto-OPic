@@ -9,6 +9,7 @@ class Friend {
     required this.user1Id,
     required this.user2Id,
   });
+
   factory Friend.fromJason(Map<String, dynamic> json) {
     return Friend(
       id: json['id'] as int,
@@ -16,5 +17,14 @@ class Friend {
       user1Id: json['user1_id'] as int,
       user2Id: json['user2_id'] as int,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'created_at': createdAt,
+      'user1_id': user1Id,
+      'user2_id': user2Id,
+    };
   }
 }
