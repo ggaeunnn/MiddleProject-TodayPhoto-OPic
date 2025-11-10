@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/features/post/ui/post_detail_page.dart';
 
-class DeletePopup extends StatelessWidget {
+class DeletePopup extends StatefulWidget {
   const DeletePopup({super.key});
 
+  @override
+  State<DeletePopup> createState() => _DeletePopupState();
+}
+
+class _DeletePopupState extends State<DeletePopup> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
