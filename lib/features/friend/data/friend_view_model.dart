@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/core/models/friend_model.dart';
+import 'package:opicproject/core/models/friend_request_model.dart';
 import 'package:opicproject/features/friend/data/friend_repository.dart';
 
 class FriendViewModel extends ChangeNotifier {
@@ -13,6 +14,9 @@ class FriendViewModel extends ChangeNotifier {
 
   List<Friend> _friends = [];
   List<Friend> get friends => _friends;
+
+  List<FriendRequest> _friendRequests = [];
+  List<FriendRequest> get friendRequests => _friendRequests;
 
   bool shouldShowScrollUpButton = false;
 
@@ -158,5 +162,21 @@ class FriendViewModel extends ChangeNotifier {
     await _repository.deleteFriend(friendId);
     _friends.removeWhere((friend) => friend.id == friendId);
     notifyListeners();
+  }
+
+  // 친구 요청 불러오기
+  Future<void> fetchFriendRequests(int startIndex, int loginUserId) async {
+    _isLoading = true;
+    notifyListeners();
+
+    _friendRequests = await _repository.fetchFriendRequests(
+      startIndex,
+      loginUserId,
+    );
+    _isLoading = false;
+
+    //구독자(?)에게 알림보내기
+    notifyListeners();
+    debugPrint("FriendViewModel _initFriends 호출됨");
   }
 }
