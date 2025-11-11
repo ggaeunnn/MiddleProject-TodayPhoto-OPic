@@ -9,6 +9,7 @@ import 'package:opicproject/features/home/main_page.dart';
 import 'package:opicproject/features/onboarding/data/onboarding_service.dart';
 import 'package:opicproject/features/onboarding/ui/onboarding_screen.dart';
 import 'package:opicproject/features/onboarding/viewmodel/onboarding_viewmodel.dart';
+import 'package:opicproject/features/post/viewmodel/post_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -80,6 +81,7 @@ void main() async {
           child: MainPage(),
         ),
         ChangeNotifierProvider(create: (context) => FriendViewModel()),
+        ChangeNotifierProvider(create: (context) => PostViewModel()),
       ],
       child: MaterialApp.router(
         routerConfig: _router,

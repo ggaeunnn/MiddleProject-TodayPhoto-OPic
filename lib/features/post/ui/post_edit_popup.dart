@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:opicproject/features/post/ui/post_detail_page.dart';
+import 'package:opicproject/features/post/viewmodel/post_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class EditPopup extends StatefulWidget {
   const EditPopup({super.key});
@@ -13,32 +15,25 @@ class EditPopup extends StatefulWidget {
 }
 
 class _EditPopupState extends State<EditPopup> {
-  File? selectedImage;
   final pick = ImagePicker();
 
   Future<void> openGallery() async {
-    XFile? pickImage = await pick.pickImage(source: ImageSource.gallery);
+    final pickImage = await pick.pickImage(source: ImageSource.gallery);
     if (pickImage != null) {
-      setState(() {
-        selectedImage = File(pickImage.path);
-      });
+      context.read<PostViewModel>().setImage(File(pickImage.path));
     }
   }
 
-  File? takePicture;
-  final pickCamera = ImagePicker();
-
   Future<void> camera() async {
-    XFile? pickImage = await pickCamera.pickImage(source: ImageSource.camera);
+    final pickImage = await pick.pickImage(source: ImageSource.camera);
     if (pickImage != null) {
-      setState(() {
-        takePicture = File(pickImage.path);
-      });
+      context.read<PostViewModel>().setImage(File(pickImage.path));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final viewmodel = context.watch<PostViewModel>();
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       backgroundColor: Color(0xfffefefe),
@@ -73,22 +68,16 @@ class _EditPopupState extends State<EditPopup> {
             ),
 
             SizedBox(height: 12),
-            selectedImage == null && takePicture == null
+
+            viewmodel.selectedImage == null
                 ? Image.network(
-                    'https://images.unsplash.com/photo-1455156218388-5e61b526818b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fCVFQSVCMiVBOCVFQyU5QSVCOHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=500',
-                    width: double.infinity,
-                    height: 350,
-                    fit: BoxFit.fill,
-                  )
-                : selectedImage == null
-                ? Image.file(
-                    takePicture!,
+                    'https://images.unsplash.com/photo-1455156218388-5e61b526818b?ixlib=rb-4.1.0&auto=format&fit=crop&q=60&w=500',
                     width: double.infinity,
                     height: 350,
                     fit: BoxFit.fill,
                   )
                 : Image.file(
-                    selectedImage!,
+                    viewmodel.selectedImage!,
                     width: double.infinity,
                     height: 350,
                     fit: BoxFit.fill,

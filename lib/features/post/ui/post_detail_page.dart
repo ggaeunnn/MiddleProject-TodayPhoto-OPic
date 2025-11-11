@@ -1,33 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/features/post/ui/post_delete_popup.dart';
 import 'package:opicproject/features/post/ui/post_edit_popup.dart';
+import 'package:opicproject/features/post/viewmodel/post_viewmodel.dart';
 import 'package:opicproject/features/post_report/ui/post_report_page.dart';
+import 'package:provider/provider.dart';
 
-class PostDetailScreen extends StatefulWidget {
+class PostDetailScreen extends StatelessWidget {
   const PostDetailScreen({super.key});
-  @override
-  State<PostDetailScreen> createState() => _PostDetailScreenState();
-}
-
-class _PostDetailScreenState extends State<PostDetailScreen> {
-  int likeCount = 0;
-  bool buttonLike = true;
-  bool buttonReport = true;
-  String loginUserName = "친구1";
-  String postWriter = "친구2";
-  DateTime now = DateTime.now();
-  late String formattedDate = DateFormat('yyyy-MM-dd').format(now);
-  late String commentDate = DateFormat('yyyy-MM-dd hh-mm').format(now);
-  String todayTopic = "겨울풍경";
-  List<String> commentList = [];
-  final _commentListController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final viewmodel = context.watch<PostViewModel>();
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -41,17 +27,16 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                 },
                 icon: Icon(Icons.keyboard_backspace),
               ),
-              // SizedBox(height: 5),
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
                       Row(
                         children: [
-                          Text("${postWriter}"),
+                          Text("${viewmodel.postWriter}"),
                           Spacer(),
                           Text(
-                            "${formattedDate}",
+                            "${viewmodel.formattedDate}",
                             style: TextStyle(
                               fontSize: 10,
                               color: Color(0xFF515151),
@@ -60,38 +45,32 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         ],
                       ),
                       SizedBox(height: 10),
+                      viewmodel.selectedImage != null
+                          ? Image.file(viewmodel.selectedImage!, height: 200)
+                          : Image.network(
+                              'https://images.unsplash.com/photo-1455156218388-5e61b526818b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fCVFQSVCMiVBOCVFQyU5QSVCOHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=500',
+                              width: double.infinity,
+                              height: 350,
+                              fit: BoxFit.fill,
+                            ),
 
-                      //사진
-                      Image.network(
-                        'https://images.unsplash.com/photo-1455156218388-5e61b526818b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fCVFQSVCMiVBOCVFQyU5QSVCOHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=500',
-                        width: double.infinity,
-                        height: 350,
-                        fit: BoxFit.fill,
-                      ),
                       SizedBox(height: 10),
                       Row(
                         children: [
                           IconButton(
                             icon: Icon(
-                              (buttonLike)
+                              (viewmodel.buttonLike)
                                   ? Icons.favorite_border
                                   : Icons.favorite,
                             ),
                             iconSize: 20,
                             color: AppColors.opicRed,
                             onPressed: () {
-                              setState(() {
-                                buttonLike = !buttonLike;
-                                if (buttonLike) {
-                                  likeCount -= 1;
-                                } else {
-                                  likeCount += 1;
-                                }
-                              });
+                              viewmodel.toggleLike();
                             },
                           ),
                           Text(
-                            "좋아요 ${likeCount} ",
+                            "좋아요 ${viewmodel.likeCount} ",
                             style: TextStyle(
                               fontSize: 13,
                               color: AppColors.opicBlack,
@@ -100,7 +79,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           Spacer(),
 
                           // 내 게시물이라면 수정하기/삭제하기
-                          (loginUserName == postWriter)
+                          (viewmodel.loginUserName == viewmodel.postWriter)
                               ? Row(
                                   children: [
                                     ElevatedButton.icon(
@@ -179,9 +158,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                       barrierColor: Colors.black.withOpacity(
                                         0.6,
                                       ),
-                                      builder: (context) => PostReportScreen(
-                                        // currentNickname: loginUser.nickname,
-                                      ),
+                                      builder: (context) => PostReportScreen(),
                                     );
                                   },
                                   icon: Icon(
@@ -204,7 +181,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                               context.go('/home');
                             },
                             child: Text(
-                              "${todayTopic}",
+                              "${viewmodel.todayTopic}",
                               style: TextStyle(color: AppColors.opicSoftBlue),
                             ),
                           ),
@@ -213,7 +190,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       SizedBox(height: 10),
                       Container(
                         width: double.infinity,
-                        // height: 120,
                         color: AppColors.opicBackground,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -225,80 +201,73 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                   child: Text("댓글"),
                                 ),
                                 Text(
-                                  " ${commentList.length}",
+                                  " ${viewmodel.commentList.length}",
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
-                            // SizedBox(height: 20),
                             Center(
-                              child: (commentList.isEmpty)
+                              child: (viewmodel.commentList.isEmpty)
                                   ? Text("첫 댓글을 남겨보세요!")
                                   : ListView.builder(
-                                      itemCount: commentList.length,
+                                      itemCount: viewmodel.commentList.length,
                                       shrinkWrap: true,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                            return Container(
-                                              padding: EdgeInsets.only(
-                                                left: 10,
-                                              ),
-                                              width: 100,
-                                              color: AppColors.opicWhite,
-                                              child: Column(
+                                      itemBuilder: (BuildContext context, int index) {
+                                        return Container(
+                                          padding: EdgeInsets.only(left: 10),
+                                          width: 100,
+                                          color: AppColors.opicWhite,
+                                          child: Column(
+                                            children: [
+                                              Row(
                                                 children: [
-                                                  Row(
-                                                    children: [
-                                                      IconButton(
-                                                        onPressed: () {
-                                                          context.go(
-                                                            '/friend_feed',
-                                                          );
-                                                        },
-                                                        icon: Icon(
-                                                          Icons.person,
-                                                        ),
-                                                      ),
-                                                      Text("${loginUserName}"),
-                                                      Spacer(),
-                                                      Text(
-                                                        "${commentDate}",
-                                                        style: TextStyle(
-                                                          fontSize: 10,
-                                                          color: AppColors
-                                                              .opicBlack,
-                                                        ),
-                                                      ),
-                                                      Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                              right: 8,
-                                                            ),
-                                                      ),
-                                                    ],
+                                                  IconButton(
+                                                    onPressed: () {
+                                                      context.go(
+                                                        '/friend_feed',
+                                                      );
+                                                    },
+                                                    icon: Icon(Icons.person),
                                                   ),
-                                                  Container(
-                                                    padding: EdgeInsets.only(
-                                                      left: 20,
+                                                  Text(
+                                                    "${viewmodel.loginUserName}",
+                                                  ),
+                                                  Spacer(),
+                                                  Text(
+                                                    "${viewmodel.commentDate}",
+                                                    style: TextStyle(
+                                                      fontSize: 10,
+                                                      color:
+                                                          AppColors.opicBlack,
                                                     ),
-                                                    width: double.infinity,
-                                                    child: Text(
-                                                      "${commentList[index]}",
-                                                      textAlign:
-                                                          TextAlign.start,
+                                                  ),
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                      right: 8,
                                                     ),
                                                   ),
                                                 ],
                                               ),
-                                            );
-                                          },
+                                              Container(
+                                                padding: EdgeInsets.only(
+                                                  left: 20,
+                                                ),
+                                                width: double.infinity,
+                                                child: Text(
+                                                  "${viewmodel.commentList[index]}",
+                                                  textAlign: TextAlign.start,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
                                     ),
                             ),
                             SizedBox(height: 20),
                           ],
                         ),
                       ),
-                      // Spacer(),
                       Divider(),
                     ],
                   ),
@@ -313,10 +282,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   Expanded(
                     child: Container(
                       height: 35,
-                      // width: 350,
                       color: AppColors.opicWhite,
                       child: TextField(
-                        controller: _commentListController,
+                        controller: viewmodel.commentListController,
                         decoration: InputDecoration(
                           hintText: "댓글을 입력하세요..",
                           border: InputBorder.none,
@@ -340,14 +308,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       iconSize: 20,
                       color: AppColors.opicWhite,
                       onPressed: () {
-                        setState(() {
-                          if (_commentListController.text.isEmpty) {
-                          } else {
-                            commentList.add("${_commentListController.text}");
-                            _commentListController.clear();
-                            showToast("댓글작성이 완료되었습니다.");
-                          }
-                        });
+                        viewmodel.addComment();
                       },
                     ),
                   ),
@@ -358,12 +319,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _commentListController.dispose();
-    super.dispose();
   }
 }
 
