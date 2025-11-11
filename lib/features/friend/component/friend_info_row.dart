@@ -9,11 +9,13 @@ import 'package:provider/provider.dart';
 class FriendInfoRow extends StatelessWidget {
   final int userId;
   final int friendId;
+  final String friendNickname;
 
   const FriendInfoRow({
     super.key,
     required this.userId,
     required this.friendId,
+    required this.friendNickname,
   });
 
   @override
@@ -46,7 +48,7 @@ class FriendInfoRow extends StatelessWidget {
                     color: AppColors.opicBlue,
                   ),
                   Text(
-                    "$userId",
+                    friendNickname,
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 18,
@@ -109,6 +111,7 @@ class FriendInfoRow extends StatelessWidget {
                             context.pop();
                             context.read<FriendViewModel>().deleteFriend(
                               friendId,
+                              userId,
                             );
                             showToast("선택한 사용자를 친구 목록에서 삭제했어요");
                           },

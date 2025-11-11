@@ -204,14 +204,17 @@ Widget _friendList(BuildContext context, FriendViewModel viewModel) {
       itemCount: friendsCount,
       itemBuilder: (context, index) {
         final friend = viewModel.friends[index];
+        final friendUser = loginUserId == friend.user1Id
+            ? friend.user2Id
+            : friend.user1Id;
+        final friendInfo = viewModel.fetchAUser(friendUser);
 
         return Container(
           color: AppColors.opicBackground,
           child: FriendInfoRow(
-            userId: loginUserId == friend.user1Id
-                ? friend.user2Id
-                : friend.user1Id,
+            userId: loginUserId,
             friendId: friend.id,
+            friendNickname: viewModel.certainUser?.nickname ?? "알 수 없음",
           ),
         );
       },
@@ -243,12 +246,17 @@ Widget _friendRequest(BuildContext context, FriendViewModel viewModel) {
       itemCount: friendRequestsCount,
       itemBuilder: (context, index) {
         final friendRequest = viewModel.friendRequests[index];
+        final requestId = viewModel.friendRequests[index].id;
+        final requesterId = viewModel.friendRequests[index].requestId;
+        final requesterInfo = viewModel.fetchAUser(requesterId);
 
         return Container(
           color: AppColors.opicBackground,
           child: FriendRequestRow(
-            userId: friendRequest.requestId,
-            requestId: friendRequest.id,
+            userId: loginUserId,
+            requestId: requestId,
+            requesterNickname: viewModel.certainUser?.nickname ?? "알 수 없음",
+            requesterId: requesterId,
           ),
         );
       },

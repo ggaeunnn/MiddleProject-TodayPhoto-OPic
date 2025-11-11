@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/core/models/friend_model.dart';
 import 'package:opicproject/core/models/friend_request_model.dart';
+import 'package:opicproject/core/models/user_model.dart';
 import 'package:opicproject/features/friend/data/friend_repository.dart';
 
 class FriendViewModel extends ChangeNotifier {
@@ -20,8 +21,17 @@ class FriendViewModel extends ChangeNotifier {
 
   bool shouldShowScrollUpButton = false;
 
+  UserInfo? _certainUser;
+  UserInfo? get certainUser => _certainUser;
+
   int? _loginUserId;
   int? get loginUserId => _loginUserId;
+
+  bool _isExist = false;
+  bool get isExist => _isExist;
+
+  bool _isFriend = false;
+  bool get isFriend => _isFriend;
 
   bool _showFriendRequests = false;
   bool get showFriendRequests => _showFriendRequests;
@@ -72,7 +82,7 @@ class FriendViewModel extends ChangeNotifier {
       _debounce = Timer(const Duration(milliseconds: 300), () {
         final double offset = scrollController.offset;
 
-        if (offset < 30) {
+        if (offset < 60) {
           if (shouldShowScrollUpButton) {
             shouldShowScrollUpButton = false;
             notifyListeners();
@@ -103,6 +113,7 @@ class FriendViewModel extends ChangeNotifier {
     _loginUserId = loginUserId;
     currentPage = 1;
     await fetchFriends(currentPage, loginUserId);
+    await fetchFriendRequests(currentPage, loginUserId);
   }
 
   void moveScrollUp() {
@@ -129,11 +140,16 @@ class FriendViewModel extends ChangeNotifier {
 
   Future<void> refresh(int loginUserId) async {
     _friends = [];
+    _friendRequests = [];
     notifyListeners();
     // 1.7초 딜레이
     await Future.delayed(const Duration(milliseconds: 1000));
     currentPage = 1;
     _friends = await _repository.fetchFriends(currentPage, loginUserId);
+    _friendRequests = await _repository.fetchFriendRequests(
+      currentPage,
+      loginUserId,
+    );
     notifyListeners();
   }
 
@@ -158,9 +174,9 @@ class FriendViewModel extends ChangeNotifier {
   }
 
   // 친구 삭제하기
-  Future<void> deleteFriend(int friendId) async {
+  Future<void> deleteFriend(int friendId, int loginUserId) async {
     await _repository.deleteFriend(friendId);
-    _friends.removeWhere((friend) => friend.id == friendId);
+    await fetchFriends(currentPage, loginUserId);
     notifyListeners();
   }
 
@@ -178,5 +194,75 @@ class FriendViewModel extends ChangeNotifier {
     //구독자(?)에게 알림보내기
     notifyListeners();
     debugPrint("FriendViewModel _initFriends 호출됨");
+  }
+
+  Future<void> fetchMoreFriendRequests(int loginUserId) async {
+    if (_isLoading) return;
+
+    _isLoading = true;
+    currentPage += 1;
+    final fetchedFriendRequests = await _repository.fetchFriendRequests(
+      currentPage,
+      loginUserId,
+    );
+
+    if (fetchedFriendRequests.isNotEmpty) {
+      _friendRequests.addAll(fetchedFriendRequests);
+    } else {
+      currentPage -= 1;
+    }
+    _isLoading = false;
+    notifyListeners();
+    debugPrint("FriendViewmodel fetchedFriends 호출됨");
+  }
+
+  // 특정 유저 정보 가져오기
+  Future<void> fetchAUser(int userId) async {
+    _certainUser = await _repository.fetchAUser(userId);
+    notifyListeners();
+    debugPrint("certainUser : $_certainUser");
+  }
+
+  // 특정 유저 유무 확인하기
+  Future<void> checkIfExist(String nickname) async {
+    _isExist = await _repository.checkIfExist(nickname);
+    notifyListeners();
+  }
+
+  // 특정 유저 정보 가져오기(닉네임으로)
+  Future<void> fetchAUserByName(String nickname) async {
+    _certainUser = await _repository.fetchAUserByName(nickname);
+    notifyListeners();
+  }
+
+  // 친구 관계 확인하기
+  Future<void> checkIfFriend(int loginUserId, int friendUserId) async {
+    _isFriend = await _repository.checkIfFriend(loginUserId, friendUserId);
+    notifyListeners();
+  }
+
+  // 친구 요청 하기
+  Future<void> makeARequest(int loginUserId, int targetUserId) async {
+    await _repository.makeARequest(loginUserId, targetUserId);
+    notifyListeners();
+  }
+
+  // 친구 요청 응답하기
+  Future<void> answerARequest(int requestId, int loginUserId) async {
+    await _repository.answerARequest(requestId);
+    await fetchFriendRequests(currentPage, loginUserId);
+    notifyListeners();
+  }
+
+  // 친구 요청 수락 - 친구 추가 하기
+  Future<void> acceptARequest(
+    int requestId,
+    int loginUserId,
+    int requesterId,
+  ) async {
+    await _repository.acceptARequest(requestId, loginUserId, requesterId);
+    await fetchFriends(currentPage, loginUserId);
+    await fetchFriendRequests(currentPage, loginUserId);
+    notifyListeners();
   }
 }

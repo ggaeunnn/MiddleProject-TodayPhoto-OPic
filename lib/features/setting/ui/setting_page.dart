@@ -3,12 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:opicproject/component/yes_or_close_pop_up.dart';
 import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
-import 'package:opicproject/core/models/user_model.dart';
 import 'package:opicproject/features/setting/component/edit_nickname_pop_up.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-final List<UserInfo> dummyUsers = UserInfo.getDummyUsers();
-final loginUser = dummyUsers[0];
 
 class SettingScreen extends StatelessWidget {
   final int userId;
@@ -246,7 +242,7 @@ class _SettingScreenState extends State<_SettingScreen> {
                                   context: context,
                                   barrierColor: Colors.black.withOpacity(0.6),
                                   builder: (context) => EditNicknamePopUp(
-                                    currentNickname: loginUser.nickname,
+                                    currentNickname: "알수없음",
                                   ),
                                 );
                               },

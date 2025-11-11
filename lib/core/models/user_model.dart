@@ -33,29 +33,4 @@ class UserInfo {
       uuid: json['uuid'] as String,
     );
   }
-
-  static List<UserInfo> getDummyUsers() {
-    return [
-      UserInfo(
-        id: 1,
-        nickname: "찍사",
-        createdAt: DateTime.now().toString(),
-        email: "random@mail.com",
-        platformId: 1,
-        exitAt: null,
-        token: "token1",
-        uuid: "uuid1",
-      ),
-      UserInfo(
-        id: 2,
-        nickname: "찰칵",
-        createdAt: DateTime.now().toString(),
-        email: "user@test.com",
-        platformId: 2,
-        exitAt: null,
-        token: "token2",
-        uuid: "uuid2",
-      ),
-    ];
-  }
 }

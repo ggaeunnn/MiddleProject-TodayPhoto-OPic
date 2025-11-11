@@ -87,7 +87,12 @@ class DioManager {
     final String range = "$startIndex-$endIndex";
 
     final response = await _dio.get(
-      'https://zoqxnpklgtcqkvskarls.supabase.co/rest/v1/friend_request?select*id=eq.$loginId',
+      'https://zoqxnpklgtcqkvskarls.supabase.co/rest/v1/friend_request',
+      queryParameters: {
+        'select': '*',
+        'target_id': 'eq.$loginId',
+        'answered_at': 'is.null',
+      },
       options: Options(
         headers: {
           'apikey':

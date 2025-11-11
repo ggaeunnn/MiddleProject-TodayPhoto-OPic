@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:opicproject/core/models/topic_model.dart';
+import 'package:opicproject/core/models/user_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseManager {
@@ -30,5 +31,90 @@ class SupabaseManager {
       return null;
     }
     return Topic.fromJson(data);
+  }
+
+  // 특정 유저 정보 가져오기 (아이디로)
+  Future<UserInfo?> fetchAUser(int userId) async {
+    final Map<String, dynamic>? data = await supabase
+        .from("user")
+        .select('*')
+        .eq('id', userId)
+        .maybeSingle();
+    if (data == null) {
+      return null;
+    }
+    return UserInfo.fromJson(data);
+  }
+
+  // 친구 관계 여부 확인하기
+  Future<bool> checkIfFriend(int loginUserId, int friendUserId) async {
+    final Map<String, dynamic>? data = await supabase
+        .from("friends")
+        .select('*')
+        .or(
+          'and(user1_id.eq.$loginUserId,user2_id.eq.$friendUserId)'
+          'and(user1_id.eq.$friendUserId,user2_id.eq.$loginUserId)',
+        )
+        .maybeSingle();
+    if (data == null) {
+      return false;
+    }
+    return true;
+  }
+
+  // 해당 닉네임을 사용하는 사용자 존재 여부 확인
+  Future<bool> checkIfExist(String userNickname) async {
+    final Map<String, dynamic>? data = await supabase
+        .from("user")
+        .select('*')
+        .eq('nickname', userNickname)
+        .maybeSingle();
+    if (data == null) {
+      return false;
+    }
+    return true;
+  }
+
+  // 특정 유저 정보 가져오기 (닉네임으로)
+  Future<UserInfo?> fetchAUserByName(String userNickname) async {
+    final Map<String, dynamic>? data = await supabase
+        .from("user")
+        .select('*')
+        .eq('nickname', userNickname)
+        .maybeSingle();
+    if (data == null) {
+      return null;
+    }
+    return UserInfo.fromJson(data);
+  }
+
+  // 친구 요청 하기
+  Future<void> makeARequest(int loginUserId, int targetUserId) async {
+    await supabase.from('friend_request').insert({
+      "created_at": "${DateTime.now()}",
+      "request_id": loginUserId,
+      "target_id": targetUserId,
+    });
+  }
+
+  // 친구 요청 응답하기
+  Future<void> answerARequest(int requestId) async {
+    await supabase
+        .from('friend_request')
+        .update({'answered_at': "${DateTime.now()}"})
+        .eq('id', requestId);
+  }
+
+  // 친구 요청 승낙 - 친구 추가
+  Future<void> acceptARequest(
+    int requestId,
+    int loginUserId,
+    int requesterId,
+  ) async {
+    await supabase.from('friends').insert({
+      'created_at': "${DateTime.now()}",
+      'user1_id': loginUserId,
+      'user2_id': requesterId,
+    });
   }
 }
