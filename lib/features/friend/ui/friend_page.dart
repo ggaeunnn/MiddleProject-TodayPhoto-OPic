@@ -187,13 +187,21 @@ Widget _friendList(BuildContext context, FriendViewModel viewModel) {
   final loginUserId = viewModel.loginUserId!;
   final friendsCount = viewModel.friends.length;
 
+  // 친구 목록이 비어있을 때
   if (friendsCount == 0) {
-    return Container(
-      color: AppColors.opicBackground,
-      child: Center(
-        child: Text(
-          '친구 목록이 비어있습니다',
-          style: TextStyle(fontSize: 16, color: AppColors.opicBlack),
+    return RefreshIndicator(
+      onRefresh: () => viewModel.refresh(loginUserId),
+      child: SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
+        child: Container(
+          color: AppColors.opicBackground,
+          height: MediaQuery.of(context).size.height * 0.7,
+          child: Center(
+            child: Text(
+              '친구 목록이 비어있습니다',
+              style: TextStyle(fontSize: 16, color: AppColors.opicBlack),
+            ),
+          ),
         ),
       ),
     );
@@ -202,6 +210,7 @@ Widget _friendList(BuildContext context, FriendViewModel viewModel) {
   return RefreshIndicator(
     onRefresh: () => viewModel.refresh(loginUserId),
     child: ListView.builder(
+      physics: AlwaysScrollableScrollPhysics(),
       controller: viewModel.scrollController,
       itemCount: friendsCount,
       itemBuilder: (context, index) {
@@ -245,13 +254,21 @@ Widget _friendRequest(BuildContext context, FriendViewModel viewModel) {
   final loginUserId = viewModel.loginUserId!;
   final friendRequestsCount = viewModel.friendRequests.length;
 
+  // 친구 요청이 없을 때
   if (friendRequestsCount == 0) {
-    return Container(
-      color: AppColors.opicBackground,
-      child: Center(
-        child: Text(
-          '새로운 친구 요청이 없습니다',
-          style: TextStyle(fontSize: 16, color: AppColors.opicBlack),
+    return RefreshIndicator(
+      onRefresh: () => viewModel.refresh(loginUserId),
+      child: SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
+        child: Container(
+          color: AppColors.opicBackground,
+          height: MediaQuery.of(context).size.height * 0.7,
+          child: Center(
+            child: Text(
+              '새로운 친구 요청이 없습니다',
+              style: TextStyle(fontSize: 16, color: AppColors.opicBlack),
+            ),
+          ),
         ),
       ),
     );
@@ -260,6 +277,7 @@ Widget _friendRequest(BuildContext context, FriendViewModel viewModel) {
   return RefreshIndicator(
     onRefresh: () => viewModel.refresh(loginUserId),
     child: ListView.builder(
+      physics: AlwaysScrollableScrollPhysics(),
       controller: viewModel.scrollController,
       itemCount: friendRequestsCount,
       itemBuilder: (context, index) {

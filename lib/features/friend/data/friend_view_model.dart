@@ -139,10 +139,9 @@ class FriendViewModel extends ChangeNotifier {
   }
 
   Future<void> refresh(int loginUserId) async {
-    _friends = [];
-    _friendRequests = [];
+    // isLoading을 true로 설정 (리스트는 비우지 않음)
+    _isLoading = true;
     notifyListeners();
-    // 1.7초 딜레이
     await Future.delayed(const Duration(milliseconds: 1000));
     currentPage = 1;
     _friends = await _repository.fetchFriends(currentPage, loginUserId);
@@ -150,6 +149,8 @@ class FriendViewModel extends ChangeNotifier {
       currentPage,
       loginUserId,
     );
+
+    _isLoading = false;
     notifyListeners();
   }
 
