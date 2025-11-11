@@ -1,23 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/app_colors.dart';
-import 'package:opicproject/core/models/post_model.dart';
 import 'package:opicproject/features/home/ui/add_post_popup.dart';
+import 'package:opicproject/features/home/viewmodel/home_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
   //TODO:뷰모델 사용시 위의 const생성자로 교체
-  //const HomeScreen({super.key});
-  HomeScreen({super.key});
+  const HomeScreen({super.key});
+  // HomeScreen({super.key});
   //TODO:임시 더미 데이터  나중에 지워야함
-  final List<Post> _posts = Post.fixedDummyPosts;
+  // final List<Post> _posts = Post.fixedDummyPosts;
 
-  //TODO:현재 주제 뷰모델 사용시 삭제예정
-  final String currentTopic = Post.fixedDummyPosts.isNotEmpty
-      ? Post.fixedDummyPosts.first.topic
-      : '주제 없음';
+  // //TODO:현재 주제 뷰모델 사용시 삭제예정
+  // final String currentTopic = Post.fixedDummyPosts.isNotEmpty
+  //     ? Post.fixedDummyPosts.first.topic
+  //     : '주제 없음';
 
   @override
   Widget build(BuildContext context) {
+    final viewmodel = context.watch<HomeViewModel>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (viewmodel.posts.isEmpty) {
+        context.read<HomeViewModel>().loadPosts();
+      }
+    });
     return Container(
       child: Scaffold(
         body: Column(
@@ -51,7 +58,8 @@ class HomeScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          currentTopic,
+                          // currentTopic,
+                          "주제",
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -70,10 +78,18 @@ class HomeScreen extends StatelessWidget {
 
             //게시물 영역
             Expanded(
-              child: ListView.builder(
-                itemCount: _posts.length,
-                itemBuilder: (context, index) {
-                  return PostCard(post: _posts[index]);
+              child: Builder(
+                builder: (context) {
+                  if (viewmodel.posts.isEmpty) {
+                    return const Text("게시물이 없습니다");
+                  }
+                  return ListView.builder(
+                    itemCount: viewmodel.posts.length,
+                    itemBuilder: (context, index) {
+                      final post = viewmodel.posts[index];
+                      return PostCard(post: post);
+                    },
+                  );
                 },
               ),
             ),
@@ -99,8 +115,8 @@ class HomeScreen extends StatelessWidget {
 
 //계시물 컴포넌트
 class PostCard extends StatelessWidget {
-  final Post post;
-
+  // final Post post;
+  final Map<String, dynamic> post;
   const PostCard({super.key, required this.post});
 
   @override
@@ -114,7 +130,7 @@ class PostCard extends StatelessWidget {
             context.go('/post_detail_page');
           },
           child: Image.network(
-            post.imageUrl,
+            post['image_url'],
             width: double.infinity,
             height: 300,
             fit: BoxFit.cover,
@@ -131,7 +147,7 @@ class PostCard extends StatelessWidget {
               const Icon(Icons.favorite, color: AppColors.opicRed, size: 20),
               const SizedBox(width: 4),
               Text(
-                '${post.likes}',
+                '${post['likes'] ?? 0}',
                 style: const TextStyle(color: AppColors.opicRed),
               ),
 
@@ -145,7 +161,7 @@ class PostCard extends StatelessWidget {
               ),
               const SizedBox(width: 4),
               Text(
-                '${post.comments}',
+                '${post['comments'] ?? 0}',
                 style: const TextStyle(color: AppColors.opicCoolGrey),
               ),
             ],

@@ -6,6 +6,7 @@ import 'package:opicproject/features/auth/ui/login_page.dart';
 import 'package:opicproject/features/auth/viewmodel/auth_viewmodel.dart';
 import 'package:opicproject/features/friend/data/friend_view_model.dart';
 import 'package:opicproject/features/home/main_page.dart';
+import 'package:opicproject/features/home/viewmodel/home_viewmodel.dart';
 import 'package:opicproject/features/onboarding/data/onboarding_service.dart';
 import 'package:opicproject/features/onboarding/ui/onboarding_screen.dart';
 import 'package:opicproject/features/onboarding/viewmodel/onboarding_viewmodel.dart';
@@ -82,6 +83,7 @@ void main() async {
         ),
         ChangeNotifierProvider(create: (context) => FriendViewModel()),
         ChangeNotifierProvider(create: (context) => PostViewModel()),
+        ChangeNotifierProvider(create: (context) => HomeViewModel()),
       ],
       child: MaterialApp.router(
         routerConfig: _router,
