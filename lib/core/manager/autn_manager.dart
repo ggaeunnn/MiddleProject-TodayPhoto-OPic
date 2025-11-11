@@ -5,7 +5,7 @@ import 'package:opicproject/core/models/user_model.dart';
 import 'package:opicproject/features/auth/data/auth_api_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class AuthManager {
+class AuthManager extends ChangeNotifier {
   static final AuthManager _shared = AuthManager();
 
   static AuthManager get shared => _shared;
@@ -30,6 +30,7 @@ class AuthManager {
 
           fetchUser(uuid!);
 
+          notifyListeners();
           break;
 
         case AuthChangeEvent.signedOut:
@@ -39,7 +40,7 @@ class AuthManager {
           uuid = null;
 
           userInfo = null;
-
+          notifyListeners();
           break;
 
         case AuthChangeEvent.tokenRefreshed:
@@ -56,6 +57,7 @@ class AuthManager {
             uuid = data.session?.user.id;
 
             fetchUser(uuid!);
+            notifyListeners();
           } else {
             //로그아웃을 하고 앱을 종료했다면
             print('인증매니저: 초기 세션 없음 (로그아웃 상태)');
@@ -63,13 +65,16 @@ class AuthManager {
           break;
 
         case AuthChangeEvent.userUpdated:
+
           // 사용자 정보 (이메일, 비밀번호 등)가 업데이트된 경우
           print('인증매니저: 사용자 정보 업데이트됨.');
+          notifyListeners();
           break;
 
         case AuthChangeEvent.passwordRecovery:
           // 비밀번호 복구 요청 (이메일 확인 단계)
           print('인증매니저: 비밀번호 복구 요청됨.');
+          notifyListeners();
           break;
 
         case AuthChangeEvent.userDeleted:
@@ -87,5 +92,6 @@ class AuthManager {
         .fetchUserDataWithUUID(uuid);
     debugPrint("유저 가져오기:${result.email}");
     userInfo = result;
+    notifyListeners();
   }
 }

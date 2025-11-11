@@ -28,25 +28,33 @@ class FriendViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  // AuthManager 상태 구독
   FriendViewModel() {
-    _initializeScrollListener();
-    Future.delayed(Duration.zero, () {
-      _getCurrentUserId();
-    });
+    AuthManager.shared.addListener(_onAuthChanged);
   }
 
-  Future<void> _getCurrentUserId() async {
-    // AuthManager에서 유저 ID 가져오기
-    final userId = AuthManager.shared.userInfo?.id;
-    debugPrint("유저아이디 : $userId");
+  void _onAuthChanged() {
+    _checkCurrentAuth();
+  }
 
-    if (userId != null) {
+  void _checkCurrentAuth() {
+    final userId = AuthManager.shared.userInfo?.id;
+
+    if (userId != null && !_isInitialized) {
       _loginUserId = userId;
       _isInitialized = true;
       notifyListeners();
-      await initialize(userId);
-      return;
+      initialize(userId);
+    } else if (userId == null && _isInitialized) {
+      _loginUserId = null;
+      _isInitialized = false;
+      _friends = [];
+      notifyListeners();
+    } else if (userId != null && _isInitialized) {
+      print("초기화 완료");
     }
+
+    debugPrint("userId: $userId");
   }
 
   void _initializeScrollListener() {

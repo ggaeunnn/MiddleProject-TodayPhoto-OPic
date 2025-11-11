@@ -21,6 +21,7 @@ class FriendScreen extends StatelessWidget {
                 child: Center(child: Text("로그인 해주세요")),
               );
             }
+
             return Column(
               children: [
                 _buildHeader(context, viewModel),
@@ -208,8 +209,8 @@ Widget _friendList(BuildContext context, FriendViewModel viewModel) {
           color: AppColors.opicBackground,
           child: FriendInfoRow(
             userId: loginUserId == friend.user1Id
-                ? friend.user1Id
-                : friend.user2Id,
+                ? friend.user2Id
+                : friend.user1Id,
           ),
         );
       },
