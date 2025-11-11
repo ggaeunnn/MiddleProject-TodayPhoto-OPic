@@ -48,7 +48,7 @@ class _addPostPopup extends State<addPostPopup> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
+            SizedBox(
               width: double.infinity,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,

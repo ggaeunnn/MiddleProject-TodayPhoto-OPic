@@ -32,7 +32,7 @@ class AlarmRowLike extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
+                SizedBox(
                   width: MediaQuery.of(context).size.width * 0.75,
                   child: Text(
                     "userId.nickname님이 회원님의 게시물을 좋아합니다",

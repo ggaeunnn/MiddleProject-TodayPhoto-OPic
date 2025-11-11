@@ -1,4 +1,3 @@
-import 'package:opicproject/core/models/post_model.dart';
 import 'package:opicproject/features/feed/data/feed_repository.dart';
 
 class FeedService {

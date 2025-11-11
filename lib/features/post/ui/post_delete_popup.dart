@@ -20,7 +20,7 @@ class _DeletePopupState extends State<DeletePopup> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
+            SizedBox(
               width: double.infinity,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,

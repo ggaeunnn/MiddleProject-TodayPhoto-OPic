@@ -13,7 +13,7 @@ class OpicAppbar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: MediaQuery.of(context).size.height * 0.05,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -58,6 +58,8 @@ class OpicAppbar extends StatelessWidget implements PreferredSizeWidget {
 /// 하단네비게이션
 
 class OpicBottomNav extends StatefulWidget {
+  const OpicBottomNav({super.key});
+
   @override
   State<OpicBottomNav> createState() => _OpicBottomNavState();
 }
@@ -91,6 +93,8 @@ class _OpicBottomNavState extends State<OpicBottomNav> {
 }
 
 class OpicPageView extends StatefulWidget {
+  const OpicPageView({super.key});
+
   @override
   State<OpicPageView> createState() => _OpicPageViewState();
 }

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class SwitchRow extends StatelessWidget {
   final String title;
   final bool value;
-  final Function(bool) onChanged;
+  final Function(bool)? onChanged;
   final Color circleColor = Color(0xfffafafa);
   final Color backgroundColor = Color(0xff95b7db);
   final Color inactiveCircleColor = Color(0xfffafafa);
@@ -28,12 +28,12 @@ class SwitchRow extends StatelessWidget {
           child: Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: circleColor,
+            activeThumbColor: circleColor,
             activeTrackColor: backgroundColor,
             inactiveThumbColor: inactiveCircleColor,
             inactiveTrackColor: inactiveBackgroundColor,
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            trackOutlineColor: MaterialStateProperty.all(Colors.transparent),
+            trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
           ),
         ),
       ],

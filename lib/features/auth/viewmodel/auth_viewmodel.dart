@@ -13,7 +13,6 @@ class AuthViewModel extends ChangeNotifier {
   final scopes = ['email', 'profile'];
 
   bool _isLoading = false;
-
   bool get isLoading => _isLoading;
 
   void _setLoading(bool value) {
@@ -27,14 +26,12 @@ class AuthViewModel extends ChangeNotifier {
   }
 
   //구글로그인 초기화
-  initGoogleSignIn() async {
+  Future<void> initGoogleSignIn() async {
     await dotenv.load(fileName: "assets/config/.env");
-    String webClientId = dotenv.get("Web_Client_Id");
-    String clientId = dotenv.get("Client_Id");
 
     await googleSignIn.initialize(
-      serverClientId: webClientId,
-      clientId: clientId,
+      serverClientId: dotenv.get("Web_Client_Id"),
+      clientId: dotenv.get("Client_Id"),
     );
   }
 
@@ -43,23 +40,23 @@ class AuthViewModel extends ChangeNotifier {
     //구글 로그인
     final googleUser = await googleSignIn.authenticate();
 
-    debugPrint("google user ${googleUser}");
+    debugPrint("google user $googleUser");
 
     //엑세스토큰을 받기위한 인증절차
     final authorization =
         await googleUser.authorizationClient.authorizationForScopes(scopes) ??
         await googleUser.authorizationClient.authorizeScopes(scopes);
-
+    debugPrint("authorization : $authorization");
     final idToken = googleUser.authentication.idToken;
 
     if (idToken == null) {
       Fluttertoast.showToast(msg: "로그인 실패: 토큰 누락");
       throw AuthException('Required tokens (ID/Access) not found.');
     }
-
+    debugPrint("idToken : $idToken");
     return GoogleAuthTokens(
       idToken: idToken,
-      accessToken: authorization.accessToken!,
+      accessToken: authorization.accessToken,
     );
   }
 

@@ -18,7 +18,7 @@ class SettingScreen extends StatelessWidget {
 }
 
 class _SettingScreen extends StatefulWidget {
-  const _SettingScreen({super.key});
+  const _SettingScreen();
 
   @override
   State<_SettingScreen> createState() => _SettingScreenState();
@@ -54,18 +54,6 @@ class _SettingScreenState extends State<_SettingScreen> {
                   child: Row(
                     spacing: 10,
                     children: [
-                      /// 하단 탭으로 이동하기 때문에 뒤로가기 버튼 제거함
-                      // IconButton(
-                      //   icon: Icon(
-                      //     Icons.arrow_back_rounded,
-                      //     color: Color(0xff515151),
-                      //   ),
-                      //   onPressed: () {},
-                      //   splashColor: Colors.transparent,
-                      //   highlightColor: Colors.transparent,
-                      //   hoverColor: Colors.transparent,
-                      //   focusColor: Colors.transparent,
-                      // ),
                       Text(
                         "설정",
                         style: TextStyle(
@@ -109,7 +97,7 @@ class _SettingScreenState extends State<_SettingScreen> {
                         AuthManager.shared.userInfo?.nickname ?? "",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 15,
+                          fontSize: 18,
                           color: AppColors.opicBlack,
                         ),
                       ),

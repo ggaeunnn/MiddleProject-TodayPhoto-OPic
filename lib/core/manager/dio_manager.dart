@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:opicproject/core/models/alarm_setting_model.dart';
 import 'package:opicproject/core/models/friend_model.dart';
 import 'package:opicproject/core/models/friend_request_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -112,6 +113,39 @@ class DioManager {
       return results;
     } else {
       return List.empty();
+    }
+  }
+
+  // 알람 설정 가져오기
+  Future<AlarmSetting?> fetchAlarmSetting({required int loginId}) async {
+    try {
+      final response = await _dio.get(
+        'https://zoqxnpklgtcqkvskarls.supabase.co/rest/v1/alarm_setting',
+        queryParameters: {
+          'select': '*',
+          'user_id': 'eq.$loginId',
+          'limit': '1', // 단일 결과만 가져오기
+        },
+        options: Options(
+          headers: {
+            'apikey':
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvcXhucGtsZ3RjcWt2c2thcmxzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0OTk4NTYsImV4cCI6MjA3ODA3NTg1Nn0.qR8GmGNztCm44qqm7xJK4VvmI1RcIJybGKeMVBy8yaA',
+            'Authorization':
+                'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvcXhucGtsZ3RjcWt2c2thcmxzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0OTk4NTYsImV4cCI6MjA3ODA3NTg1Nn0.qR8GmGNztCm44qqm7xJK4VvmI1RcIJybGKeMVBy8yaA',
+          },
+        ),
+      );
+
+      if (response.data != null &&
+          response.data is List &&
+          (response.data as List).isNotEmpty) {
+        final List<dynamic> dataList = response.data as List<dynamic>;
+        return AlarmSetting.fromJson(dataList.first); // 첫 번째 항목만 반환
+      } else {
+        return null; // 데이터가 없으면 null 반환
+      }
+    } catch (e) {
+      rethrow; // 또는 적절한 에러 처리
     }
   }
 }

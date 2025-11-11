@@ -14,7 +14,7 @@ class AlarmListScreen extends StatelessWidget {
 }
 
 class _AlarmListScreen extends StatefulWidget {
-  const _AlarmListScreen({super.key});
+  const _AlarmListScreen();
 
   @override
   State<_AlarmListScreen> createState() => _AlarmListScreenState();

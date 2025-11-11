@@ -32,7 +32,7 @@ class AlarmRowComment extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
+                SizedBox(
                   width: MediaQuery.of(context).size.width * 0.75,
                   child: Text(
                     "commentId.userId님이 회원님의 게시물에 댓글을 남겼어요: \"commentId.content\"",

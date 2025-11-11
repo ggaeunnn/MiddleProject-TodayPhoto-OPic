@@ -32,7 +32,7 @@ class AlarmRowTopic extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
+                SizedBox(
                   width: MediaQuery.of(context).size.width * 0.75,
                   child: Text(
                     "새로운 주제가 도착했어요! [topicId.content]",

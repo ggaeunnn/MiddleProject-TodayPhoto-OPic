@@ -28,7 +28,7 @@ class AlarmRowFriendAccept extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
+                SizedBox(
                   width: MediaQuery.of(context).size.width * 0.75,
                   child: Text(
                     "requestId.targetId님과 친구가 되었습니다",

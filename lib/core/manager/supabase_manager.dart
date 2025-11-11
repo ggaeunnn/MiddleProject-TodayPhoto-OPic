@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:opicproject/core/models/alarm_setting_model.dart';
 import 'package:opicproject/core/models/topic_model.dart';
 import 'package:opicproject/core/models/user_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -118,10 +119,27 @@ class SupabaseManager {
     });
   }
 
+  // 닉네임 수정
   Future<void> editNickname(int loginUserId, String nickname) async {
     await supabase
         .from('user')
         .update({'nickname': nickname})
         .eq('id', loginUserId);
+  }
+
+  // 알람 설정 업데이트
+  Future<void> updateAlarmSetting(int userId, AlarmSetting setting) async {
+    await supabase
+        .from('alarm_setting')
+        .update({
+          'entire_alarm': setting.entireAlarm,
+          'new_topic': setting.newTopic,
+          'like_post': setting.likePost,
+          'new_comment': setting.newComment,
+          'new_request': setting.newRequest,
+          'new_friend': setting.newFriend,
+          'edited_at': DateTime.now().toIso8601String(),
+        })
+        .eq('user_id', userId);
   }
 }

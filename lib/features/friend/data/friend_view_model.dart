@@ -72,14 +72,14 @@ class FriendViewModel extends ChangeNotifier {
   }
 
   void _initializeScrollListener() {
-    Timer? _debounce;
+    Timer? debounce;
 
     // 바닥 감지
     scrollController.addListener(() {
       // scroll 일어나면 기존 타이머 취소
-      if (_debounce?.isActive ?? false) _debounce!.cancel();
+      if (debounce?.isActive ?? false) debounce!.cancel();
 
-      _debounce = Timer(const Duration(milliseconds: 300), () {
+      debounce = Timer(const Duration(milliseconds: 300), () {
         final double offset = scrollController.offset;
 
         if (offset < 60) {

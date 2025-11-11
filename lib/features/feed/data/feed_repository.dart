@@ -1,4 +1,3 @@
-import 'package:opicproject/core/models/post_model.dart';
 
 class FeedRepository {
   Future<Map<String, dynamic>> fetchFeed(int userId) async {

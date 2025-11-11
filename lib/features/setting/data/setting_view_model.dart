@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
+import 'package:opicproject/core/models/alarm_setting_model.dart';
 import 'package:opicproject/core/models/user_model.dart';
 
 import 'setting_repository.dart';
@@ -10,6 +11,9 @@ class SettingViewModel extends ChangeNotifier {
   UserInfo? _loginUser;
   UserInfo? get loginUser => _loginUser;
 
+  AlarmSetting? _alarmSetting;
+  AlarmSetting? get alarmSetting => _alarmSetting;
+
   int? _loginUserId;
   int? get loginUserId => _loginUserId;
 
@@ -19,11 +23,11 @@ class SettingViewModel extends ChangeNotifier {
   bool _isInitialized = false;
   bool get isInitialized => _isInitialized;
 
-  bool _isLoading = false;
+  late bool _isLoading = false;
   bool get isLoading => _isLoading;
 
   // AuthManager 상태 구독
-  FriendViewModel() {
+  SettingViewModel() {
     AuthManager.shared.addListener(_onAuthChanged);
   }
 
@@ -67,5 +71,33 @@ class SettingViewModel extends ChangeNotifier {
   Future<void> editNickname(int loginUserId, String newNickname) async {
     await _repository.editNickname(loginUserId, newNickname);
     await fetchUserInfo(loginUserId);
+  }
+
+  Future<void> fetchAlarmSetting(int loginId) async {
+    _alarmSetting = await _repository.fetchAlarmSetting(loginId);
+    notifyListeners();
+  }
+
+  // 알람 설정 업데이트 추가
+  Future<void> updateAlarmSetting({
+    required int userId,
+    required AlarmSetting newSetting,
+  }) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      await _repository.updateAlarmSetting(userId, newSetting);
+      _alarmSetting = newSetting;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  @override
+  void dispose() {
+    AuthManager.shared.removeListener(_onAuthChanged);
+    super.dispose();
   }
 }

@@ -33,10 +33,10 @@ class PostDetailScreen extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text("${viewmodel.postWriter}"),
+                          Text(viewmodel.postWriter),
                           Spacer(),
                           Text(
-                            "${viewmodel.formattedDate}",
+                            viewmodel.formattedDate,
                             style: TextStyle(
                               fontSize: 10,
                               color: Color(0xFF515151),
@@ -181,7 +181,7 @@ class PostDetailScreen extends StatelessWidget {
                               context.go('/home');
                             },
                             child: Text(
-                              "${viewmodel.todayTopic}",
+                              viewmodel.todayTopic,
                               style: TextStyle(color: AppColors.opicSoftBlue),
                             ),
                           ),
@@ -230,11 +230,11 @@ class PostDetailScreen extends StatelessWidget {
                                                     icon: Icon(Icons.person),
                                                   ),
                                                   Text(
-                                                    "${viewmodel.loginUserName}",
+                                                    viewmodel.loginUserName,
                                                   ),
                                                   Spacer(),
                                                   Text(
-                                                    "${viewmodel.commentDate}",
+                                                    viewmodel.commentDate,
                                                     style: TextStyle(
                                                       fontSize: 10,
                                                       color:
@@ -254,7 +254,7 @@ class PostDetailScreen extends StatelessWidget {
                                                 ),
                                                 width: double.infinity,
                                                 child: Text(
-                                                  "${viewmodel.commentList[index]}",
+                                                  viewmodel.commentList[index],
                                                   textAlign: TextAlign.start,
                                                 ),
                                               ),

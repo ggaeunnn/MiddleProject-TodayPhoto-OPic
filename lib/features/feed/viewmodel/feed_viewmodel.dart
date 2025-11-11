@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:opicproject/core/models/post_model.dart';
-import 'package:opicproject/features/feed/data/feed_repository.dart';
 import 'package:opicproject/features/feed/data/feed_service.dart';
 
 class FeedViewModel extends ChangeNotifier {

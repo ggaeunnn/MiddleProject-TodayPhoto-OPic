@@ -46,7 +46,7 @@ class LoginScreen extends StatelessWidget {
                           alignment: Alignment.bottomCenter,
                           child: Padding(
                             padding: const EdgeInsets.only(bottom: 30),
-                            child: Container(
+                            child: SizedBox(
                               width: MediaQuery.of(context).size.width * 0.9,
                               height: 50,
 
@@ -58,7 +58,7 @@ class LoginScreen extends StatelessWidget {
                           alignment: Alignment.bottomCenter,
                           child: Padding(
                             padding: const EdgeInsets.only(bottom: 50),
-                            child: Container(
+                            child: SizedBox(
                               width: MediaQuery.of(context).size.width * 0.7,
                               height: 50,
 
@@ -122,7 +122,7 @@ class SignOutGoogle extends StatelessWidget {
     return ElevatedButton(
       onPressed: () => authViewModel.signOutGoogle(),
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(AppColors.opicRed),
+        backgroundColor: WidgetStateProperty.all(AppColors.opicRed),
       ),
       child: const Text('로그아웃', style: TextStyle(color: AppColors.opicWhite)),
     );
