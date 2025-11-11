@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class YesOrClosePopUp extends StatelessWidget {
   final String title;
@@ -58,7 +57,6 @@ class YesOrClosePopUp extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      context.pop();
                       onConfirm();
                     },
                     style: ElevatedButton.styleFrom(
@@ -83,7 +81,6 @@ class YesOrClosePopUp extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      context.pop();
                       onCancel();
                     },
                     style: ElevatedButton.styleFrom(

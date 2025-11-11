@@ -2,11 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/component/yes_or_close_pop_up.dart';
 import 'package:opicproject/core/app_colors.dart';
+import 'package:opicproject/features/friend/data/friend_view_model.dart';
 import 'package:opicproject/features/post/ui/post_detail_page.dart';
+import 'package:provider/provider.dart';
 
 class FriendInfoRow extends StatelessWidget {
   final int userId;
-  const FriendInfoRow({super.key, required this.userId});
+  final int friendId;
+
+  const FriendInfoRow({
+    super.key,
+    required this.userId,
+    required this.friendId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -98,8 +106,11 @@ class FriendInfoRow extends StatelessWidget {
                           text: "삭제 시, 상대방과의 친구 관계가 끊어집니다",
                           confirmText: "삭제하기",
                           onConfirm: () {
-                            showToast("선택한 사용자를 친구 목록에서 삭제했어요");
                             context.pop();
+                            context.read<FriendViewModel>().deleteFriend(
+                              friendId,
+                            );
+                            showToast("선택한 사용자를 친구 목록에서 삭제했어요");
                           },
                           onCancel: () {
                             context.pop();

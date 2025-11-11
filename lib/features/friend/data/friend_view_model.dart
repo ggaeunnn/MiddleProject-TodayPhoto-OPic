@@ -97,4 +97,24 @@ class FriendViewModel extends ChangeNotifier {
     notifyListeners();
     debugPrint("FriendViewmodel fetchedFriends 호출됨");
   }
+
+  Future<void> deleteFriend(int friendId) async {
+    await this._repository.deleteFriend(friendId);
+
+    final removedCount = _friends.length;
+    _friends.removeWhere((friend) => friend.id == friendId);
+
+    notifyListeners();
+    debugPrint("FriendViewmodel deleteFriend 호출");
+  }
+
+  int getOtherUserId(Friend friend, int myUserId) {
+    return friend.user1Id == myUserId ? friend.user2Id : friend.user1Id;
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
 }

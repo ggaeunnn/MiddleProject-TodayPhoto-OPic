@@ -18,6 +18,7 @@ class _FriendScreenState extends State<FriendScreen> {
   bool showFriendRequests = false;
 
   int? _currentUserId;
+  int? _thisFriendId;
 
   @override
   void initState() {
@@ -91,35 +92,39 @@ class _FriendScreenState extends State<FriendScreen> {
                         ),
                       ],
                     ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _tabButton(
-                            label: '친구 목록',
-                            count: 2,
-                            isSelected: !showFriendRequests,
-                            onTap: () {
-                              setState(() {
-                                showFriendRequests = false;
-                              });
-                            },
-                          ),
-                        ),
-                        SizedBox(width: 12),
-                        Expanded(
-                          child: _tabButton(
-                            label: '친구 요청',
-                            count: 2,
-                            isSelected: showFriendRequests,
-                            onTap: () {
-                              setState(() {
-                                showFriendRequests = true;
-                              });
-                            },
-                            icon: Icons.mail_outline_rounded,
-                          ),
-                        ),
-                      ],
+                    Consumer<FriendViewModel>(
+                      builder: (context, viewModel, child) {
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: _tabButton(
+                                label: '친구 목록',
+                                count: viewModel.friends.length,
+                                isSelected: !showFriendRequests,
+                                onTap: () {
+                                  setState(() {
+                                    showFriendRequests = false;
+                                  });
+                                },
+                              ),
+                            ),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: _tabButton(
+                                label: '친구 요청',
+                                count: 2,
+                                isSelected: showFriendRequests,
+                                onTap: () {
+                                  setState(() {
+                                    showFriendRequests = true;
+                                  });
+                                },
+                                icon: Icons.mail_outline_rounded,
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -130,7 +135,7 @@ class _FriendScreenState extends State<FriendScreen> {
                 color: AppColors.opicBackground,
                 child: showFriendRequests
                     ? _friendRequest()
-                    : _friendList(context, _currentUserId ?? 10),
+                    : _friendList(context, _currentUserId ?? 0),
               ),
             ),
           ],
@@ -236,6 +241,7 @@ class _FriendScreenState extends State<FriendScreen> {
                           userId: _currentUserId == friend.user1Id
                               ? friend.user1Id
                               : friend.user2Id,
+                          friendId: _thisFriendId = friend.id,
                         ),
                       );
                     },
