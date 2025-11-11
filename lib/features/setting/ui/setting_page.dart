@@ -4,11 +4,12 @@ import 'package:opicproject/component/yes_or_close_pop_up.dart';
 import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/features/setting/component/edit_nickname_pop_up.dart';
+import 'package:opicproject/features/setting/data/setting_view_model.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingScreen extends StatelessWidget {
-  final int userId;
-  const SettingScreen({super.key, required this.userId});
+  const SettingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +27,11 @@ class _SettingScreen extends StatefulWidget {
 class _SettingScreenState extends State<_SettingScreen> {
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.read<SettingViewModel>();
+    final loginUserId = AuthManager.shared.userInfo?.id ?? 0;
+    viewModel.fetchUserInfo(loginUserId);
+    final loginUserInfo = viewModel.loginUser;
+
     return Container(
       child: Scaffold(
         backgroundColor: AppColors.opicBackground,
@@ -242,7 +248,9 @@ class _SettingScreenState extends State<_SettingScreen> {
                                   context: context,
                                   barrierColor: Colors.black.withOpacity(0.6),
                                   builder: (context) => EditNicknamePopUp(
-                                    currentNickname: "알수없음",
+                                    loginUserId: loginUserId,
+                                    loginUserNickname:
+                                        loginUserInfo?.nickname ?? "알 수 없음",
                                   ),
                                 );
                               },

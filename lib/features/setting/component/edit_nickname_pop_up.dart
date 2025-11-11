@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/app_colors.dart';
+import 'package:opicproject/features/post/ui/post_detail_page.dart';
+import 'package:opicproject/features/setting/data/setting_view_model.dart';
+import 'package:provider/provider.dart';
 
 class EditNicknamePopUp extends StatefulWidget {
-  final String currentNickname;
+  final int loginUserId;
+  final String loginUserNickname;
 
-  const EditNicknamePopUp({super.key, required this.currentNickname});
+  const EditNicknamePopUp({
+    super.key,
+    required this.loginUserId,
+    required this.loginUserNickname,
+  });
 
   @override
   State<EditNicknamePopUp> createState() => _EditNicknamePopUpState();
@@ -19,8 +27,7 @@ class _EditNicknamePopUpState extends State<EditNicknamePopUp> {
   void initState() {
     super.initState();
     // 초기값 설정
-    _nicknameController.text = widget.currentNickname;
-    _currentInput = widget.currentNickname;
+    _nicknameController.text = widget.loginUserNickname;
 
     // 실시간 입력 감지
     _nicknameController.addListener(() {
@@ -47,7 +54,7 @@ class _EditNicknamePopUpState extends State<EditNicknamePopUp> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "새로운 닉네임을 입력 한 뒤 저장을 눌러주세요",
+              "새로운 닉네임을 입력 한 뒤 변경하기를 눌러주세요",
               style: TextStyle(
                 fontWeight: FontWeight.w500,
                 fontSize: 14,
@@ -95,7 +102,20 @@ class _EditNicknamePopUpState extends State<EditNicknamePopUp> {
                     onPressed: _isValidNickname(_currentInput)
                         ? () {
                             // 저장 로직
-                            context.pop(_currentInput);
+                            context.read<SettingViewModel>().checkIfExist(
+                              _currentInput,
+                            );
+                            if (context.read<SettingViewModel>().isExist) {
+                              showToast("이미 사용 중인 닉네임이에요");
+                              return;
+                            } else {
+                              context.pop();
+                              context.read<SettingViewModel>().editNickname(
+                                widget.loginUserId,
+                                _currentInput,
+                              );
+                              showToast("닉네임을 변경했어요");
+                            }
                           }
                         : null,
                     style: ElevatedButton.styleFrom(
@@ -108,7 +128,7 @@ class _EditNicknamePopUpState extends State<EditNicknamePopUp> {
                       ),
                     ),
                     child: Text(
-                      "저장하기",
+                      "변경하기",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,

@@ -77,4 +77,9 @@ class FriendRepository {
       requesterId,
     );
   }
+
+  // 닉네임 변경하기
+  Future<void> editNickname(int loginUserId, String nickname) async {
+    await SupabaseManager.shared.editNickname(loginUserId, nickname);
+  }
 }

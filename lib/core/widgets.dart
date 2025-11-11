@@ -114,12 +114,7 @@ class _OpicPageViewState extends State<OpicPageView> {
         }
       },
       controller: pageController,
-      children: [
-        HomeScreen(),
-        FriendScreen(),
-        MyFeedScreen(),
-        SettingScreen(userId: 10),
-      ],
+      children: [HomeScreen(), FriendScreen(), MyFeedScreen(), SettingScreen()],
     );
   }
 }

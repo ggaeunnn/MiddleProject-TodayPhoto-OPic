@@ -28,6 +28,7 @@ class AuthViewModel extends ChangeNotifier {
 
   //구글로그인 초기화
   initGoogleSignIn() async {
+    await dotenv.load(fileName: "assets/config/.env");
     String webClientId = dotenv.get("Web_Client_Id");
     String clientId = dotenv.get("Client_Id");
 

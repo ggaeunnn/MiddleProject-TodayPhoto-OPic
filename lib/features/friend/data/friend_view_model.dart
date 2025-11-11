@@ -251,7 +251,6 @@ class FriendViewModel extends ChangeNotifier {
   Future<void> answerARequest(int requestId, int loginUserId) async {
     await _repository.answerARequest(requestId);
     await fetchFriendRequests(currentPage, loginUserId);
-    notifyListeners();
   }
 
   // 친구 요청 수락 - 친구 추가 하기
@@ -263,6 +262,11 @@ class FriendViewModel extends ChangeNotifier {
     await _repository.acceptARequest(requestId, loginUserId, requesterId);
     await fetchFriends(currentPage, loginUserId);
     await fetchFriendRequests(currentPage, loginUserId);
-    notifyListeners();
+  }
+
+  // 닉네임 수정하기
+  Future<void> editNickname(int loginUserId, String nickname) async {
+    await _repository.editNickname(loginUserId, nickname);
+    await fetchAUser(loginUserId);
   }
 }

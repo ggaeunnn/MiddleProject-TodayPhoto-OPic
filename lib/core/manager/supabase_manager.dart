@@ -117,4 +117,11 @@ class SupabaseManager {
       'user2_id': requesterId,
     });
   }
+
+  Future<void> editNickname(int loginUserId, String nickname) async {
+    await supabase
+        .from('user')
+        .update({'nickname': nickname})
+        .eq('id', loginUserId);
+  }
 }

@@ -11,6 +11,7 @@ import 'package:opicproject/features/onboarding/data/onboarding_service.dart';
 import 'package:opicproject/features/onboarding/ui/onboarding_screen.dart';
 import 'package:opicproject/features/onboarding/viewmodel/onboarding_viewmodel.dart';
 import 'package:opicproject/features/post/viewmodel/post_viewmodel.dart';
+import 'package:opicproject/features/setting/data/setting_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -46,14 +47,14 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/setting_page',
-      builder: (context, state) => SettingScreen(userId: 10),
+      builder: (context, state) => SettingScreen(),
     ),
   ],
 );
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: 'assets/config/.env');
+  await dotenv.load(fileName: "assets/config/.env");
   //getIt 로케이터 초기화
 
   await Supabase.initialize(
@@ -84,6 +85,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => FriendViewModel()),
         ChangeNotifierProvider(create: (context) => PostViewModel()),
         ChangeNotifierProvider(create: (context) => HomeViewModel()),
+        ChangeNotifierProvider(create: (context) => SettingViewModel()),
       ],
       child: MaterialApp.router(
         routerConfig: _router,
