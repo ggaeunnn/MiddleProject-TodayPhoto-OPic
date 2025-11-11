@@ -26,6 +26,7 @@ initLocator() {
   locator.registerLazySingleton<FeedService>(
     () => FeedService(locator<FeedRepository>()),
   );
+
   locator.registerLazySingleton<AuthRepository>(() => AuthRepository());
   locator.registerSingleton<AuthManager>(AuthManager());
 }

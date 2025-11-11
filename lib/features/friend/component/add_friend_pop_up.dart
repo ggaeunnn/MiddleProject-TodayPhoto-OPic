@@ -10,7 +10,7 @@ class AddFriendPopUp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      backgroundColor: Color(0xfffefefe),
+      backgroundColor: AppColors.opicWhite,
       child: Padding(
         padding: EdgeInsets.all(24),
         child: Column(
@@ -21,7 +21,7 @@ class AddFriendPopUp extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.w500,
                 fontSize: 14,
-                color: Color(0xff515151),
+                color: AppColors.opicBlack,
               ),
             ),
             SizedBox(height: 24),
@@ -32,11 +32,17 @@ class AddFriendPopUp extends StatelessWidget {
                 fillColor: AppColors.opicBackground,
                 hintText: '친구의 닉네임을 입력하세요',
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(width: 1, color: Color(0xff95b7db)),
+                  borderSide: BorderSide(
+                    width: 1,
+                    color: AppColors.opicSoftBlue,
+                  ),
                   borderRadius: BorderRadius.all(Radius.circular(16)),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(width: 1, color: Color(0xffe8e8dc)),
+                  borderSide: BorderSide(
+                    width: 1,
+                    color: AppColors.opicBackground,
+                  ),
                   borderRadius: BorderRadius.all(Radius.circular(16)),
                 ),
                 border: OutlineInputBorder(
@@ -57,8 +63,8 @@ class AddFriendPopUp extends StatelessWidget {
                       showToast("친구 요청을 보냈어요 💌");
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xff95b7db),
-                      foregroundColor: Color(0xfffefefe),
+                      backgroundColor: AppColors.opicSoftBlue,
+                      foregroundColor: AppColors.opicWhite,
                       padding: EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -69,7 +75,7 @@ class AddFriendPopUp extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
-                        color: Color(0xfffefefe),
+                        color: AppColors.opicWhite,
                       ),
                     ),
                   ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/core/models/friend_model.dart';
 import 'package:opicproject/features/friend/data/friend_repository.dart';
 
@@ -14,22 +15,50 @@ class FriendViewModel extends ChangeNotifier {
   List<Friend> get friends => _friends;
 
   bool shouldShowScrollUpButton = false;
+
   int? _loginUserId;
+  int? get loginUserId => _loginUserId;
 
-  FriendViewModel(BuildContext context, int loginUserId) {
-    fetchFriends(1, loginUserId);
+  bool _showFriendRequests = false;
+  bool get showFriendRequests => _showFriendRequests;
 
+  bool _isInitialized = false;
+  bool get isInitialized => _isInitialized;
+
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  FriendViewModel() {
+    _initializeScrollListener();
+    Future.delayed(Duration.zero, () {
+      _getCurrentUserId();
+    });
+  }
+
+  Future<void> _getCurrentUserId() async {
+    // AuthManager에서 유저 ID 가져오기
+    final userId = AuthManager.shared.userInfo?.id;
+    debugPrint("유저아이디 : $userId");
+
+    if (userId != null) {
+      _loginUserId = userId;
+      _isInitialized = true;
+      notifyListeners();
+      await initialize(userId);
+      return;
+    }
+  }
+
+  void _initializeScrollListener() {
     Timer? _debounce;
 
     // 바닥 감지
-    scrollController.addListener(() async {
+    scrollController.addListener(() {
       // scroll 일어나면 기존 타이머 취소
       if (_debounce?.isActive ?? false) _debounce!.cancel();
 
       _debounce = Timer(const Duration(milliseconds: 300), () {
         final double offset = scrollController.offset;
-
-        debugPrint('scrollController.offset: ${offset}');
 
         if (offset < 30) {
           if (shouldShowScrollUpButton) {
@@ -48,9 +77,14 @@ class FriendViewModel extends ChangeNotifier {
           scrollController.position.maxScrollExtent) {
         debugPrint('Scroll End');
         //여기에 바닥감지시 실행할 코드를 작성한다.
-        fetchMoreFriends(loginUserId);
+        fetchMoreFriends(_loginUserId!);
       }
     });
+  }
+
+  void changeTab(bool showRequests) {
+    _showFriendRequests = showRequests;
+    notifyListeners();
   }
 
   Future<void> initialize(int loginUserId) async {
@@ -70,7 +104,11 @@ class FriendViewModel extends ChangeNotifier {
 
   // 리포지토리에서 데이터 가져오는데 이제 시작하자마자 가져오기
   Future<void> fetchFriends(int startIndex, int loginUserId) async {
-    _friends = await _repository.fetchFriends(1, loginUserId);
+    _isLoading = true;
+    notifyListeners();
+
+    _friends = await _repository.fetchFriends(startIndex, loginUserId);
+    _isLoading = false;
 
     //구독자(?)에게 알림보내기
     notifyListeners();
@@ -83,18 +121,34 @@ class FriendViewModel extends ChangeNotifier {
     // 1.7초 딜레이
     await Future.delayed(const Duration(milliseconds: 1000));
     currentPage = 1;
-    _friends = await this._repository.fetchFriends(currentPage, loginUserId);
+    _friends = await _repository.fetchFriends(currentPage, loginUserId);
     notifyListeners();
   }
 
   Future<void> fetchMoreFriends(int loginUser) async {
+    if (_isLoading) return;
+
+    _isLoading = true;
     currentPage += 1;
-    dynamic fetchedFriends = await this._repository.fetchFriends(
+    final fetchedFriends = await _repository.fetchFriends(
       currentPage,
       loginUser,
     );
-    _friends.addAll(fetchedFriends);
+
+    if (fetchedFriends.isNotEmpty) {
+      _friends.addAll(fetchedFriends);
+    } else {
+      currentPage -= 1;
+    }
+    _isLoading = false;
     notifyListeners();
     debugPrint("FriendViewmodel fetchedFriends 호출됨");
+  }
+
+  // 친구 삭제하기
+  Future<void> deleteFriend(int friendId) async {
+    await _repository.deleteFriend(friendId);
+    _friends.removeWhere((friend) => friend.id == friendId);
+    notifyListeners();
   }
 }

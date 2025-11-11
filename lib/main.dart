@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
+import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/core/models/page_model.dart';
 import 'package:opicproject/features/auth/ui/login_page.dart';
 import 'package:opicproject/features/auth/viewmodel/auth_viewmodel.dart';
@@ -36,10 +37,7 @@ final GoRouter _router = GoRouter(
       builder: (context, state) => AlarmListScreen(userId: 10),
     ),
     GoRoute(path: '/feed', builder: (context, state) => MyFeedScreen()),
-    GoRoute(
-      path: '/friend_page',
-      builder: (context, state) => FriendScreen(loginUserId: 10),
-    ),
+    GoRoute(path: '/friend_page', builder: (context, state) => FriendScreen()),
     GoRoute(path: '/home', builder: (context, state) => MainPage()),
     GoRoute(
       path: '/setting_alarm_page',
@@ -62,6 +60,7 @@ void main() async {
     anonKey:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvcXhucGtsZ3RjcWt2c2thcmxzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0OTk4NTYsImV4cCI6MjA3ODA3NTg1Nn0.qR8GmGNztCm44qqm7xJK4VvmI1RcIJybGKeMVBy8yaA',
   );
+  AuthManager();
   initLocator();
   runApp(
     MultiProvider(
@@ -72,19 +71,17 @@ void main() async {
               OnboardingViewModel(locator<OnboardingService>()),
         ),
         ChangeNotifierProvider(
+          create: (context) => AuthViewModel(),
+          child: LoginScreen(),
+        ),
+        ChangeNotifierProvider(
           create: (context) => FeedViewModel(locator<FeedService>()),
         ),
         ChangeNotifierProvider(
           create: (context) => PageCountViewmodel(),
           child: MainPage(),
         ),
-        ChangeNotifierProvider(
-          create: (context) => FriendViewModel(context, 10),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => AuthViewModel(),
-          child: LoginScreen(),
-        ),
+        ChangeNotifierProvider(create: (context) => FriendViewModel()),
       ],
       child: MaterialApp.router(
         routerConfig: _router,

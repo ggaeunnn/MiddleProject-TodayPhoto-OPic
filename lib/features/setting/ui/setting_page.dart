@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/component/yes_or_close_pop_up.dart';
 import 'package:opicproject/core/app_colors.dart';
+import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/core/models/user_model.dart';
 import 'package:opicproject/features/setting/component/edit_nickname_pop_up.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -103,7 +104,7 @@ class _SettingScreenState extends State<_SettingScreen> {
                         color: AppColors.opicSoftBlue,
                       ),
                       Text(
-                        "닉네임자리",
+                        AuthManager.shared.userInfo?.nickname ?? "",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 15,
