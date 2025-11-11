@@ -4,7 +4,12 @@ import 'package:opicproject/features/post/ui/post_detail_page.dart';
 
 class FriendRequestRow extends StatelessWidget {
   final int userId;
-  const FriendRequestRow({super.key, required this.userId});
+  final int requestId;
+  const FriendRequestRow({
+    super.key,
+    required this.userId,
+    required this.requestId,
+  });
 
   @override
   Widget build(BuildContext context) {

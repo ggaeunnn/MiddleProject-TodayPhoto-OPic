@@ -29,7 +29,7 @@ class FriendScreen extends StatelessWidget {
                   child: Container(
                     color: AppColors.opicBackground,
                     child: viewModel.showFriendRequests
-                        ? _friendRequest()
+                        ? _friendRequest(context, viewModel)
                         : _friendList(context, viewModel),
                   ),
                 ),
@@ -102,7 +102,7 @@ Widget _buildHeader(BuildContext context, FriendViewModel viewModel) {
               Expanded(
                 child: _tabButton(
                   label: '친구 요청',
-                  count: 2,
+                  count: viewModel.friendRequests.length,
                   isSelected: viewModel.showFriendRequests,
                   onTap: () {
                     viewModel.changeTab(true);
@@ -211,6 +211,7 @@ Widget _friendList(BuildContext context, FriendViewModel viewModel) {
             userId: loginUserId == friend.user1Id
                 ? friend.user2Id
                 : friend.user1Id,
+            friendId: friend.id,
           ),
         );
       },
@@ -219,10 +220,11 @@ Widget _friendList(BuildContext context, FriendViewModel viewModel) {
 }
 
 /// 친구 요청 화면
-Widget _friendRequest() {
-  final friendRequests = [];
+Widget _friendRequest(BuildContext context, FriendViewModel viewModel) {
+  final loginUserId = viewModel.loginUserId!;
+  final friendRequestsCount = viewModel.friendRequests.length;
 
-  if (friendRequests.isEmpty) {
+  if (friendRequestsCount == 0) {
     return Container(
       color: AppColors.opicBackground,
       child: Center(
@@ -234,14 +236,22 @@ Widget _friendRequest() {
     );
   }
 
-  return ListView.builder(
-    itemCount: friendRequests.length,
-    itemBuilder: (context, index) {
-      final friendRequest = friendRequests[index];
-      return Container(
-        color: AppColors.opicBackground,
-        child: FriendRequestRow(userId: 1),
-      );
-    },
+  return RefreshIndicator(
+    onRefresh: () => viewModel.refresh(loginUserId),
+    child: ListView.builder(
+      controller: viewModel.scrollController,
+      itemCount: friendRequestsCount,
+      itemBuilder: (context, index) {
+        final friendRequest = viewModel.friendRequests[index];
+
+        return Container(
+          color: AppColors.opicBackground,
+          child: FriendRequestRow(
+            userId: friendRequest.requestId,
+            requestId: friendRequest.id,
+          ),
+        );
+      },
+    ),
   );
 }
