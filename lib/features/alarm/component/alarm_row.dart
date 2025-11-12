@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:opicproject/core/app_colors.dart';
-import 'package:opicproject/core/models/alarm_model.dart';
 import 'package:opicproject/features/alarm/data/alarm_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -33,27 +32,27 @@ class AlarmRow extends StatelessWidget {
               radius: 20,
               backgroundColor: AppColors.opicWarmGrey,
               child: switch (alarmType) {
-                AlarmType.NEW_TOPIC => Icon(
+                "NEW_TOPIC" => Icon(
                   Icons.calendar_today_outlined,
                   size: 20,
                   color: AppColors.opicBlue,
                 ),
-                AlarmType.NEW_FRIEND_REQUEST => Icon(
+                "NEW_FRIEND_REQUEST" => Icon(
                   Icons.person_add_alt,
                   size: 20,
                   color: AppColors.opicBlue,
                 ),
-                AlarmType.NEW_FRIEND => Icon(
+                "NEW_FRIEND" => Icon(
                   Icons.check,
                   size: 20,
                   color: AppColors.opicBlue,
                 ),
-                AlarmType.NEW_LIKE => Icon(
+                "NEW_LIKE" => Icon(
                   Icons.favorite_border_rounded,
                   size: 20,
                   color: AppColors.opicBlue,
                 ),
-                AlarmType.NEW_REPLY => Icon(
+                "NEW_REPLY" => Icon(
                   Icons.chat_bubble_outline_rounded,
                   size: 20,
                   color: AppColors.opicBlue,

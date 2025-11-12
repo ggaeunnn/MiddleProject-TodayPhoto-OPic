@@ -164,8 +164,8 @@ class DioManager {
       'https://zoqxnpklgtcqkvskarls.supabase.co/rest/v1/alarm',
       queryParameters: {
         'select': '*',
-        'target_user_id': 'eq.$loginId',
-        'is_checked': 'false',
+        'user_id': 'eq.$loginId',
+        'is_checked': 'eq.false',
       },
       options: Options(
         headers: {

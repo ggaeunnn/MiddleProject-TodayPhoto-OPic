@@ -2,7 +2,7 @@ class Alarm {
   final int id;
   final String createdAt;
   final int? userId;
-  final AlarmType type;
+  final String alarmType;
   final String content;
   final bool isChecked;
 
@@ -10,7 +10,7 @@ class Alarm {
     required this.id,
     required this.createdAt,
     required this.userId,
-    required this.type,
+    required this.alarmType,
     required this.content,
     required this.isChecked,
   });
@@ -20,7 +20,7 @@ class Alarm {
       id: json['id'] as int,
       createdAt: json['created_at'] as String,
       userId: json['user_id'] as int,
-      type: json['type'] as AlarmType,
+      alarmType: json['type'] as String,
       content: json['content'] as String,
       isChecked: json['is_checked'] as bool,
     );
@@ -31,17 +31,9 @@ class Alarm {
       'id': id,
       'created_at': createdAt,
       'user_id': userId,
-      'type': type,
+      'type': alarmType,
       'content': content,
       'is_checked': isChecked,
     };
   }
-}
-
-enum AlarmType {
-  NEW_TOPIC,
-  NEW_FRIEND_REQUEST,
-  NEW_FRIEND,
-  NEW_LIKE,
-  NEW_REPLY,
 }
