@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:opicproject/core/app_colors.dart';
 
-class MyFeedScreen extends StatelessWidget {
-  const MyFeedScreen({super.key});
+class FeedScreen extends StatelessWidget {
+  const FeedScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
