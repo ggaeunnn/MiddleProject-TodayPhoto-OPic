@@ -12,7 +12,7 @@ class AlarmRow extends StatelessWidget {
     final viewModel = context.read<AlarmViewModel>();
     viewModel.fetchAnAlarm(alarmId);
     final alarm = viewModel.certainAlarm;
-    final alarmType = alarm?.type;
+    final alarmType = alarm?.alarmType;
     final alarmContent = alarm?.content ?? "존재하지 않는 알림입니다";
     final alarmTime = alarm?.createdAt;
 
@@ -62,6 +62,8 @@ class AlarmRow extends StatelessWidget {
                   size: 20,
                   color: AppColors.opicBlue,
                 ),
+                // TODO: Handle this case.
+                String() => throw UnimplementedError(),
               },
             ),
             Column(
