@@ -9,11 +9,14 @@ import 'package:opicproject/features/post_report/ui/post_report_page.dart';
 import 'package:provider/provider.dart';
 
 class PostDetailScreen extends StatelessWidget {
-  const PostDetailScreen({super.key});
+  final int postId;
 
-  @override
+  const PostDetailScreen({required this.postId, super.key});
   Widget build(BuildContext context) {
     final viewmodel = context.watch<PostViewModel>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      viewmodel.fetchPostById(postId);
+    });
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -45,14 +48,13 @@ class PostDetailScreen extends StatelessWidget {
                         ],
                       ),
                       SizedBox(height: 10),
-                      viewmodel.selectedImage != null
-                          ? Image.file(viewmodel.selectedImage!, height: 200)
-                          : Image.network(
-                              'https://images.unsplash.com/photo-1455156218388-5e61b526818b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fCVFQSVCMiVBOCVFQyU5QSVCOHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=500',
-                              width: double.infinity,
-                              height: 350,
-                              fit: BoxFit.fill,
-                            ),
+                      Image.network(
+                        viewmodel.post?['image_url'] ??
+                            'https://images.unsplash.com/photo-1455156218388-5e61b526818b?auto=format&fit=crop&q=60&w=500',
+                        width: double.infinity,
+                        height: 350,
+                        fit: BoxFit.fill,
+                      ),
 
                       SizedBox(height: 10),
                       Row(
@@ -66,7 +68,7 @@ class PostDetailScreen extends StatelessWidget {
                             iconSize: 20,
                             color: AppColors.opicRed,
                             onPressed: () {
-                              viewmodel.toggleLike();
+                              viewmodel.toggleLike(postId);
                             },
                           ),
                           Text(
@@ -212,56 +214,64 @@ class PostDetailScreen extends StatelessWidget {
                                   : ListView.builder(
                                       itemCount: viewmodel.commentList.length,
                                       shrinkWrap: true,
-                                      itemBuilder: (BuildContext context, int index) {
-                                        return Container(
-                                          padding: EdgeInsets.only(left: 10),
-                                          width: 100,
-                                          color: AppColors.opicWhite,
-                                          child: Column(
-                                            children: [
-                                              Row(
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                            return Container(
+                                              padding: EdgeInsets.only(
+                                                left: 10,
+                                              ),
+                                              width: 100,
+                                              color: AppColors.opicWhite,
+                                              child: Column(
                                                 children: [
-                                                  IconButton(
-                                                    onPressed: () {
-                                                      context.go(
-                                                        '/friend_feed',
-                                                      );
-                                                    },
-                                                    icon: Icon(Icons.person),
+                                                  Row(
+                                                    children: [
+                                                      IconButton(
+                                                        onPressed: () {
+                                                          context.go(
+                                                            '/friend_feed',
+                                                          );
+                                                        },
+                                                        icon: Icon(
+                                                          Icons.person,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        viewmodel.loginUserName,
+                                                      ),
+                                                      Spacer(),
+                                                      Text(
+                                                        viewmodel.commentDate,
+                                                        style: TextStyle(
+                                                          fontSize: 10,
+                                                          color: AppColors
+                                                              .opicBlack,
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                              right: 8,
+                                                            ),
+                                                      ),
+                                                    ],
                                                   ),
-                                                  Text(
-                                                    viewmodel.loginUserName,
-                                                  ),
-                                                  Spacer(),
-                                                  Text(
-                                                    viewmodel.commentDate,
-                                                    style: TextStyle(
-                                                      fontSize: 10,
-                                                      color:
-                                                          AppColors.opicBlack,
-                                                    ),
-                                                  ),
-                                                  Padding(
+                                                  Container(
                                                     padding: EdgeInsets.only(
-                                                      right: 8,
+                                                      left: 20,
+                                                    ),
+                                                    width: double.infinity,
+                                                    child: Text(
+                                                      viewmodel
+                                                          .commentList[index],
+                                                      textAlign:
+                                                          TextAlign.start,
                                                     ),
                                                   ),
                                                 ],
                                               ),
-                                              Container(
-                                                padding: EdgeInsets.only(
-                                                  left: 20,
-                                                ),
-                                                width: double.infinity,
-                                                child: Text(
-                                                  viewmodel.commentList[index],
-                                                  textAlign: TextAlign.start,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      },
+                                            );
+                                          },
                                     ),
                             ),
                             SizedBox(height: 20),

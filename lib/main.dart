@@ -44,8 +44,11 @@ final GoRouter _router = GoRouter(
 
     GoRoute(path: '/login', builder: (context, state) => LoginScreen()),
     GoRoute(
-      path: '/post_detail_page',
-      builder: (context, state) => PostDetailScreen(),
+      path: '/post_detail_page/:id',
+      builder: (context, state) {
+        final postId = int.parse(state.pathParameters['id']!);
+        return PostDetailScreen(postId: postId);
+      },
     ),
     GoRoute(
       path: '/alarm_list_page',
