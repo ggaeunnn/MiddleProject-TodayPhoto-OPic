@@ -44,6 +44,8 @@ dependencies:
   supabase_flutter: ^2.6.0
   get_it: ^9.0.5
   image_picker: ^1.2.0
+  firebase_core: ^4.2.1
+  firebase_messaging: ^16.0.4
 
 
 dev_dependencies:
