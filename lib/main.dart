@@ -21,8 +21,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/manager/locator.dart';
 import 'features/alarm/ui/alarm_list_page.dart';
+import 'features/feed/data/feed_viewmodel.dart';
 import 'features/feed/ui/feed.dart';
-import 'features/feed/viewmodel/feed_viewmodel.dart';
 import 'features/friend/ui/friend_page.dart';
 import 'features/post/ui/post_detail_page.dart';
 import 'features/setting/ui/setting_alarm_page.dart';
@@ -51,9 +51,15 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/alarm_list_page',
-      builder: (context, state) => AlarmListScreen(userId: 10),
+      builder: (context, state) => AlarmListScreen(),
     ),
-    GoRoute(path: '/feed', builder: (context, state) => FeedScreen()),
+    GoRoute(
+      path: '/feed/:id',
+      builder: (context, state) {
+        final userId = int.parse(state.pathParameters['id']!);
+        return FeedScreen(userId: userId);
+      },
+    ),
     GoRoute(path: '/friend_page', builder: (context, state) => FriendScreen()),
     GoRoute(path: '/home', builder: (context, state) => MainPage()),
     GoRoute(

@@ -29,7 +29,7 @@ class PostCard extends StatelessWidget {
               //좋아요
               const Icon(Icons.favorite, color: Colors.red, size: 20),
               const SizedBox(width: 4),
-              Text('${post.likes}', style: const TextStyle(color: Colors.red)),
+              Text('post.likes', style: const TextStyle(color: Colors.red)),
 
               const SizedBox(width: 16),
 
@@ -40,10 +40,7 @@ class PostCard extends StatelessWidget {
                 size: 20,
               ),
               const SizedBox(width: 4),
-              Text(
-                '${post.comments}',
-                style: const TextStyle(color: Colors.grey),
-              ),
+              Text('post.comments', style: const TextStyle(color: Colors.grey)),
             ],
           ),
         ),

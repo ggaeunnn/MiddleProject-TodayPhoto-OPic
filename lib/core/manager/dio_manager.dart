@@ -3,6 +3,7 @@ import 'package:opicproject/core/models/alarm_model.dart';
 import 'package:opicproject/core/models/alarm_setting_model.dart';
 import 'package:opicproject/core/models/friend_model.dart';
 import 'package:opicproject/core/models/friend_request_model.dart';
+import 'package:opicproject/core/models/post_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class DioManager {
@@ -182,6 +183,46 @@ class DioManager {
       final List data = response.data;
       final List<Alarm> results = data.map((json) {
         return Alarm.fromJson(json);
+      }).toList();
+      return results;
+    } else {
+      return List.empty();
+    }
+  }
+
+  // 유저의 포스트 불러오기 FOR 피드
+  Future<List<Post>> fetchPosts({
+    int currentPage = 1,
+    int perPage = 15,
+    required int userId,
+  }) async {
+    final int startIndex = perPage * (currentPage - 1);
+    final int endIndex = startIndex + perPage - 1;
+    final String range = "$startIndex-$endIndex";
+
+    final response = await _dio.get(
+      'https://zoqxnpklgtcqkvskarls.supabase.co/rest/v1/posts',
+      queryParameters: {
+        'select': '*',
+        'user_id': 'eq.$userId',
+        'is_deleted': 'eq.false',
+        'order': 'created_at.desc',
+      },
+      options: Options(
+        headers: {
+          'apikey':
+              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvcXhucGtsZ3RjcWt2c2thcmxzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0OTk4NTYsImV4cCI6MjA3ODA3NTg1Nn0.qR8GmGNztCm44qqm7xJK4VvmI1RcIJybGKeMVBy8yaA',
+          'Authorization':
+              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvcXhucGtsZ3RjcWt2c2thcmxzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0OTk4NTYsImV4cCI6MjA3ODA3NTg1Nn0.qR8GmGNztCm44qqm7xJK4VvmI1RcIJybGKeMVBy8yaA',
+          'Range': range,
+        },
+      ),
+    );
+
+    if (response.data != null) {
+      final List data = response.data;
+      final List<Post> results = data.map((json) {
+        return Post.fromJson(json);
       }).toList();
       return results;
     } else {

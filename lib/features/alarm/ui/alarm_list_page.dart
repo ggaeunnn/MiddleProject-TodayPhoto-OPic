@@ -8,18 +8,16 @@ import 'package:opicproject/features/alarm/data/alarm_view_model.dart';
 import 'package:provider/provider.dart';
 
 class AlarmListScreen extends StatelessWidget {
-  final int userId;
-  const AlarmListScreen({super.key, required this.userId});
+  const AlarmListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Placeholder(child: _AlarmListScreen(userId: userId));
+    return Placeholder(child: _AlarmListScreen());
   }
 }
 
 class _AlarmListScreen extends StatefulWidget {
-  final int userId;
-  const _AlarmListScreen({required this.userId});
+  const _AlarmListScreen();
 
   @override
   State<_AlarmListScreen> createState() => _AlarmListScreenState();

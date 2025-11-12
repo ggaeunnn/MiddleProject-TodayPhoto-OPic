@@ -1,110 +1,236 @@
-//feed page
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/app_colors.dart';
+import 'package:opicproject/core/manager/autn_manager.dart';
+import 'package:opicproject/core/models/page_model.dart';
+import 'package:opicproject/core/models/user_model.dart';
+import 'package:opicproject/features/feed/data/feed_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class FeedScreen extends StatelessWidget {
-  const FeedScreen({super.key});
+  final int userId;
+
+  const FeedScreen({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Scaffold(
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return Consumer<FeedViewModel>(
+      builder: (context, feedViewModel, child) {
+        final pageViewModel = context.read<PageCountViewmodel>();
+        final loginUserId = AuthManager.shared.userInfo?.id ?? 0;
+        final feedUserId = pageViewModel.currentPage == 2
+            ? loginUserId
+            : userId;
+
+        // 빌드 후에 데이터 로드 (한 번만 실행되도록)
+        if (feedViewModel.feedUser == null ||
+            feedViewModel.feedUser!.id != feedUserId) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            feedViewModel.fetchAUser(feedUserId);
+            feedViewModel.fetchPosts(1, feedUserId);
+          });
+        }
+
+        final feedUser = feedViewModel.feedUser;
+
+        if (feedUser == null ||
+            (feedViewModel.isLoading && feedViewModel.posts.isEmpty)) {
+          return Container(
+            color: AppColors.opicBackground,
+            child: Center(
+              child: CircularProgressIndicator(color: AppColors.opicBlue),
+            ),
+          );
+        }
+
+        return Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 8.0,
+            _buildUserHeader(context, feedViewModel, feedUser, loginUserId),
+            Expanded(
+              child: Container(
+                color: AppColors.opicBackground,
+                child: _postList(context, feedViewModel, feedUser),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      const Text(
-                        '내 피드',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          color: AppColors.opicBlack,
-                        ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+Widget _buildUserHeader(
+  BuildContext context,
+  FeedViewModel feedViewModel,
+  UserInfo feedUser,
+  int loginUserId,
+) {
+  final isMyFeed = feedUser.id == loginUserId;
+
+  return Container(
+    decoration: BoxDecoration(
+      color: AppColors.opicWhite,
+      border: Border(
+        top: BorderSide(color: AppColors.opicSoftBlue, width: 0.5),
+        bottom: BorderSide(color: AppColors.opicSoftBlue, width: 0.5),
+      ),
+    ),
+    width: double.maxFinite,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 12.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // 닉네임
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 15.0),
+            child: Text(
+              feedUser.nickname,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: AppColors.opicBlack,
+              ),
+            ),
+          ),
+          // 내 피드가 아닐 때만 차단 버튼 표시
+          if (!isMyFeed)
+            GestureDetector(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text('사용자 차단'),
+                    content: Text('${feedUser.nickname}님을 차단하시겠습니까?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => context.pop(),
+                        child: Text('취소'),
                       ),
-                      const SizedBox(width: 8),
-                      Chip(
-                        label: const Text('차단하기'),
-                        backgroundColor: AppColors.opicRed,
-                        labelStyle: TextStyle(
-                          color: AppColors.opicWhite,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          side: BorderSide.none,
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 4,
-                          vertical: 0,
-                        ),
-                        visualDensity: const VisualDensity(
-                          horizontal: 0,
-                          vertical: -4,
+                      TextButton(
+                        onPressed: () async {
+                          await feedViewModel.blockUser(feedUser.id);
+                          if (context.mounted) {
+                            context.pop(); // 다이얼로그 닫기
+                            context.pop(); // 피드 화면 닫기
+                          }
+                        },
+                        child: Text(
+                          '차단',
+                          style: TextStyle(color: AppColors.opicRed),
                         ),
                       ),
                     ],
                   ),
-
-                  // 오른쪽 상단 그리드/리스트 뷰 아이콘
-                ],
-              ),
-            ),
-
-            // 게시물 수 및 좋아요 수
-            Padding(
-              padding: const EdgeInsets.only(left: 16.0, bottom: 16.0),
-              child: Row(
-                children: const [
-                  Text('게시물 3', style: TextStyle(color: Colors.grey)),
-                  SizedBox(width: 16),
-                  Text('좋아요 1', style: TextStyle(color: Colors.grey)),
-                ],
-              ),
-            ),
-
-            // 타일형 이미지 섹션 (GridView)
-            Expanded(
-              child: GridView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                itemCount: 3, //갯수
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3, // 한 줄에 3개
-                  crossAxisSpacing: 4.0, //가로 간격
-                  mainAxisSpacing: 4.0, //세로 간격
-                  childAspectRatio: 1.0, // 타일 비율 (정사각형)
+                );
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: AppColors.opicRed,
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                itemBuilder: (context, index) {
-                  //임시 이미지 리스트 3개
-                  final List<String> imageUrls = [
-                    'https://images.unsplash.com/photo-1447933601403-0c6688de566e?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1061',
-                    'https://images.unsplash.com/photo-1607532941433-304659e8198a?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1078',
-                    'https://images.unsplash.com/photo-1487383298905-ee8a6b373ff9?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8c25vd3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=500',
-                  ];
-
-                  return Image.network(
-                    imageUrls[index % imageUrls.length],
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      color: AppColors.opicBackground,
-                      child: const Center(child: Text('이미지')),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.block_rounded,
+                      color: AppColors.opicWhite,
+                      size: 16,
                     ),
-                  );
-                },
+                    SizedBox(width: 6),
+                    Text(
+                      "차단",
+                      style: TextStyle(
+                        color: AppColors.opicWhite,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ],
+        ],
+      ),
+    ),
+  );
+}
+
+Widget _postList(
+  BuildContext context,
+  FeedViewModel feedViewModel,
+  UserInfo feedUser,
+) {
+  final postsCount = feedViewModel.posts.length;
+  final posts = feedViewModel.posts;
+
+  if (postsCount == 0) {
+    return RefreshIndicator(
+      onRefresh: () => feedViewModel.refresh(feedUser.id),
+      child: SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
+        child: Container(
+          color: AppColors.opicBackground,
+          height: MediaQuery.of(context).size.height * 0.6,
+          child: Center(
+            child: Text(
+              "아직 작성한 게시물이 없어요",
+              style: TextStyle(fontSize: 16, color: AppColors.opicBlack),
+            ),
+          ),
         ),
       ),
     );
   }
+
+  return RefreshIndicator(
+    onRefresh: () => feedViewModel.refresh(feedUser.id),
+    child: GridView.builder(
+      physics: AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.all(6.0),
+      controller: feedViewModel.scrollController,
+      itemCount: postsCount,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 6.0,
+        mainAxisSpacing: 6.0,
+        childAspectRatio: 1.0,
+      ),
+      itemBuilder: (context, index) {
+        final post = posts[index];
+        return GestureDetector(
+          onTap: () {
+            context.push('/post_detail_page/${post.id}');
+          },
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.network(
+              post.imageUrl,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Container(
+                color: AppColors.opicWarmGrey,
+                child: Icon(
+                  Icons.image_not_supported,
+                  color: AppColors.opicCoolGrey,
+                ),
+              ),
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Container(
+                  color: AppColors.opicWarmGrey,
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.opicBlue,
+                      strokeWidth: 2,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      },
+    ),
+  );
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/app_colors.dart';
+import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/core/models/page_model.dart';
 import 'package:opicproject/features/feed/ui/feed.dart';
 import 'package:opicproject/features/friend/ui/friend_page.dart';
@@ -108,6 +109,7 @@ class _OpicPageViewState extends State<OpicPageView> {
     final PageController pageController = context
         .watch<PageCountViewmodel>()
         .pageController;
+    final loginUserId = AuthManager.shared.userInfo?.id ?? 0;
     return PageView(
       onPageChanged: (index) {
         if (index > currentpage) {
@@ -118,7 +120,12 @@ class _OpicPageViewState extends State<OpicPageView> {
         }
       },
       controller: pageController,
-      children: [HomeScreen(), FriendScreen(), FeedScreen(), SettingScreen()],
+      children: [
+        HomeScreen(),
+        FriendScreen(),
+        FeedScreen(userId: loginUserId),
+        SettingScreen(),
+      ],
     );
   }
 }

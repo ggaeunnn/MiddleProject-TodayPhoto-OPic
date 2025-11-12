@@ -186,7 +186,7 @@ Widget _tabButton({
 @override
 /// 친구 목록 화면
 Widget _friendList(BuildContext context, FriendViewModel viewModel) {
-  final loginUserId = viewModel.loginUserId!;
+  final loginUserId = AuthManager.shared.userInfo?.id ?? 0;
   final friendsCount = viewModel.friends.length;
 
   // 친구 목록이 비어있을 때
