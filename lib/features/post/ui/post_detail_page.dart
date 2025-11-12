@@ -68,7 +68,8 @@ class PostDetailScreen extends StatelessWidget {
                             iconSize: 20,
                             color: AppColors.opicRed,
                             onPressed: () {
-                              viewmodel.toggleLike(postId);
+                              final userId = 11;
+                              viewmodel.toggleLike(userId, postId);
                             },
                           ),
                           Text(

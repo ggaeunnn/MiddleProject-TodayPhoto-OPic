@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-import 'package:opicproject/core/manager/supabase_manager.dart';
 import 'package:opicproject/features/post/data/post_repository.dart';
 
 class PostViewModel extends ChangeNotifier {
@@ -40,9 +39,13 @@ class PostViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> toggleLike(int postId) async {
-    final userId = SupabaseManager.shared.supabase.auth.currentUser?.id;
-    await _repository.fetchLike(userId!, postId);
+  Future<void> toggleLike(int userId, int postId) async {
+    await _repository.toggleLike(userId, postId);
+    await fetchLikeCount(postId);
+    notifyListeners();
+  }
+
+  Future<void> fetchLikeCount(int postId) async {
     likeCount = await _repository.getLikeCount(postId);
     notifyListeners();
   }
