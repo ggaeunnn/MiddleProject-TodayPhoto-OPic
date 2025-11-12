@@ -13,4 +13,8 @@ class AlarmRepository {
   Future<Alarm?> fetchAnAlarm(int alarmId) async {
     return await SupabaseManager.shared.fetchAnAlarm(alarmId);
   }
+
+  Future<void> checkAlarm(int alarmId) async {
+    return await SupabaseManager.shared.checkAlarm(alarmId);
+  }
 }

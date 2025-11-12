@@ -156,4 +156,9 @@ class AlarmViewModel extends ChangeNotifier {
   Future<void> fetchAnAlarm(int alarmId) async {
     _certainAlarm = await _repository.fetchAnAlarm(alarmId);
   }
+
+  Future<void> checkAlarm(int loginUserId, int alarmId) async {
+    await _repository.checkAlarm(alarmId);
+    await refresh(loginUserId);
+  }
 }

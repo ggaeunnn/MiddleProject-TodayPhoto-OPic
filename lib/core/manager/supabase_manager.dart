@@ -156,4 +156,9 @@ class SupabaseManager {
     }
     return Alarm.fromJson(data);
   }
+
+  // 알람 메세지 읽음 처리
+  Future<void> checkAlarm(int alarmId) async {
+    await supabase.from('alarm').update({'is_checked': true}).eq('id', alarmId);
+  }
 }

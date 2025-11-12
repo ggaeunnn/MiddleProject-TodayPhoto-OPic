@@ -177,7 +177,7 @@ Widget _buildAlarmList(
 
             return Container(
               color: AppColors.opicBackground,
-              child: AlarmRow(alarmId: alarm.id),
+              child: AlarmRow(alarmId: alarm.id, loginUserId: loginUserId),
             );
           },
         );

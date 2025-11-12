@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:opicproject/core/app_colors.dart';
+import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/core/manager/supabase_manager.dart';
 import 'package:opicproject/core/models/user_model.dart';
 import 'package:opicproject/features/friend/component/add_friend_pop_up.dart';
@@ -17,7 +18,8 @@ class FriendScreen extends StatelessWidget {
       body: SafeArea(
         child: Consumer<FriendViewModel>(
           builder: (context, viewModel, child) {
-            if (viewModel.loginUserId == null) {
+            final loginUserId = AuthManager.shared.userInfo?.id ?? 0;
+            if (loginUserId == 0) {
               return Container(
                 decoration: BoxDecoration(color: AppColors.opicBackground),
                 child: Center(child: Text("로그인 해주세요")),
