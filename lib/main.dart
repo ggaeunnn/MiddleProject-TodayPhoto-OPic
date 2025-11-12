@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/models/page_model.dart';
+import 'package:opicproject/features/alarm/data/alarm_view_model.dart';
 import 'package:opicproject/features/auth/ui/login_page.dart';
 import 'package:opicproject/features/auth/viewmodel/auth_viewmodel.dart';
 import 'package:opicproject/features/friend/data/friend_view_model.dart';
@@ -86,6 +87,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => PostViewModel()),
         ChangeNotifierProvider(create: (context) => HomeViewModel()),
         ChangeNotifierProvider(create: (context) => SettingViewModel()),
+        ChangeNotifierProvider(create: (context) => AlarmViewModel()),
       ],
       child: MaterialApp.router(
         routerConfig: _router,

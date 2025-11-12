@@ -188,7 +188,7 @@ class _SettingAlarmScreenState extends State<SettingAlarmScreen> {
                           focusColor: Colors.transparent,
                         ),
                         Text(
-                          "알림 설정",
+                          "푸시 알림 설정",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 15,

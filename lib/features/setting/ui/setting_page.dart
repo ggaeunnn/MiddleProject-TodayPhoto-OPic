@@ -184,7 +184,7 @@ class _SettingScreenState extends State<_SettingScreen> {
                                               color: AppColors.opicSoftBlue,
                                             ),
                                             Text(
-                                              "알림설정",
+                                              "푸시 알림 설정",
                                               style: TextStyle(
                                                 fontSize: 15,
                                                 color: AppColors.opicBlack,

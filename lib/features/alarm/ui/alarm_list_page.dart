@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/app_colors.dart';
-import 'package:opicproject/features/alarm/component/alarm_row_comment.dart';
+import 'package:opicproject/core/manager/autn_manager.dart';
+import 'package:opicproject/features/alarm/component/alarm_row.dart';
+import 'package:opicproject/features/alarm/data/alarm_view_model.dart';
+import 'package:provider/provider.dart';
 
 class AlarmListScreen extends StatelessWidget {
   final int userId;
@@ -23,6 +26,11 @@ class _AlarmListScreen extends StatefulWidget {
 class _AlarmListScreenState extends State<_AlarmListScreen> {
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.read<AlarmViewModel>();
+    final loginUserId = AuthManager.shared.userInfo?.id ?? 0;
+    viewModel.fetchAlarms(1, loginUserId);
+    final alarmList = viewModel.alarms;
+
     return Scaffold(
       backgroundColor: AppColors.opicWhite,
       body: SafeArea(
@@ -77,13 +85,32 @@ class _AlarmListScreenState extends State<_AlarmListScreen> {
             Expanded(
               child: Container(
                 width: MediaQuery.of(context).size.width,
-                color: Color(0xfffcfcf0),
+                color: AppColors.opicBackground,
                 alignment: Alignment.topCenter,
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
-
-                  /// ListView 처리 필요
-                  child: _alarmList(),
+                  child: alarmList.isEmpty
+                      ? Container(
+                          color: AppColors.opicBackground,
+                          child: Center(
+                            child: Text(
+                              '새로운 알림이 없습니다',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: AppColors.opicBlack,
+                              ),
+                            ),
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: alarmList.length,
+                          itemBuilder: (context, index) {
+                            final alarm = alarmList[index];
+                            return Container(
+                              child: AlarmRow(alarmId: alarmList[index].id),
+                            );
+                          },
+                        ),
                 ),
               ),
             ),
@@ -92,27 +119,4 @@ class _AlarmListScreenState extends State<_AlarmListScreen> {
       ),
     );
   }
-}
-
-Widget _alarmList() {
-  final alarms = [];
-  if (alarms.isEmpty) {
-    return Container(
-      color: AppColors.opicBackground,
-      child: Center(
-        child: Text(
-          '새로운 알림이 없습니다',
-          style: TextStyle(fontSize: 16, color: AppColors.opicBlack),
-        ),
-      ),
-    );
-  }
-
-  return ListView.builder(
-    itemCount: alarms.length,
-    itemBuilder: (context, index) {
-      final alarm = alarms[index];
-      return Container(child: AlarmRowComment());
-    },
-  );
 }

@@ -1,7 +1,7 @@
 class Alarm {
   final int id;
   final String createdAt;
-  final int userId;
+  final int? userId;
   final AlarmType type;
   final String content;
   final bool isChecked;

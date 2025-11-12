@@ -1,10 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/app_colors.dart';
+import 'package:opicproject/core/manager/autn_manager.dart';
+import 'package:opicproject/features/friend/data/friend_view_model.dart';
 import 'package:opicproject/features/post/ui/post_detail_page.dart';
+import 'package:provider/provider.dart';
 
-class AddFriendPopUp extends StatelessWidget {
+class AddFriendPopUp extends StatefulWidget {
   const AddFriendPopUp({super.key});
+
+  @override
+  State<AddFriendPopUp> createState() => _AddFriendPopUpState();
+}
+
+class _AddFriendPopUpState extends State<AddFriendPopUp> {
+  final TextEditingController _nicknameController = TextEditingController();
+
+  @override
+  void dispose() {
+    _nicknameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +42,7 @@ class AddFriendPopUp extends StatelessWidget {
             ),
             SizedBox(height: 24),
             TextField(
+              controller: _nicknameController, // controller 추가!
               obscureText: false,
               decoration: InputDecoration(
                 filled: true,
@@ -58,7 +75,50 @@ class AddFriendPopUp extends StatelessWidget {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      final nickname = _nicknameController.text.trim();
+                      if (nickname.isEmpty) {
+                        showToast("닉네임을 입력해주세요");
+                        return;
+                      }
+
+                      final viewModel = context.read<FriendViewModel>();
+                      final loginUserId = AuthManager.shared.userInfo?.id ?? 0;
+
+                      // 1. 유저 존재 여부 확인
+                      await viewModel.checkIfExist(nickname);
+
+                      if (!viewModel.isExist) {
+                        showToast("존재하지 않는 사용자예요");
+                        return;
+                      }
+
+                      // 2. 해당 유저 정보 가져오기
+                      await viewModel.fetchAUserByName(nickname);
+
+                      if (viewModel.certainUser == null) {
+                        showToast("사용자 정보를 불러올 수 없어요");
+                        return;
+                      }
+
+                      final targetUserId = viewModel.certainUser?.id ?? 0;
+
+                      // 3. 자기 자신인지 확인
+                      if (targetUserId == loginUserId) {
+                        showToast("자기 자신에게는 친구 요청을 보낼 수 없어요");
+                        return;
+                      }
+
+                      // 4. 이미 친구인지 확인
+                      await viewModel.checkIfFriend(loginUserId, targetUserId);
+
+                      if (viewModel.isFriend) {
+                        showToast("이미 친구인 사용자예요");
+                        return;
+                      }
+
+                      // 5. 친구 요청 보내기
+                      await viewModel.makeARequest(loginUserId, targetUserId);
                       context.pop();
                       showToast("친구 요청을 보냈어요 💌");
                     },

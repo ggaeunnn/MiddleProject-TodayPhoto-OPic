@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:opicproject/core/models/alarm_model.dart';
 import 'package:opicproject/core/models/alarm_setting_model.dart';
 import 'package:opicproject/core/models/topic_model.dart';
 import 'package:opicproject/core/models/user_model.dart';
@@ -53,8 +54,7 @@ class SupabaseManager {
         .from("friends")
         .select('*')
         .or(
-          'and(user1_id.eq.$loginUserId,user2_id.eq.$friendUserId)'
-          'and(user1_id.eq.$friendUserId,user2_id.eq.$loginUserId)',
+          'and(user1_id.eq.$loginUserId,user2_id.eq.$friendUserId), and(user1_id.eq.$friendUserId,user2_id.eq.$loginUserId)',
         )
         .maybeSingle();
     if (data == null) {
@@ -142,5 +142,18 @@ class SupabaseManager {
           'edited_at': DateTime.now().toIso8601String(),
         })
         .eq('user_id', userId);
+  }
+
+  // 특정 알림 정보 가져오기 (아이디로)
+  Future<Alarm?> fetchAnAlarm(int alarmId) async {
+    final Map<String, dynamic>? data = await supabase
+        .from("alarm")
+        .select('*')
+        .eq('id', alarmId)
+        .maybeSingle();
+    if (data == null) {
+      return null;
+    }
+    return Alarm.fromJson(data);
   }
 }
