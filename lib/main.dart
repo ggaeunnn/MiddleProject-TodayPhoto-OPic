@@ -1,6 +1,9 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
+import 'package:opicproject/core/manager/firebase_manager.dart';
 import 'package:opicproject/core/models/page_model.dart';
 import 'package:opicproject/features/alarm/data/alarm_view_model.dart';
 import 'package:opicproject/features/auth/ui/login_page.dart';
@@ -25,6 +28,15 @@ import 'features/friend/ui/friend_page.dart';
 import 'features/post/ui/post_detail_page.dart';
 import 'features/setting/ui/setting_alarm_page.dart';
 import 'features/setting/ui/setting_page.dart';
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // 백그라운드 메시지 처리 시 Firebase 초기화 보장
+  await Firebase.initializeApp();
+
+  print("Handling a background message: ${message.messageId}");
+  // TODO: 백그라운드에서 실행시 로직 처리
+}
 
 final GoRouter _router = GoRouter(
   routes: [
@@ -55,14 +67,23 @@ final GoRouter _router = GoRouter(
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await dotenv.load(fileName: "assets/config/.env");
-  //getIt 로케이터 초기화
+
+  //firebase초기화
+  await Firebase.initializeApp();
+  await dotenv.load(fileName: 'assets/config/.env');
 
   await Supabase.initialize(
     url: 'https://zoqxnpklgtcqkvskarls.supabase.co',
     anonKey:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvcXhucGtsZ3RjcWt2c2thcmxzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0OTk4NTYsImV4cCI6MjA3ODA3NTg1Nn0.qR8GmGNztCm44qqm7xJK4VvmI1RcIJybGKeMVBy8yaA',
   );
+  //백그라운드 핸들러
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  //매니저 초기화(토큰/리스너 설정)
+  await FirebaseManager().initialize();
+  //getIt 로케이터 초기화
   initLocator();
   runApp(
     MultiProvider(

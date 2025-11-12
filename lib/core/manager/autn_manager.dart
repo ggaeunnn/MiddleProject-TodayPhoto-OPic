@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
+import 'package:opicproject/core/manager/firebase_manager.dart';
 import 'package:opicproject/core/manager/supabase_manager.dart';
 import 'package:opicproject/core/models/user_model.dart';
 import 'package:opicproject/features/auth/data/auth_api_repository.dart';
@@ -27,8 +28,12 @@ class AuthManager extends ChangeNotifier {
           print("인증매니저:AuthChangeEvent.signedIn");
 
           uuid = data.session?.user.id;
-
-          fetchUser(uuid!);
+          if (uuid != null) {
+            FirebaseManager().updateFCMToken(uuid);
+            fetchUser(uuid);
+          } else {
+            debugPrint("AuthManager:현재 uuid가 null");
+          }
 
           notifyListeners();
           break;
@@ -36,6 +41,7 @@ class AuthManager extends ChangeNotifier {
         case AuthChangeEvent.signedOut:
           // 사용자 로그아웃
           print("인증매니저:AuthChangeEvent.signedOut");
+          FirebaseManager().deleteFCMToken(uuid!);
 
           uuid = null;
 
@@ -55,8 +61,12 @@ class AuthManager extends ChangeNotifier {
             print('인증매니저:초기 세션 복구 성공.');
 
             uuid = data.session?.user.id;
-
-            fetchUser(uuid!);
+            if (uuid != null) {
+              FirebaseManager().updateFCMToken(uuid);
+              fetchUser(uuid);
+            } else {
+              debugPrint("AuthManager:현재 uuid가 null");
+            }
             notifyListeners();
           } else {
             //로그아웃을 하고 앱을 종료했다면
@@ -65,7 +75,6 @@ class AuthManager extends ChangeNotifier {
           break;
 
         case AuthChangeEvent.userUpdated:
-
           // 사용자 정보 (이메일, 비밀번호 등)가 업데이트된 경우
           print('인증매니저: 사용자 정보 업데이트됨.');
           notifyListeners();
