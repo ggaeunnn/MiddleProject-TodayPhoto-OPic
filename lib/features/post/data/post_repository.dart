@@ -6,22 +6,21 @@ class PostRepository {
 
   final supabase = SupabaseManager.shared.supabase;
 
-  // 전체 게시물 불러오기
+  // 홈
   Future<List<Map<String, dynamic>>> getAllPosts() async {
     return await supabase.from('posts').select();
   }
 
-  // 특정 게시물 불러오기
+  // 상세
   Future<Map<String, dynamic>> getPostById(int id) async {
     return await supabase.from('posts').select().eq('id', id).single();
   }
 
-  // 게시물 이미지 업데이트
   Future<void> updatePostImage(int id, String newUrl) async {
     await supabase.from('posts').update({'image_url': newUrl}).eq('id', id);
   }
 
-  // 좋아요 추가/삭제
+  // 좋아요
   Future<void> toggleLike(String userId, int postId) async {
     final res = await supabase
         .from('likes')
@@ -66,7 +65,7 @@ class PostRepository {
     }
   }
 
-  // 좋아요 개수 가져오기
+  // 좋아요 개수
   Future<int> getLikeCount(int postId) async {
     final res = await supabase.from('likes').select('id').eq('post_id', postId);
     return res.length;
