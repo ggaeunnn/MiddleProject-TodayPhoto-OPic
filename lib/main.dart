@@ -21,7 +21,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/manager/locator.dart';
 import 'features/alarm/ui/alarm_list_page.dart';
-import 'features/feed/data/feed_service.dart';
 import 'features/feed/ui/feed.dart';
 import 'features/feed/viewmodel/feed_viewmodel.dart';
 import 'features/friend/ui/friend_page.dart';
@@ -54,7 +53,7 @@ final GoRouter _router = GoRouter(
       path: '/alarm_list_page',
       builder: (context, state) => AlarmListScreen(userId: 10),
     ),
-    GoRoute(path: '/feed', builder: (context, state) => MyFeedScreen()),
+    GoRoute(path: '/feed', builder: (context, state) => FeedScreen()),
     GoRoute(path: '/friend_page', builder: (context, state) => FriendScreen()),
     GoRoute(path: '/home', builder: (context, state) => MainPage()),
     GoRoute(
@@ -100,9 +99,7 @@ void main() async {
           create: (context) => AuthViewModel(),
           child: LoginScreen(),
         ),
-        ChangeNotifierProvider(
-          create: (context) => FeedViewModel(locator<FeedService>()),
-        ),
+        ChangeNotifierProvider(create: (context) => FeedViewModel()),
         ChangeNotifierProvider(
           create: (context) => PageCountViewmodel(),
           child: MainPage(),

@@ -1,4 +1,3 @@
-
 class FeedRepository {
   Future<Map<String, dynamic>> fetchFeed(int userId) async {
     //TODO:해당아이디의 포스트리스트 가져오기

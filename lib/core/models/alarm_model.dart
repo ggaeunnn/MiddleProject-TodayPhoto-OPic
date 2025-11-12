@@ -5,6 +5,7 @@ class Alarm {
   final String alarmType;
   final String content;
   final bool isChecked;
+  final String? targetUrl;
 
   Alarm({
     required this.id,
@@ -13,6 +14,7 @@ class Alarm {
     required this.alarmType,
     required this.content,
     required this.isChecked,
+    this.targetUrl,
   });
 
   factory Alarm.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class Alarm {
       alarmType: json['type'] as String,
       content: json['content'] as String,
       isChecked: json['is_checked'] as bool,
+      targetUrl: json['target_url'] as String?,
     );
   }
 
@@ -34,6 +37,7 @@ class Alarm {
       'type': alarmType,
       'content': content,
       'is_checked': isChecked,
+      'target_url': targetUrl,
     };
   }
 }
