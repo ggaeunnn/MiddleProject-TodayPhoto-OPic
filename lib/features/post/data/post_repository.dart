@@ -45,9 +45,8 @@ class PostRepository {
     final supabase = SupabaseManager.shared.supabase;
     final result = await supabase
         .from('comments')
-        .select()
+        .select('*, user:user_id(id, nickname)')
         .eq('post_id', postId)
-        .eq('is_deleted', false)
         .order('created_at', ascending: true);
 
     return result;
@@ -64,9 +63,10 @@ class PostRepository {
   Future<Map<String, dynamic>> getPostById(int id) async {
     final result = await supabase
         .from('posts')
-        .select()
+        .select('*, user:user_id(nickname)')
         .eq('id', id)
         .maybeSingle();
+
     return result ?? {};
   }
 
@@ -80,5 +80,18 @@ class PostRepository {
         .select()
         .order('id', ascending: false);
     return List<Map<String, dynamic>>.from(result);
+  }
+
+  Future<int> insertPost({
+    required int userId,
+    required String imageUrl,
+  }) async {
+    final result = await supabase
+        .from('posts')
+        .insert({'user_id': userId, 'image_url': imageUrl, 'topic_id': 3})
+        .select('id')
+        .maybeSingle();
+
+    return result?['id'];
   }
 }

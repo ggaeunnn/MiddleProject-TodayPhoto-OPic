@@ -1,10 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:opicproject/core/app_colors.dart';
-import 'package:opicproject/features/post/ui/post_detail_page.dart';
+import 'package:opicproject/features/home/viewmodel/home_viewmodel.dart';
+import 'package:opicproject/features/post/viewmodel/post_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class addPostPopup extends StatefulWidget {
   const addPostPopup({super.key});
@@ -165,9 +168,30 @@ class _addPostPopup extends State<addPostPopup> {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      final homeViewModel = context.read<HomeViewModel>();
+
+                      final viewmodel = context.read<PostViewModel>();
+
+                      if (selectedImage == null && takePicture == null) {
+                        Fluttertoast.showToast(msg: "이미지를 선택해주세요.");
+                        return;
+                      }
+
+                      final file = selectedImage ?? takePicture!;
+
+                      final imageUrl = await viewmodel.uploadImageToSupabase(
+                        file,
+                      );
+
+                      if (imageUrl == null) {
+                        Fluttertoast.showToast(msg: "이미지 업로드 실패");
+                        return;
+                      }
+                      await viewmodel.createPost(imageUrl);
+                      await homeViewModel.fetchPosts();
                       context.pop();
-                      showToast("게시물이 작성되었습니다.");
+                      Fluttertoast.showToast(msg: "게시물이 작성되었습니다.");
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xff95b7db),

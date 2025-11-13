@@ -6,8 +6,13 @@ class HomeViewModel extends ChangeNotifier {
 
   List<Map<String, dynamic>> posts = [];
 
-  // 게시글 로드
+  // 게시글 올리기
   Future<void> loadPosts() async {
+    posts = await repository.getAllPosts();
+    notifyListeners();
+  }
+
+  Future<void> fetchPosts() async {
     posts = await repository.getAllPosts();
     notifyListeners();
   }

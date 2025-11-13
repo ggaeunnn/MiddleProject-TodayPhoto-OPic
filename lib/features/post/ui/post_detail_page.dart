@@ -17,6 +17,7 @@ class PostDetailScreen extends StatelessWidget {
     final viewmodel = context.watch<PostViewModel>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       viewmodel.fetchPostById(postId);
+      viewmodel.loadLoginUserInfo();
     });
     return Scaffold(
       body: SafeArea(
@@ -37,7 +38,15 @@ class PostDetailScreen extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text(viewmodel.postWriter),
+                          TextButton(
+                            onPressed: () {
+                              // context.go('/feed/${viewmodel.friendUserId}');
+                            },
+                            child: Text(
+                              viewmodel.postWriter,
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
                           Spacer(),
                           Text(
                             viewmodel.formattedDate,
@@ -234,13 +243,14 @@ class PostDetailScreen extends StatelessWidget {
                                                 children: [
                                                   IconButton(
                                                     onPressed: () {
-                                                      context.go(
-                                                        '/friend_feed',
-                                                      );
+                                                      // context.go();
                                                     },
                                                     icon: Icon(Icons.person),
                                                   ),
-                                                  Text(viewmodel.loginUserName),
+                                                  //이름 바꾸기
+                                                  Text(
+                                                    comment['user']?['nickname'],
+                                                  ),
                                                   Spacer(),
                                                   Text(
                                                     comment['created_at']
@@ -321,7 +331,6 @@ class PostDetailScreen extends StatelessWidget {
                       iconSize: 20,
                       color: AppColors.opicWhite,
                       onPressed: () {
-                        // final userId = 11;
                         final loginUserId =
                             AuthManager.shared.userInfo?.id ?? 0;
 
