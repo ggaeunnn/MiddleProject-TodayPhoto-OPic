@@ -125,4 +125,20 @@ class PostViewModel extends ChangeNotifier {
     await _repository.deletePostWithRelations(postId);
     clearPostData();
   }
+
+  Future<void> deleteComment(int commentId) async {
+    try {
+      await SupabaseManager.shared.supabase
+          .from('comments')
+          .delete()
+          .eq('id', commentId);
+
+      commentList.removeWhere((comment) => comment['id'] == commentId);
+      notifyListeners();
+      Fluttertoast.showToast(msg: "댓글이 삭제되었습니다.");
+    } catch (e) {
+      print("댓글 삭제 실패: $e");
+      Fluttertoast.showToast(msg: "댓글 삭제에 실패했습니다.");
+    }
+  }
 }

@@ -40,7 +40,6 @@ class PostDetailScreen extends StatelessWidget {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      // Post Writer and Date
                       Row(
                         children: [
                           TextButton(
@@ -68,15 +67,13 @@ class PostDetailScreen extends StatelessWidget {
 
                       // Post Image
                       Image.network(
-                        viewmodel.post?['image_url'] ??
-                            'https://images.unsplash.com/photo-1455156218388-5e61b526818b?auto=format&fit=crop&q=60&w=500',
+                        viewmodel.post?['image_url'],
                         width: double.infinity,
                         height: 350,
                         fit: BoxFit.fill,
                       ),
                       const SizedBox(height: 10),
 
-                      // Like Button
                       Row(
                         children: [
                           IconButton(
@@ -102,8 +99,6 @@ class PostDetailScreen extends StatelessWidget {
                             ),
                           ),
                           const Spacer(),
-
-                          // Post Edit/Delete buttons (only for the post owner)
                           (AuthManager.shared.userInfo?.id ==
                                   viewmodel.friendUserId)
                               ? Row(
@@ -198,7 +193,6 @@ class PostDetailScreen extends StatelessWidget {
                       ),
                       const Divider(),
 
-                      // Topic
                       Row(
                         children: [
                           Text(
@@ -216,7 +210,6 @@ class PostDetailScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
 
-                      // Comments Section
                       Container(
                         width: double.infinity,
                         color: AppColors.opicBackground,
@@ -249,7 +242,6 @@ class PostDetailScreen extends StatelessWidget {
                                         final comment =
                                             viewmodel.commentList[index];
 
-                                        // 로그인된 사용자의 닉네임
                                         final loginUserNickname =
                                             AuthManager
                                                 .shared
@@ -290,7 +282,6 @@ class PostDetailScreen extends StatelessWidget {
                                                               .opicBlack,
                                                         ),
                                                       ),
-                                                      // Only show delete button for the author of the comment
                                                       if (loginUserNickname ==
                                                           commentWriterNickname)
                                                         ElevatedButton.icon(
@@ -311,21 +302,12 @@ class PostDetailScreen extends StatelessWidget {
                                                             ),
                                                           ),
                                                           onPressed: () {
-                                                            showDialog(
-                                                              context: context,
-                                                              barrierColor: Colors
-                                                                  .black
-                                                                  .withOpacity(
-                                                                    0.6,
-                                                                  ),
-                                                              builder: (_) =>
-                                                                  DeletePopup(
-                                                                    postId:
-                                                                        viewmodel
-                                                                            .post?['id'] ??
-                                                                        0,
-                                                                  ),
-                                                            );
+                                                            final commentId =
+                                                                comment['id'];
+                                                            viewmodel
+                                                                .deleteComment(
+                                                                  commentId,
+                                                                );
                                                           },
                                                           icon: Icon(
                                                             Icons
@@ -375,7 +357,6 @@ class PostDetailScreen extends StatelessWidget {
                 ),
               ),
 
-              // Comment Input Field
               Row(
                 children: [
                   Expanded(
