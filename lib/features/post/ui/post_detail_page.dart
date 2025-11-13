@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/app_colors.dart';
+import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/features/post/ui/post_delete_popup.dart';
 import 'package:opicproject/features/post/ui/post_edit_popup.dart';
 import 'package:opicproject/features/post/viewmodel/post_viewmodel.dart';
@@ -68,8 +69,13 @@ class PostDetailScreen extends StatelessWidget {
                             iconSize: 20,
                             color: AppColors.opicRed,
                             onPressed: () {
-                              final userId = 11;
-                              viewmodel.toggleLike(userId, postId);
+                              final loginUserId =
+                                  AuthManager.shared.userInfo?.id ?? 0;
+
+                              viewmodel.toggleLike(loginUserId, postId);
+
+                              // 버튼 아이콘 토글
+                              viewmodel.buttonLike = !viewmodel.buttonLike;
                             },
                           ),
                           Text(
@@ -215,64 +221,60 @@ class PostDetailScreen extends StatelessWidget {
                                   : ListView.builder(
                                       itemCount: viewmodel.commentList.length,
                                       shrinkWrap: true,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                            return Container(
-                                              padding: EdgeInsets.only(
-                                                left: 10,
-                                              ),
-                                              width: 100,
-                                              color: AppColors.opicWhite,
-                                              child: Column(
+                                      itemBuilder: (context, index) {
+                                        final comment =
+                                            viewmodel.commentList[index];
+                                        return Container(
+                                          padding: EdgeInsets.only(left: 10),
+                                          width: 100,
+                                          color: AppColors.opicWhite,
+                                          child: Column(
+                                            children: [
+                                              Row(
                                                 children: [
-                                                  Row(
-                                                    children: [
-                                                      IconButton(
-                                                        onPressed: () {
-                                                          context.go(
-                                                            '/friend_feed',
-                                                          );
-                                                        },
-                                                        icon: Icon(
-                                                          Icons.person,
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        viewmodel.loginUserName,
-                                                      ),
-                                                      Spacer(),
-                                                      Text(
-                                                        viewmodel.commentDate,
-                                                        style: TextStyle(
-                                                          fontSize: 10,
-                                                          color: AppColors
-                                                              .opicBlack,
-                                                        ),
-                                                      ),
-                                                      Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                              right: 8,
-                                                            ),
-                                                      ),
-                                                    ],
+                                                  IconButton(
+                                                    onPressed: () {
+                                                      context.go(
+                                                        '/friend_feed',
+                                                      );
+                                                    },
+                                                    icon: Icon(Icons.person),
                                                   ),
-                                                  Container(
-                                                    padding: EdgeInsets.only(
-                                                      left: 20,
+                                                  Text(viewmodel.loginUserName),
+                                                  Spacer(),
+                                                  Text(
+                                                    comment['created_at']
+                                                            ?.toString()
+                                                            .split('T')
+                                                            .first ??
+                                                        '',
+                                                    style: TextStyle(
+                                                      fontSize: 10,
+                                                      color:
+                                                          AppColors.opicBlack,
                                                     ),
-                                                    width: double.infinity,
-                                                    child: Text(
-                                                      viewmodel
-                                                          .commentList[index],
-                                                      textAlign:
-                                                          TextAlign.start,
+                                                  ),
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                      right: 8,
                                                     ),
                                                   ),
                                                 ],
                                               ),
-                                            );
-                                          },
+                                              Container(
+                                                padding: EdgeInsets.only(
+                                                  left: 20,
+                                                ),
+                                                width: double.infinity,
+                                                child: Text(
+                                                  comment['text'] ?? '',
+                                                  textAlign: TextAlign.start,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
                                     ),
                             ),
                             SizedBox(height: 20),
@@ -319,7 +321,11 @@ class PostDetailScreen extends StatelessWidget {
                       iconSize: 20,
                       color: AppColors.opicWhite,
                       onPressed: () {
-                        viewmodel.addComment();
+                        // final userId = 11;
+                        final loginUserId =
+                            AuthManager.shared.userInfo?.id ?? 0;
+
+                        viewmodel.addComment(loginUserId, postId);
                       },
                     ),
                   ),

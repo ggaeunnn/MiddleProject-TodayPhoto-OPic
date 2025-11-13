@@ -15,7 +15,8 @@ class PostViewModel extends ChangeNotifier {
   String postWriter = "친구1";
   File? selectedImage;
   final commentListController = TextEditingController();
-  List<String> commentList = [];
+  List<Map<String, dynamic>> commentList = [];
+  int? _loadedPostId;
 
   DateTime now = DateTime.now();
   late String formattedDate = DateFormat('yyyy-MM-dd').format(now);
@@ -23,8 +24,13 @@ class PostViewModel extends ChangeNotifier {
   String todayTopic = "겨울풍경";
 
   Future<void> fetchPostById(int id) async {
+    if (_loadedPostId == id && post != null) return;
+
     post = await _repository.getPostById(id);
     likeCount = await _repository.getLikeCount(id);
+    await fetchComments(id);
+
+    _loadedPostId = id;
     notifyListeners();
   }
 
@@ -50,11 +56,34 @@ class PostViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addComment() {
-    if (commentListController.text.isEmpty) return;
-    commentList.add(commentListController.text);
+  Future<void> addComment(int userId, int postId) async {
+    final text = commentListController.text.trim();
+    if (text.isEmpty) return;
+
+    await _repository.commentSend(userId, postId, text);
+
+    commentList.add({
+      'user_id': userId,
+      'post_id': postId,
+      'text': text,
+      'created_at': DateTime.now().toIso8601String(),
+      'is_deleted': false,
+    });
+
     commentListController.clear();
     Fluttertoast.showToast(msg: "댓글 작성이 완료되었습니다.");
+    notifyListeners();
+  }
+
+  Future<void> fetchComments(int postId) async {
+    commentList = await _repository.fetchComments(postId);
+    notifyListeners();
+  }
+
+  void clearPostData() {
+    post = null;
+    commentList.clear();
+    _loadedPostId = null;
     notifyListeners();
   }
 

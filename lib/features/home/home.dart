@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/app_colors.dart';
+import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/features/home/ui/add_post_popup.dart';
 import 'package:opicproject/features/home/viewmodel/home_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -21,6 +23,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewmodel = context.watch<HomeViewModel>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // context.read<HomeViewModel>().loadLoginUserId();
       if (viewmodel.posts.isEmpty) {
         context.read<HomeViewModel>().loadPosts();
       }
@@ -121,14 +124,19 @@ class PostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loginUserId = AuthManager.shared.userInfo?.id ?? 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         //이미지
         InkWell(
           onTap: () {
-            final postId = post['id'];
-            context.go('/post_detail_page/$postId');
+            if (loginUserId == 0) {
+              Fluttertoast.showToast(msg: "로그인 해주세요");
+            } else {
+              final postId = post['id'];
+              context.go('/post_detail_page/$postId');
+            }
           },
           child: Image.network(
             post['image_url'],

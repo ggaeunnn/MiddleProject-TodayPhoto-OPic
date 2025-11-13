@@ -9,13 +9,13 @@ class PostRepository {
   Future<void> toggleLike(int userId, int postId) async {
     final supabase = SupabaseManager.shared.supabase;
 
-    final res = await supabase
+    final result = await supabase
         .from('likes')
         .select('id')
         .eq('user_id', userId)
         .eq('post_id', postId);
     //좋아요 함, 취소함
-    if (res.isEmpty) {
+    if (result.isEmpty) {
       await supabase.from('likes').insert({
         'user_id': userId,
         'post_id': postId,
@@ -29,18 +29,45 @@ class PostRepository {
     }
   }
 
+  Future<void> commentSend(int userId, int postId, String text) async {
+    final supabase = SupabaseManager.shared.supabase;
+
+    await supabase.from('comments').insert({
+      'user_id': userId,
+      'post_id': postId,
+      'text': text,
+      'is_deleted': false,
+      'created_at': DateTime.now().toIso8601String(),
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> fetchComments(int postId) async {
+    final supabase = SupabaseManager.shared.supabase;
+    final result = await supabase
+        .from('comments')
+        .select()
+        .eq('post_id', postId)
+        .eq('is_deleted', false)
+        .order('created_at', ascending: true);
+
+    return result;
+  }
+
   Future<int> getLikeCount(int postId) async {
-    final res = await supabase.from('likes').select('id').eq('post_id', postId);
-    return res.length;
+    final result = await supabase
+        .from('likes')
+        .select('id')
+        .eq('post_id', postId);
+    return result.length;
   }
 
   Future<Map<String, dynamic>> getPostById(int id) async {
-    final res = await supabase
+    final result = await supabase
         .from('posts')
         .select()
         .eq('id', id)
         .maybeSingle();
-    return res ?? {};
+    return result ?? {};
   }
 
   Future<void> updatePostImage(int id, String newUrl) async {
@@ -48,7 +75,10 @@ class PostRepository {
   }
 
   Future<List<Map<String, dynamic>>> getAllPosts() async {
-    final res = await supabase.from('posts').select();
-    return List<Map<String, dynamic>>.from(res);
+    final result = await supabase
+        .from('posts')
+        .select()
+        .order('id', ascending: false);
+    return List<Map<String, dynamic>>.from(result);
   }
 }
