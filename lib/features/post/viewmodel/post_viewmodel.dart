@@ -49,7 +49,7 @@ class PostViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setImage(File image) {
+  void setImage(File? image) {
     selectedImage = image;
     notifyListeners();
   }

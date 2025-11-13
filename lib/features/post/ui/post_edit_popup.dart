@@ -74,12 +74,14 @@ class _EditPopupState extends State<EditPopup> {
             SizedBox(height: 12),
 
             viewmodel.selectedImage == null
-                ? Image.network(
-                    'https://images.unsplash.com/photo-1455156218388-5e61b526818b?ixlib=rb-4.1.0&auto=format&fit=crop&q=60&w=500',
-                    width: double.infinity,
-                    height: 350,
-                    fit: BoxFit.fill,
-                  )
+                ? (viewmodel.post?['image_url'] != null
+                      ? Image.network(
+                          viewmodel.post?['image_url'],
+                          width: double.infinity,
+                          height: 350,
+                          fit: BoxFit.fill,
+                        )
+                      : SizedBox())
                 : Image.file(
                     viewmodel.selectedImage!,
                     width: double.infinity,
@@ -149,9 +151,25 @@ class _EditPopupState extends State<EditPopup> {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
-                      context.pop();
-                      showToast("게시물 수정이 완료되었습니다.");
+                    onPressed: () async {
+                      if (viewmodel.selectedImage != null) {
+                        final newImageUrl = await viewmodel
+                            .uploadImageToSupabase(viewmodel.selectedImage!);
+
+                        if (newImageUrl != null) {
+                          await viewmodel.updatePostImage(
+                            viewmodel.post?['id'],
+                            newImageUrl,
+                          );
+
+                          showToast("게시물 수정이 완료되었습니다.");
+                          context.pop();
+                        } else {
+                          showToast("이미지 업로드에 실패했습니다.");
+                        }
+                      } else {
+                        showToast("수정할 이미지가 없습니다.");
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.opicSoftBlue,
@@ -173,24 +191,27 @@ class _EditPopupState extends State<EditPopup> {
                 ),
                 SizedBox(width: 12),
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      context.pop();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.opicBackground,
-                      foregroundColor: AppColors.opicWhite,
-                      padding: EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                  child: Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        context.read<PostViewModel>().setImage(null);
+                        context.pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.opicBackground,
+                        foregroundColor: AppColors.opicWhite,
+                        padding: EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      "닫기",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.opicBlack,
+                      child: Text(
+                        "닫기",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.opicBlack,
+                        ),
                       ),
                     ),
                   ),
