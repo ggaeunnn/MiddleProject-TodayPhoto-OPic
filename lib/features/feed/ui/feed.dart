@@ -191,7 +191,7 @@ Widget _buildUserHeader(
                                   ),
                                   SizedBox(width: 6),
                                   Text(
-                                    "친구 추가",
+                                    "친구 요청",
                                     style: TextStyle(
                                       decoration: TextDecoration.none,
                                       color: AppColors.opicWhite,
@@ -205,33 +205,66 @@ Widget _buildUserHeader(
                           ),
                         // 수락 대기중 버튼 (요청중일 때)
                         if (isRequested && !isFriend && !isBlocked)
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.opicWarmGrey,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.schedule_rounded,
-                                  color: AppColors.opicBlack,
-                                  size: 16,
+                          GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                barrierColor: Colors.black.withOpacity(0.6),
+                                builder: (context) => YesOrClosePopUp(
+                                  title: "친구 요청을 취소하시겠어요?",
+                                  text: "상대방이 수락하기 전인 친구 요청을 삭제할 수 있어요",
+                                  confirmText: "요청 취소",
+                                  onConfirm: () async {
+                                    context.pop();
+                                    await friendViewModel.deleteARequest(
+                                      loginUserId,
+                                      feedUser.id,
+                                    );
+                                    // 상태 다시 체크
+                                    await feedViewModel.checkIfRequested(
+                                      loginUserId,
+                                      feedUser.id,
+                                    );
+                                    await friendViewModel.checkIfFriend(
+                                      loginUserId,
+                                      feedUser.id,
+                                    );
+                                    showToast("친구 요청을 취소했어요");
+                                  },
+                                  onCancel: () {
+                                    context.pop();
+                                  },
                                 ),
-                                SizedBox(width: 6),
-                                Text(
-                                  "수락 대기중",
-                                  style: TextStyle(
+                              );
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.opicWarmGrey,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.schedule_rounded,
                                     color: AppColors.opicBlack,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
+                                    size: 16,
                                   ),
-                                ),
-                              ],
+                                  SizedBox(width: 6),
+                                  Text(
+                                    "요청 취소",
+                                    style: TextStyle(
+                                      color: AppColors.opicBlack,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         // 차단 버튼 (차단 안 되어있을 때)

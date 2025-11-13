@@ -21,6 +21,7 @@ class FriendScreen extends StatelessWidget {
           builder: (context, viewModel, child) {
             final authManager = context.watch<AuthManager>();
             final loginUserId = authManager.userInfo?.id ?? 0;
+
             if (loginUserId == 0) {
               return Container(
                 decoration: BoxDecoration(color: AppColors.opicBackground),
@@ -35,9 +36,9 @@ class FriendScreen extends StatelessWidget {
                   child: Container(
                     color: AppColors.opicBackground,
                     child: switch (viewModel.tabNumber) {
-                      0 => _friendList(context, viewModel),
-                      1 => _friendRequest(context, viewModel),
-                      2 => _blockList(context, viewModel),
+                      0 => _friendList(context, viewModel, loginUserId),
+                      1 => _friendRequest(context, viewModel, loginUserId),
+                      2 => _blockList(context, viewModel, loginUserId),
                       // TODO: Handle this case.
                       int() => throw UnimplementedError(),
                     },
@@ -203,8 +204,11 @@ Widget _tabButton({
 
 @override
 /// 친구 목록 화면
-Widget _friendList(BuildContext context, FriendViewModel viewModel) {
-  final loginUserId = AuthManager.shared.userInfo?.id ?? 0;
+Widget _friendList(
+  BuildContext context,
+  FriendViewModel viewModel,
+  int loginUserId,
+) {
   final friendsCount = viewModel.friends.length;
 
   // 친구 목록이 비어있을 때
@@ -271,8 +275,11 @@ Widget _friendList(BuildContext context, FriendViewModel viewModel) {
 }
 
 /// 친구 요청 화면
-Widget _friendRequest(BuildContext context, FriendViewModel viewModel) {
-  final loginUserId = AuthManager.shared.userInfo?.id ?? 0;
+Widget _friendRequest(
+  BuildContext context,
+  FriendViewModel viewModel,
+  int loginUserId,
+) {
   final friendRequestsCount = viewModel.friendRequests.length;
 
   // 친구 요청이 없을 때
@@ -338,8 +345,11 @@ Widget _friendRequest(BuildContext context, FriendViewModel viewModel) {
 }
 
 /// 차단 유저 목록 화면
-Widget _blockList(BuildContext context, FriendViewModel viewModel) {
-  final loginUserId = AuthManager.shared.userInfo?.id ?? 0;
+Widget _blockList(
+  BuildContext context,
+  FriendViewModel viewModel,
+  int loginUserId,
+) {
   final blockCount = viewModel.blockUsers.length;
 
   // 차단한 사용자가 비어있을 때

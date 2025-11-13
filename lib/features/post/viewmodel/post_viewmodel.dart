@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/core/manager/supabase_manager.dart';
+import 'package:opicproject/core/models/post_model.dart';
 import 'package:opicproject/features/post/data/post_repository.dart';
 
 class PostViewModel extends ChangeNotifier {
@@ -144,5 +145,12 @@ class PostViewModel extends ChangeNotifier {
     await supabase.storage.from('post_images').upload(fileName, file);
 
     return supabase.storage.from('post_images').getPublicUrl(fileName);
+  }
+
+  Post? _thisPost;
+  Post? get thisPost => _thisPost;
+
+  Future<void> fetchPostWriterId(int postId) async {
+    _thisPost = await _repository.fetchPostWriterId(postId);
   }
 }

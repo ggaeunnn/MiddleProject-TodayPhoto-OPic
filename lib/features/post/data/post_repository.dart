@@ -1,4 +1,5 @@
 import 'package:opicproject/core/manager/supabase_manager.dart';
+import 'package:opicproject/core/models/post_model.dart';
 
 class PostRepository {
   static final PostRepository shared = PostRepository._internal();
@@ -93,5 +94,9 @@ class PostRepository {
         .maybeSingle();
 
     return result?['id'];
+  }
+
+  Future<Post?> fetchPostWriterId(int postId) async {
+    return await SupabaseManager.shared.fetchPostWriterId(postId);
   }
 }
