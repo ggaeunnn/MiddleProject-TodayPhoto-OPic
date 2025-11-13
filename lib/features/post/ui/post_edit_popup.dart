@@ -73,28 +73,15 @@ class _EditPopupState extends State<EditPopup> {
 
             SizedBox(height: 12),
 
-            // viewmodel.selectedImage == null
-            //     ? Image.network(
-            //         'https://images.unsplash.com/photo-1455156218388-5e61b526818b?ixlib=rb-4.1.0&auto=format&fit=crop&q=60&w=500',
-            //         width: double.infinity,
-            //         height: 350,
-            //         fit: BoxFit.fill,
-            //       )
-            //     : Image.file(
-            //         viewmodel.selectedImage!,
-            //         width: double.infinity,
-            //         height: 350,
-            //         fit: BoxFit.fill,
-            //       ),
             viewmodel.selectedImage == null
                 ? (viewmodel.post?['image_url'] != null
                       ? Image.network(
-                          viewmodel.post?['image_url'], // 게시물의 기존 이미지 URL 사용
+                          viewmodel.post?['image_url'],
                           width: double.infinity,
                           height: 350,
                           fit: BoxFit.fill,
                         )
-                      : SizedBox()) // 만약 image_url이 없다면 빈 위젯을 반환
+                      : SizedBox())
                 : Image.file(
                     viewmodel.selectedImage!,
                     width: double.infinity,
@@ -163,152 +150,71 @@ class _EditPopupState extends State<EditPopup> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
-                  child:
-                      // ElevatedButton(
-                      //   onPressed: () {
-                      //     context.pop();
-                      //     showToast("게시물 수정이 완료되었습니다.");
-                      //   },
-                      //   style: ElevatedButton.styleFrom(
-                      //     backgroundColor: AppColors.opicSoftBlue,
-                      //     foregroundColor: AppColors.opicWhite,
-                      //     padding: EdgeInsets.symmetric(vertical: 14),
-                      //     shape: RoundedRectangleBorder(
-                      //       borderRadius: BorderRadius.circular(8),
-                      //     ),
-                      //   ),
-                      //   child: Text(
-                      //     "수정하기",
-                      //     style: TextStyle(
-                      //       fontSize: 16,
-                      //       fontWeight: FontWeight.w500,
-                      //       color: AppColors.opicWhite,
-                      //     ),
-                      //   ),
-                      // ),
-                      ElevatedButton(
-                        onPressed: () async {
-                          // 이미 선택된 이미지가 있는지 확인
-                          if (viewmodel.selectedImage != null) {
-                            // 이미지를 Supabase에 업로드하고, URL을 받아옵니다.
-                            final newImageUrl = await viewmodel
-                                .uploadImageToSupabase(
-                                  viewmodel.selectedImage!,
-                                );
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (viewmodel.selectedImage != null) {
+                        final newImageUrl = await viewmodel
+                            .uploadImageToSupabase(viewmodel.selectedImage!);
 
-                            if (newImageUrl != null) {
-                              // Supabase에서 게시물의 이미지 URL을 수정합니다.
-                              await viewmodel.updatePostImage(
-                                viewmodel.post?['id'],
-                                newImageUrl,
-                              );
+                        if (newImageUrl != null) {
+                          await viewmodel.updatePostImage(
+                            viewmodel.post?['id'],
+                            newImageUrl,
+                          );
 
-                              // 수정 완료 후 팝업 닫기
-                              showToast("게시물 수정이 완료되었습니다.");
-                              context.pop();
-                            } else {
-                              showToast("이미지 업로드에 실패했습니다.");
-                            }
-                          } else {
-                            showToast("수정할 이미지가 없습니다.");
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.opicSoftBlue,
-                          foregroundColor: AppColors.opicWhite,
-                          padding: EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Text(
-                          "수정하기",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.opicWhite,
-                          ),
-                        ),
+                          showToast("게시물 수정이 완료되었습니다.");
+                          context.pop();
+                        } else {
+                          showToast("이미지 업로드에 실패했습니다.");
+                        }
+                      } else {
+                        showToast("수정할 이미지가 없습니다.");
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.opicSoftBlue,
+                      foregroundColor: AppColors.opicWhite,
+                      padding: EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
+                    ),
+                    child: Text(
+                      "수정하기",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.opicWhite,
+                      ),
+                    ),
+                  ),
                 ),
                 SizedBox(width: 12),
                 Expanded(
-                  child:
-                      // ElevatedButton(
-                      //   onPressed: () {
-                      //     context.pop();
-                      //   },
-                      //   style: ElevatedButton.styleFrom(
-                      //     backgroundColor: AppColors.opicBackground,
-                      //     foregroundColor: AppColors.opicWhite,
-                      //     padding: EdgeInsets.symmetric(vertical: 14),
-                      //     shape: RoundedRectangleBorder(
-                      //       borderRadius: BorderRadius.circular(8),
-                      //     ),
-                      //   ),
-                      //   child: Text(
-                      //     "닫기",
-                      //     style: TextStyle(
-                      //       fontSize: 16,
-                      //       fontWeight: FontWeight.w500,
-                      //       color: AppColors.opicBlack,
-                      //     ),
-                      //   ),
-                      // ),
-                      // 수정하지 않고 닫기 눌렀을 때
-                      // Expanded(
-                      //   child: ElevatedButton(
-                      //     onPressed: () {
-                      //       // 이미지 변경을 취소하고 selectedImage 초기화
-                      //       context.read<PostViewModel>().setImage(null);  // selectedImage를 null로 설정하여 변경된 이미지 취소
-                      //       context.pop();  // 팝업 닫기
-                      //     },
-                      //     style: ElevatedButton.styleFrom(
-                      //       backgroundColor: AppColors.opicBackground,
-                      //       foregroundColor: AppColors.opicWhite,
-                      //       padding: EdgeInsets.symmetric(vertical: 14),
-                      //       shape: RoundedRectangleBorder(
-                      //         borderRadius: BorderRadius.circular(8),
-                      //       ),
-                      //     ),
-                      //     child: Text(
-                      //       "닫기",
-                      //       style: TextStyle(
-                      //         fontSize: 16,
-                      //         fontWeight: FontWeight.w500,
-                      //         color: AppColors.opicBlack,
-                      //       ),
-                      //     ),
-                      //   ),
-                      // )
-                      // 수정하지 않고 닫기 눌렀을 때
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            // 이미지 변경을 취소하고 selectedImage 초기화
-                            context.read<PostViewModel>().setImage(
-                              null,
-                            ); // selectedImage를 null로 설정하여 변경된 이미지 취소
-                            context.pop(); // 팝업 닫기
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.opicBackground,
-                            foregroundColor: AppColors.opicWhite,
-                            padding: EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: Text(
-                            "닫기",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.opicBlack,
-                            ),
-                          ),
+                  child: Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        context.read<PostViewModel>().setImage(null);
+                        context.pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.opicBackground,
+                        foregroundColor: AppColors.opicWhite,
+                        padding: EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
+                      child: Text(
+                        "닫기",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.opicBlack,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
