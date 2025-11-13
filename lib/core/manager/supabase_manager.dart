@@ -213,6 +213,7 @@ class SupabaseManager {
     final data = await supabase
         .from("friend_request")
         .select('id')
+        .isFilter('answered_at', null)
         .or(
           'and(request_id.eq.$loginId,target_id.eq.$userId),and(request_id.eq.$userId,target_id.eq.$loginId)',
         )

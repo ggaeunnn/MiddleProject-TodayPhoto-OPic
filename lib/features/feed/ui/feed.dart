@@ -146,6 +146,10 @@ Widget _buildUserHeader(
                                       loginUserId,
                                       feedUser.id,
                                     );
+                                    await friendViewModel.checkIfFriend(
+                                      loginUserId,
+                                      feedUser.id,
+                                    );
                                     showToast("친구 요청을 보냈어요 💌");
                                   },
                                   onCancel: () {
