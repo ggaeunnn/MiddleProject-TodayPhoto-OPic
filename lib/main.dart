@@ -17,7 +17,6 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/manager/locator.dart';
-import 'features/feed/data/feed_viewmodel.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -60,7 +59,7 @@ void main() async {
               OnboardingViewModel(locator<OnboardingService>()),
         ),
         ChangeNotifierProvider(create: (context) => AuthViewModel()),
-        ChangeNotifierProvider(create: (context) => FeedViewModel()),
+        //ChangeNotifierProvider(create: (context) => FeedViewModel()),
         ChangeNotifierProvider(create: (context) => FriendViewModel()),
         ChangeNotifierProvider(create: (context) => PostViewModel()),
         ChangeNotifierProvider(create: (context) => HomeViewModel()),
