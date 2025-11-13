@@ -17,8 +17,6 @@ class PostDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewmodel = context.watch<PostViewModel>();
-
-    // 최초 한 번만 데이터 로드
     WidgetsBinding.instance.addPostFrameCallback((_) {
       viewmodel.fetchPostById(postId);
       viewmodel.loadLoginUserInfo();
@@ -41,7 +39,6 @@ class PostDetailScreen extends StatelessWidget {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      // 상단 프로필 / 날짜
                       Row(
                         children: [
                           TextButton(
@@ -77,8 +74,6 @@ class PostDetailScreen extends StatelessWidget {
                       ),
 
                       const SizedBox(height: 10),
-
-                      // 좋아요 + 수정/삭제 or 신고
                       Row(
                         children: [
                           IconButton(

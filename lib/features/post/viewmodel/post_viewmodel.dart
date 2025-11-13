@@ -12,21 +12,20 @@ class PostViewModel extends ChangeNotifier {
 
   Map<String, dynamic>? post;
   int likeCount = 0;
-  bool buttonLike = true; // 아이콘 표시 용
+  bool buttonLike = true;
   String loginUserName = "친구1";
 
   File? selectedImage;
   final commentListController = TextEditingController();
   List<Map<String, dynamic>> commentList = [];
 
-  int? friendUserId; // 게시물 작성자 user_id
-  String postWriter = ""; // 게시물 작성자 닉네임
+  int? friendUserId;
+  String postWriter = "";
 
   DateTime now = DateTime.now();
   late String formattedDate = DateFormat('yyyy-MM-dd').format(now);
   String todayTopic = "겨울풍경";
 
-  /// 게시물 상세 조회
   Future<void> fetchPostById(int id) async {
     post = await _repository.getPostById(id);
 
@@ -44,7 +43,6 @@ class PostViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 게시물 이미지 수정
   Future<void> updatePostImage(int id, String newUrl) async {
     await _repository.updatePostImage(id, newUrl);
     post?['image_url'] = newUrl;
@@ -56,7 +54,6 @@ class PostViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 좋아요 토글
   Future<void> toggleLike(int userId, int postId) async {
     await _repository.toggleLike(userId, postId);
     await fetchLikeCount(postId);
@@ -68,14 +65,12 @@ class PostViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 댓글 작성
   Future<void> addComment(int userId, int postId) async {
     final text = commentListController.text.trim();
     if (text.isEmpty) return;
 
     await _repository.commentSend(userId, postId, text);
 
-    // 다시 목록 불러오기
     await fetchComments(postId);
 
     commentListController.clear();
@@ -83,7 +78,6 @@ class PostViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 댓글 목록 조회
   Future<void> fetchComments(int postId) async {
     commentList = await _repository.fetchComments(postId);
     notifyListeners();
@@ -101,7 +95,6 @@ class PostViewModel extends ChangeNotifier {
     super.dispose();
   }
 
-  /// 로그인 유저 닉네임 불러오기
   Future<void> loadLoginUserInfo() async {
     final authId = SupabaseManager.shared.supabase.auth.currentUser?.id;
 
@@ -124,7 +117,6 @@ class PostViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 게시물 생성
   Future<int?> createPost(String imageUrl) async {
     final userId = AuthManager.shared.userInfo?.id;
 
@@ -137,7 +129,6 @@ class PostViewModel extends ChangeNotifier {
     return id;
   }
 
-  /// 이미지 Supabase Storage 업로드
   Future<String?> uploadImageToSupabase(File file) async {
     final supabase = SupabaseManager.shared.supabase;
     final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
@@ -147,7 +138,6 @@ class PostViewModel extends ChangeNotifier {
     return supabase.storage.from('post_images').getPublicUrl(fileName);
   }
 
-  /// 게시물 삭제
   Future<void> deletePost(int postId) async {
     await _repository.deletePostWithRelations(postId);
     clearPostData();

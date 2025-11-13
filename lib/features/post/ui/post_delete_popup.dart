@@ -19,7 +19,6 @@ class DeletePopup extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // 제목 + 안내문
             SizedBox(
               width: double.infinity,
               child: Column(
@@ -40,8 +39,6 @@ class DeletePopup extends StatelessWidget {
             ),
 
             const SizedBox(height: 24),
-
-            // 버튼 2개 (삭제 / 닫기)
             Row(
               children: [
                 Expanded(
@@ -49,8 +46,8 @@ class DeletePopup extends StatelessWidget {
                     onPressed: () async {
                       await context.read<PostViewModel>().deletePost(postId);
 
-                      Navigator.pop(context); // 팝업 닫기
-                      context.go('/home'); // 이동
+                      Navigator.pop(context);
+                      context.go('/home');
                       _showToast(context, "게시물이 삭제되었습니다.");
                     },
                     style: ElevatedButton.styleFrom(
@@ -101,7 +98,6 @@ class DeletePopup extends StatelessWidget {
     );
   }
 
-  /// 내부용 토스트 함수 (팝업 안에서도 보이게 하기 위한 안전한 형태)
   void _showToast(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
