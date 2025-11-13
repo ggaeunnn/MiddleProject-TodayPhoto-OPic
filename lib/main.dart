@@ -69,6 +69,7 @@ void main() async {
       child: MaterialApp.router(
         routerConfig: GoRouterManager.router,
         debugShowCheckedModeBanner: false,
+        theme: ThemeData(fontFamily: 'Pretendard'),
       ),
     ),
   );

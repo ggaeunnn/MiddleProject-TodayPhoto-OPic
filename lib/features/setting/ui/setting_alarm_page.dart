@@ -33,7 +33,7 @@ class _SettingAlarmScreenState extends State<SettingAlarmScreen> {
   }
 
   Future<void> _loadAlarmSettings() async {
-    final authManager = context.watch<AuthManager>();
+    final authManager = context.read<AuthManager>();
     final loginUserId = authManager.userInfo?.id ?? 0;
 
     final viewModel = context.read<SettingViewModel>();
@@ -60,7 +60,7 @@ class _SettingAlarmScreenState extends State<SettingAlarmScreen> {
   Future<void> _saveAlarmSettings() async {
     if (_isSaving) return; // 중복 저장 방지
 
-    final authManager = context.watch<AuthManager>();
+    final authManager = context.read<AuthManager>();
     final loginUserId = authManager.userInfo?.id ?? 0;
 
     setState(() => _isSaving = true);
