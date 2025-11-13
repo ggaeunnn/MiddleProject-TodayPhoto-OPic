@@ -31,6 +31,7 @@ class PostDetailScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Back Button
               IconButton(
                 onPressed: () => context.go('/home'),
                 icon: const Icon(Icons.keyboard_backspace),
@@ -39,6 +40,7 @@ class PostDetailScreen extends StatelessWidget {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
+                      // Post Writer and Date
                       Row(
                         children: [
                           TextButton(
@@ -64,7 +66,7 @@ class PostDetailScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
 
-                      // 이미지
+                      // Post Image
                       Image.network(
                         viewmodel.post?['image_url'] ??
                             'https://images.unsplash.com/photo-1455156218388-5e61b526818b?auto=format&fit=crop&q=60&w=500',
@@ -72,8 +74,9 @@ class PostDetailScreen extends StatelessWidget {
                         height: 350,
                         fit: BoxFit.fill,
                       ),
-
                       const SizedBox(height: 10),
+
+                      // Like Button
                       Row(
                         children: [
                           IconButton(
@@ -87,7 +90,6 @@ class PostDetailScreen extends StatelessWidget {
                             onPressed: () {
                               final loginUserId =
                                   AuthManager.shared.userInfo?.id ?? 0;
-
                               viewmodel.toggleLike(loginUserId, postId);
                               viewmodel.buttonLike = !viewmodel.buttonLike;
                             },
@@ -101,7 +103,7 @@ class PostDetailScreen extends StatelessWidget {
                           ),
                           const Spacer(),
 
-                          // 내 게시물: 수정/삭제 버튼
+                          // Post Edit/Delete buttons (only for the post owner)
                           (AuthManager.shared.userInfo?.id ==
                                   viewmodel.friendUserId)
                               ? Row(
@@ -174,9 +176,7 @@ class PostDetailScreen extends StatelessWidget {
                                     ),
                                   ],
                                 )
-                              :
-                                // 신고하기
-                                TextButton.icon(
+                              : TextButton.icon(
                                   onPressed: () {
                                     showDialog(
                                       context: context,
@@ -196,10 +196,9 @@ class PostDetailScreen extends StatelessWidget {
                                 ),
                         ],
                       ),
-
                       const Divider(),
 
-                      // 주제 표시
+                      // Topic
                       Row(
                         children: [
                           Text(
@@ -215,10 +214,9 @@ class PostDetailScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-
                       const SizedBox(height: 10),
 
-                      // 댓글 목록
+                      // Comments Section
                       Container(
                         width: double.infinity,
                         color: AppColors.opicBackground,
@@ -232,7 +230,7 @@ class PostDetailScreen extends StatelessWidget {
                                   child: Text("댓글"),
                                 ),
                                 Text(
-                                  " ${viewmodel.commentList.length}",
+                                  "${viewmodel.commentList.length}",
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -250,6 +248,17 @@ class PostDetailScreen extends StatelessWidget {
                                       itemBuilder: (context, index) {
                                         final comment =
                                             viewmodel.commentList[index];
+
+                                        // 로그인된 사용자의 닉네임
+                                        final loginUserNickname =
+                                            AuthManager
+                                                .shared
+                                                .userInfo
+                                                ?.nickname ??
+                                            '';
+                                        final commentWriterNickname =
+                                            comment['user']?['nickname'] ?? '';
+
                                         return Container(
                                           padding: const EdgeInsets.only(
                                             left: 10,
@@ -265,22 +274,76 @@ class PostDetailScreen extends StatelessWidget {
                                                       Icons.person,
                                                     ),
                                                   ),
-                                                  Text(
-                                                    comment['user']?['nickname'] ??
-                                                        '',
-                                                  ),
+                                                  Text(commentWriterNickname),
                                                   const Spacer(),
-                                                  Text(
-                                                    comment['created_at']
-                                                            ?.toString()
-                                                            .split('T')
-                                                            .first ??
-                                                        '',
-                                                    style: TextStyle(
-                                                      fontSize: 10,
-                                                      color:
-                                                          AppColors.opicBlack,
-                                                    ),
+                                                  Column(
+                                                    children: [
+                                                      Text(
+                                                        comment['created_at']
+                                                                ?.toString()
+                                                                .split('T')
+                                                                .first ??
+                                                            '',
+                                                        style: TextStyle(
+                                                          fontSize: 10,
+                                                          color: AppColors
+                                                              .opicBlack,
+                                                        ),
+                                                      ),
+                                                      // Only show delete button for the author of the comment
+                                                      if (loginUserNickname ==
+                                                          commentWriterNickname)
+                                                        ElevatedButton.icon(
+                                                          style: ElevatedButton.styleFrom(
+                                                            backgroundColor:
+                                                                AppColors
+                                                                    .opicRed,
+                                                            fixedSize:
+                                                                const Size(
+                                                                  110,
+                                                                  10,
+                                                                ),
+                                                            shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    12,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                          onPressed: () {
+                                                            showDialog(
+                                                              context: context,
+                                                              barrierColor: Colors
+                                                                  .black
+                                                                  .withOpacity(
+                                                                    0.6,
+                                                                  ),
+                                                              builder: (_) =>
+                                                                  DeletePopup(
+                                                                    postId:
+                                                                        viewmodel
+                                                                            .post?['id'] ??
+                                                                        0,
+                                                                  ),
+                                                            );
+                                                          },
+                                                          icon: Icon(
+                                                            Icons
+                                                                .delete_outline,
+                                                            color: AppColors
+                                                                .opicWhite,
+                                                            size: 13,
+                                                          ),
+                                                          label: Text(
+                                                            "삭제하기",
+                                                            style: TextStyle(
+                                                              color: AppColors
+                                                                  .opicWhite,
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                    ],
                                                   ),
                                                   const SizedBox(width: 8),
                                                 ],
@@ -306,14 +369,13 @@ class PostDetailScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-
                       const Divider(),
                     ],
                   ),
                 ),
               ),
 
-              // 댓글 입력창
+              // Comment Input Field
               Row(
                 children: [
                   Expanded(
