@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/features/post/viewmodel/post_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -19,11 +19,12 @@ class DeletePopup extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(
+            // 제목 + 안내문
+            SizedBox(
               width: double.infinity,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: const [
                   Text("게시물 삭제", style: TextStyle(fontWeight: FontWeight.bold)),
                   SizedBox(height: 15),
                   Text(
@@ -40,35 +41,73 @@ class DeletePopup extends StatelessWidget {
 
             const SizedBox(height: 24),
 
+            // 버튼 2개 (삭제 / 닫기)
             Row(
               children: [
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () async {
-                      final viewmodel = context.read<PostViewModel>();
+                      await context.read<PostViewModel>().deletePost(postId);
 
-                      await viewmodel.deletePost(postId);
-
-                      Fluttertoast.showToast(msg: "게시물이 삭제되었습니다.");
-
-                      if (context.mounted) {
-                        context.go('/home');
-                      }
+                      Navigator.pop(context); // 팝업 닫기
+                      context.go('/home'); // 이동
+                      _showToast(context, "게시물이 삭제되었습니다.");
                     },
-                    child: const Text("삭제하기"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xff95b7db),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text(
+                      "삭제하기",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xfffefefe),
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () => context.pop(),
-                    child: const Text("닫기"),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xffe8e8dc),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text(
+                      "닫기",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xff515151),
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// 내부용 토스트 함수 (팝업 안에서도 보이게 하기 위한 안전한 형태)
+  void _showToast(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: AppColors.opicBlue,
+        duration: const Duration(seconds: 1),
       ),
     );
   }

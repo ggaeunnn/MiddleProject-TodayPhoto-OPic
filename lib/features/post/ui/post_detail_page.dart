@@ -12,58 +12,62 @@ import 'package:provider/provider.dart';
 class PostDetailScreen extends StatelessWidget {
   final int postId;
 
-  const PostDetailScreen({required this.postId, super.key});
+  const PostDetailScreen({super.key, required this.postId});
+
+  @override
   Widget build(BuildContext context) {
     final viewmodel = context.watch<PostViewModel>();
 
+    // 최초 한 번만 데이터 로드
     WidgetsBinding.instance.addPostFrameCallback((_) {
       viewmodel.fetchPostById(postId);
       viewmodel.loadLoginUserInfo();
-      viewmodel.fetchPostWriterId(postId);
     });
 
-    final thisPost = viewmodel.thisPost;
-    final postWriter = thisPost?.userId ?? 0;
+    final postWriterUserId = viewmodel.friendUserId ?? 0;
 
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               IconButton(
-                onPressed: () {
-                  context.go('/home');
-                },
-                icon: Icon(Icons.keyboard_backspace),
+                onPressed: () => context.go('/home'),
+                icon: const Icon(Icons.keyboard_backspace),
               ),
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
+                      // 상단 프로필 / 날짜
                       Row(
                         children: [
                           TextButton(
                             onPressed: () {
-                              context.go('/home/feed/$postWriter');
+                              context.go('/home/feed/$postWriterUserId');
                             },
                             child: Text(
                               viewmodel.postWriter,
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                          Spacer(),
+                          const Spacer(),
                           Text(
                             viewmodel.formattedDate,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 10,
                               color: Color(0xFF515151),
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
+
+                      // 이미지
                       Image.network(
                         viewmodel.post?['image_url'] ??
                             'https://images.unsplash.com/photo-1455156218388-5e61b526818b?auto=format&fit=crop&q=60&w=500',
@@ -72,12 +76,14 @@ class PostDetailScreen extends StatelessWidget {
                         fit: BoxFit.fill,
                       ),
 
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
+
+                      // 좋아요 + 수정/삭제 or 신고
                       Row(
                         children: [
                           IconButton(
                             icon: Icon(
-                              (viewmodel.buttonLike)
+                              viewmodel.buttonLike
                                   ? Icons.favorite_border
                                   : Icons.favorite,
                             ),
@@ -88,21 +94,19 @@ class PostDetailScreen extends StatelessWidget {
                                   AuthManager.shared.userInfo?.id ?? 0;
 
                               viewmodel.toggleLike(loginUserId, postId);
-
-                              // 버튼 아이콘 토글
                               viewmodel.buttonLike = !viewmodel.buttonLike;
                             },
                           ),
                           Text(
-                            "좋아요 ${viewmodel.likeCount} ",
-                            style: TextStyle(
+                            "좋아요 ${viewmodel.likeCount}",
+                            style: const TextStyle(
                               fontSize: 13,
                               color: AppColors.opicBlack,
                             ),
                           ),
-                          Spacer(),
+                          const Spacer(),
 
-                          // 내 게시물이라면 수정하기/삭제하기
+                          // 내 게시물: 수정/삭제 버튼
                           (AuthManager.shared.userInfo?.id ==
                                   viewmodel.friendUserId)
                               ? Row(
@@ -110,7 +114,7 @@ class PostDetailScreen extends StatelessWidget {
                                     ElevatedButton.icon(
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.opicSoftBlue,
-                                        fixedSize: Size(110, 10),
+                                        fixedSize: const Size(110, 10),
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(
                                             12,
@@ -122,7 +126,8 @@ class PostDetailScreen extends StatelessWidget {
                                           context: context,
                                           barrierColor: AppColors.opicLightBlack
                                               .withOpacity(0.6),
-                                          builder: (context) => EditPopup(),
+                                          builder: (context) =>
+                                              const EditPopup(),
                                         );
                                       },
                                       icon: Icon(
@@ -138,11 +143,11 @@ class PostDetailScreen extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-                                    Padding(padding: EdgeInsets.all(5)),
+                                    const SizedBox(width: 5),
                                     ElevatedButton.icon(
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.opicRed,
-                                        fixedSize: Size(110, 10),
+                                        fixedSize: const Size(110, 10),
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(
                                             12,
@@ -152,8 +157,10 @@ class PostDetailScreen extends StatelessWidget {
                                       onPressed: () {
                                         showDialog(
                                           context: context,
+                                          barrierColor: Colors.black
+                                              .withOpacity(0.6),
                                           builder: (_) => DeletePopup(
-                                            postId: viewmodel.post!['id'],
+                                            postId: viewmodel.post?['id'] ?? 0,
                                           ),
                                         );
                                       },
@@ -173,7 +180,7 @@ class PostDetailScreen extends StatelessWidget {
                                   ],
                                 )
                               :
-                                // 다른 사람 게시물이라면 신고하기
+                                // 다른 사람 게시물: 신고하기
                                 TextButton.icon(
                                   onPressed: () {
                                     showDialog(
@@ -181,18 +188,22 @@ class PostDetailScreen extends StatelessWidget {
                                       barrierColor: Colors.black.withOpacity(
                                         0.6,
                                       ),
-                                      builder: (context) => PostReportScreen(),
+                                      builder: (context) =>
+                                          const PostReportScreen(),
                                     );
                                   },
                                   icon: Icon(
                                     Icons.outlined_flag,
                                     color: AppColors.opicRed,
                                   ),
-                                  label: Text('신고하기'),
+                                  label: const Text('신고하기'),
                                 ),
                         ],
                       ),
-                      Divider(),
+
+                      const Divider(),
+
+                      // 주제 표시
                       Row(
                         children: [
                           Text(
@@ -200,9 +211,7 @@ class PostDetailScreen extends StatelessWidget {
                             style: TextStyle(color: AppColors.opicLightBlack),
                           ),
                           TextButton(
-                            onPressed: () {
-                              context.go('/home');
-                            },
+                            onPressed: () => context.go('/home'),
                             child: Text(
                               viewmodel.todayTopic,
                               style: TextStyle(color: AppColors.opicSoftBlue),
@@ -210,7 +219,10 @@ class PostDetailScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      SizedBox(height: 10),
+
+                      const SizedBox(height: 10),
+
+                      // 댓글 목록
                       Container(
                         width: double.infinity,
                         color: AppColors.opicBackground,
@@ -219,44 +231,49 @@ class PostDetailScreen extends StatelessWidget {
                           children: [
                             Row(
                               children: [
-                                Padding(
+                                const Padding(
                                   padding: EdgeInsets.all(8),
                                   child: Text("댓글"),
                                 ),
                                 Text(
                                   " ${viewmodel.commentList.length}",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ],
                             ),
                             Center(
-                              child: (viewmodel.commentList.isEmpty)
-                                  ? Text("첫 댓글을 남겨보세요!")
+                              child: viewmodel.commentList.isEmpty
+                                  ? const Text("첫 댓글을 남겨보세요!")
                                   : ListView.builder(
                                       itemCount: viewmodel.commentList.length,
                                       shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
                                       itemBuilder: (context, index) {
                                         final comment =
                                             viewmodel.commentList[index];
                                         return Container(
-                                          padding: EdgeInsets.only(left: 10),
-                                          width: 100,
+                                          padding: const EdgeInsets.only(
+                                            left: 10,
+                                          ),
                                           color: AppColors.opicWhite,
                                           child: Column(
                                             children: [
                                               Row(
                                                 children: [
                                                   IconButton(
-                                                    onPressed: () {
-                                                      // context.go();
-                                                    },
-                                                    icon: Icon(Icons.person),
+                                                    onPressed: () {},
+                                                    icon: const Icon(
+                                                      Icons.person,
+                                                    ),
                                                   ),
-                                                  //여기 이름 바꾸기
                                                   Text(
-                                                    comment['user']?['nickname'],
+                                                    comment['user']?['nickname'] ??
+                                                        '',
                                                   ),
-                                                  Spacer(),
+                                                  const Spacer(),
                                                   Text(
                                                     comment['created_at']
                                                             ?.toString()
@@ -269,16 +286,13 @@ class PostDetailScreen extends StatelessWidget {
                                                           AppColors.opicBlack,
                                                     ),
                                                   ),
-                                                  Padding(
-                                                    padding: EdgeInsets.only(
-                                                      right: 8,
-                                                    ),
-                                                  ),
+                                                  const SizedBox(width: 8),
                                                 ],
                                               ),
                                               Container(
-                                                padding: EdgeInsets.only(
+                                                padding: const EdgeInsets.only(
                                                   left: 20,
+                                                  bottom: 8,
                                                 ),
                                                 width: double.infinity,
                                                 child: Text(
@@ -292,20 +306,19 @@ class PostDetailScreen extends StatelessWidget {
                                       },
                                     ),
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                           ],
                         ),
                       ),
-                      Divider(),
+
+                      const Divider(),
                     ],
                   ),
                 ),
               ),
 
-              //댓글 입력 창
+              // 댓글 입력창
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Expanded(
                     child: Container(
@@ -324,21 +337,19 @@ class PostDetailScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-
-                  Padding(padding: EdgeInsets.only(left: 10)),
+                  const SizedBox(width: 10),
                   Container(
                     alignment: Alignment.center,
                     width: 35,
                     height: 35,
                     color: AppColors.opicSoftBlue,
                     child: IconButton(
-                      icon: Icon(Icons.send),
+                      icon: const Icon(Icons.send),
                       iconSize: 20,
                       color: AppColors.opicWhite,
                       onPressed: () {
                         final loginUserId =
                             AuthManager.shared.userInfo?.id ?? 0;
-
                         viewmodel.addComment(loginUserId, postId);
                       },
                     ),
