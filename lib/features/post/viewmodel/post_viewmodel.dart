@@ -5,7 +5,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/core/manager/supabase_manager.dart';
-import 'package:opicproject/core/models/post_model.dart';
 import 'package:opicproject/features/post/data/post_repository.dart';
 
 class PostViewModel extends ChangeNotifier {
@@ -15,22 +14,22 @@ class PostViewModel extends ChangeNotifier {
   int likeCount = 0;
   bool buttonLike = true;
   String loginUserName = "친구1";
+
   File? selectedImage;
   final commentListController = TextEditingController();
   List<Map<String, dynamic>> commentList = [];
-  int? _loadedPostId;
+
   int? friendUserId;
   String postWriter = "";
 
   DateTime now = DateTime.now();
   late String formattedDate = DateFormat('yyyy-MM-dd').format(now);
-  late String commentDate = DateFormat('yyyy-MM-dd HH:mm').format(now);
   String todayTopic = "겨울풍경";
 
   Future<void> fetchPostById(int id) async {
     post = await _repository.getPostById(id);
+
     friendUserId = post?['user']?['id'];
-    postWriter = post?['user']?['nickname'] ?? "";
     postWriter = post?['user']?['nickname'] ?? "이름 없음";
 
     final created = post?['created_at'];
@@ -72,13 +71,7 @@ class PostViewModel extends ChangeNotifier {
 
     await _repository.commentSend(userId, postId, text);
 
-    commentList.add({
-      'user_id': userId,
-      'post_id': postId,
-      'text': text,
-      'created_at': DateTime.now().toIso8601String(),
-      'is_deleted': false,
-    });
+    await fetchComments(postId);
 
     commentListController.clear();
     Fluttertoast.showToast(msg: "댓글 작성이 완료되었습니다.");
@@ -93,7 +86,6 @@ class PostViewModel extends ChangeNotifier {
   void clearPostData() {
     post = null;
     commentList.clear();
-    _loadedPostId = null;
     notifyListeners();
   }
 
@@ -115,7 +107,7 @@ class PostViewModel extends ChangeNotifier {
     final data = await SupabaseManager.shared.supabase
         .from('user')
         .select()
-        .eq('uuid', authId)
+        .eq('auth_id', authId)
         .maybeSingle();
 
     if (data != null) {
@@ -134,7 +126,6 @@ class PostViewModel extends ChangeNotifier {
     }
 
     final id = await _repository.insertPost(userId: userId, imageUrl: imageUrl);
-
     return id;
   }
 
@@ -147,16 +138,8 @@ class PostViewModel extends ChangeNotifier {
     return supabase.storage.from('post_images').getPublicUrl(fileName);
   }
 
-
   Future<void> deletePost(int postId) async {
     await _repository.deletePostWithRelations(postId);
     clearPostData();
-
-  Post? _thisPost;
-  Post? get thisPost => _thisPost;
-
-  Future<void> fetchPostWriterId(int postId) async {
-    _thisPost = await _repository.fetchPostWriterId(postId);
-
   }
 }
