@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:opicproject/component/yes_or_close_pop_up.dart';
 import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
-import 'package:opicproject/core/models/page_model.dart';
 import 'package:opicproject/core/models/user_model.dart';
 import 'package:opicproject/features/feed/data/feed_viewmodel.dart';
 import 'package:opicproject/features/friend/data/friend_view_model.dart';
@@ -19,11 +18,8 @@ class FeedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<FeedViewModel>(
       builder: (context, feedViewModel, child) {
-        final pageViewModel = context.read<PageCountViewmodel>();
         final loginUserId = AuthManager.shared.userInfo?.id ?? 0;
-        final feedUserId = pageViewModel.currentPage == 2
-            ? loginUserId
-            : userId;
+        final feedUserId = userId;
 
         // 빌드 후에 데이터 로드 (한 번만 실행되도록)
         if (feedViewModel.feedUser == null ||
@@ -107,22 +103,39 @@ Widget _buildUserHeader(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // 닉네임
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 15.0),
-                    child: Text(
-                      feedUser.nickname,
-                      style: TextStyle(
-                        decoration: TextDecoration.none,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 25,
-                        color: AppColors.opicBlack,
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          Icons.arrow_back_rounded,
+                          color: AppColors.opicBlack,
+                        ),
+                        onPressed: () {
+                          context.pop();
+                        },
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        focusColor: Colors.transparent,
                       ),
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6.0),
+                        child: Text(
+                          feedUser.nickname,
+                          style: TextStyle(
+                            decoration: TextDecoration.none,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 23,
+                            color: AppColors.opicBlack,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   // 내 피드가 아닐 때만 버튼 표시
                   if (!isMyFeed)
                     Row(
-                      spacing: 8,
+                      spacing: 5,
                       children: [
                         // 친구 추가 버튼 (친구가 아니고, 요청중도 아니고, 차단 안 되어있을 때)
                         if (!isFriend && !isRequested && !isBlocked)
@@ -351,7 +364,7 @@ Widget _buildUserHeader(
                 "게시물 $feedCount",
                 style: TextStyle(
                   decoration: TextDecoration.none,
-                  color: AppColors.opicLightBlack,
+                  color: AppColors.opicSoftBlue,
                   fontSize: 15,
                 ),
               ),
