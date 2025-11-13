@@ -22,8 +22,11 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewmodel = context.watch<HomeViewModel>();
+    final homeViewmodel = context.watch<HomeViewModel>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // context.read<HomeViewModel>().loadLoginUserId();
+      context.read<HomeViewModel>().initHome();
+
       if (viewmodel.posts.isEmpty) {
         context.read<HomeViewModel>().loadPosts();
       }
@@ -61,8 +64,7 @@ class HomeScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          // currentTopic,
-                          "주제",
+                          homeViewmodel.todayTopic?['content'] ?? "주제가 없습니다.",
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
