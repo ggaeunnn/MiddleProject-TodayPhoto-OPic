@@ -30,6 +30,7 @@ class GoRouterManager {
         '/setting_alarm_page',
       ];
 
+      // 로그인 안됐는데 다른 탭 가려고 함
       if (!isLoggedIn &&
           lockedPaths.any((path) => currentPath.startsWith(path)))
         return '/login';

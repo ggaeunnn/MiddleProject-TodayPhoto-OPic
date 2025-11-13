@@ -76,6 +76,7 @@ flutter:
     - assets/images/logo_long_skyblue.png
     - assets/images/logo_square_skyblue.png
     - assets/images/sign_in_google.png
+    - assets/images/google_logo.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

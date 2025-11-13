@@ -126,7 +126,8 @@ class PostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final loginUserId = AuthManager.shared.userInfo?.id ?? 0;
+    final authManager = context.watch<AuthManager>();
+    final loginUserId = authManager.userInfo?.id ?? 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

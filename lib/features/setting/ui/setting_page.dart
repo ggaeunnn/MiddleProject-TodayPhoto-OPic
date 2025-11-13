@@ -30,16 +30,15 @@ class _SettingScreenState extends State<_SettingScreen> {
     super.initState();
     // 초기 데이터 로드
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final loginUserId = AuthManager.shared.userInfo?.id;
-      if (loginUserId != null) {
-        context.read<SettingViewModel>().fetchUserInfo(loginUserId);
-      }
+      final authManager = context.watch<AuthManager>();
+      final loginUserId = authManager.userInfo?.id ?? 0;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final loginUserId = AuthManager.shared.userInfo?.id ?? 0;
+    final authManager = context.watch<AuthManager>();
+    final loginUserId = authManager.userInfo?.id ?? 0;
 
     return Scaffold(
       backgroundColor: AppColors.opicBackground,
@@ -49,7 +48,7 @@ class _SettingScreenState extends State<_SettingScreen> {
             // ViewModel에서 직접 닉네임 가져오기
             final displayNickname =
                 viewModel.loginUser?.nickname ??
-                AuthManager.shared.userInfo?.nickname ??
+                authManager.userInfo?.nickname ??
                 "알 수 없음";
 
             return Column(

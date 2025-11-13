@@ -18,7 +18,8 @@ class FeedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<FeedViewModel>(
       builder: (context, feedViewModel, child) {
-        final loginUserId = AuthManager.shared.userInfo?.id ?? 0;
+        final authManager = context.watch<AuthManager>();
+        final loginUserId = authManager.userInfo?.id ?? 0;
         final feedUserId = userId;
 
         // 빌드 후에 데이터 로드 (한 번만 실행되도록)

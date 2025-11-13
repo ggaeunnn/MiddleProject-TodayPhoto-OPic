@@ -19,7 +19,8 @@ class FriendScreen extends StatelessWidget {
       body: SafeArea(
         child: Consumer<FriendViewModel>(
           builder: (context, viewModel, child) {
-            final loginUserId = AuthManager.shared.userInfo?.id ?? 0;
+            final authManager = context.watch<AuthManager>();
+            final loginUserId = authManager.userInfo?.id ?? 0;
             if (loginUserId == 0) {
               return Container(
                 decoration: BoxDecoration(color: AppColors.opicBackground),

@@ -29,10 +29,8 @@ class _AlarmListScreenState extends State<_AlarmListScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final viewModel = context.read<AlarmViewModel>();
-      final loginUserId = AuthManager.shared.userInfo?.id;
-      if (loginUserId != null && !viewModel.isInitialized) {
-        viewModel.initialize(loginUserId);
-      }
+      final authManager = context.watch<AuthManager>();
+      final loginUserId = authManager.userInfo?.id ?? 0;
     });
   }
 
@@ -41,9 +39,9 @@ class _AlarmListScreenState extends State<_AlarmListScreen> {
     return Scaffold(
       backgroundColor: AppColors.opicWhite,
       body: SafeArea(
-        child: Consumer<AlarmViewModel>(
-          builder: (context, viewModel, child) {
-            final loginUserId = AuthManager.shared.userInfo?.id;
+        child: Consumer2<AlarmViewModel, AuthManager>(
+          builder: (context, viewModel, authManager, child) {
+            final loginUserId = authManager.userInfo?.id;
 
             if (loginUserId == null) {
               return Container(

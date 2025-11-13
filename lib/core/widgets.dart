@@ -1,46 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/app_colors.dart';
+import 'package:opicproject/core/manager/autn_manager.dart';
+import 'package:opicproject/features/auth/viewmodel/auth_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class OpicAppbar extends StatelessWidget implements PreferredSizeWidget {
   const OpicAppbar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.05,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            margin: EdgeInsets.all(10),
-            child: Image.asset('assets/images/logo_long_skyblue.png'),
-          ),
-          Row(
+    return Consumer<AuthManager>(
+      builder: (context, authManager, child) {
+        final isLoggedIn = authManager.userInfo != null;
+        final authViewModel = context.read<AuthViewModel>();
+
+        print("🔍 OpicAppbar - isLoggedIn: $isLoggedIn");
+        print("🔍 OpicAppbar - userInfo: ${authManager.userInfo?.email}");
+
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.05,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                child: IconButton(
-                  onPressed: () {
-                    context.push('/alarm_list_page');
-                  },
-                  icon: Icon(
-                    Icons.notifications_none,
-                    color: AppColors.opicSoftBlue,
-                  ),
-                ),
+                margin: EdgeInsets.all(10),
+                child: Image.asset('assets/images/logo_long_skyblue.png'),
               ),
-              Container(
-                child: IconButton(
-                  onPressed: () {
-                    context.push('/login');
-                  },
-                  icon: Icon(Icons.exit_to_app, color: AppColors.opicSoftBlue),
-                ),
+              Row(
+                children: [
+                  if (isLoggedIn)
+                    Container(
+                      child: IconButton(
+                        onPressed: () {
+                          context.push('/alarm_list_page');
+                        },
+                        icon: Icon(
+                          Icons.notifications_none,
+                          color: AppColors.opicSoftBlue,
+                        ),
+                      ),
+                    ),
+                  Container(
+                    child: IconButton(
+                      onPressed: () {
+                        context.push('/login');
+                      },
+                      icon: Icon(
+                        Icons.exit_to_app,
+                        color: AppColors.opicSoftBlue,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
