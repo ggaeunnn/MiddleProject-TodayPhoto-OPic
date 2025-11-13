@@ -16,44 +16,39 @@ class FeedScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<FeedViewModel>(
-      builder: (context, feedViewModel, child) {
-        final loginUserId = AuthManager.shared.userInfo?.id ?? 0;
-        final feedUserId = userId;
+    final feedViewModel = context.watch<FeedViewModel>();
+    final authManager = context.watch<AuthManager>();
+    final loginUserId = authManager.userInfo?.id ?? 0;
 
-        // 빌드 후에 데이터 로드 (한 번만 실행되도록)
-        if (feedViewModel.feedUser == null ||
-            feedViewModel.feedUser!.id != feedUserId) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            feedViewModel.fetchAUser(feedUserId);
-            feedViewModel.fetchPosts(1, feedUserId);
-          });
-        }
+    final needsInit =
+        !feedViewModel.isInitialized || feedViewModel.feedUser?.id != userId;
 
-        final feedUser = feedViewModel.feedUser;
+    if (needsInit && loginUserId != 0) {
+      debugPrint('⚡ Initializing feed for userId=$userId');
+      feedViewModel.initializeFeed(userId, loginUserId);
+    }
 
-        if (feedUser == null ||
-            (feedViewModel.isLoading && feedViewModel.posts.isEmpty)) {
-          return Container(
+    final feedUser = feedViewModel.feedUser;
+
+    if (feedUser == null || feedViewModel.isLoading) {
+      return Container(
+        color: AppColors.opicBackground,
+        child: Center(
+          child: CircularProgressIndicator(color: AppColors.opicBlue),
+        ),
+      );
+    }
+
+    return Column(
+      children: [
+        _buildUserHeader(context, feedViewModel, feedUser, loginUserId),
+        Expanded(
+          child: Container(
             color: AppColors.opicBackground,
-            child: Center(
-              child: CircularProgressIndicator(color: AppColors.opicBlue),
-            ),
-          );
-        }
-
-        return Column(
-          children: [
-            _buildUserHeader(context, feedViewModel, feedUser, loginUserId),
-            Expanded(
-              child: Container(
-                color: AppColors.opicBackground,
-                child: _postList(context, feedViewModel, feedUser),
-              ),
-            ),
-          ],
-        );
-      },
+            child: _postList(context, feedViewModel, feedUser),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -66,15 +61,12 @@ Widget _buildUserHeader(
 ) {
   final isMyFeed = feedUser.id == loginUserId;
 
-  // 초기 로드 시 한 번만 체크
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    if (!isMyFeed) {
-      feedViewModel.checkIfBlocked(loginUserId, feedUser.id);
-      feedViewModel.checkIfRequested(loginUserId, feedUser.id);
-      feedViewModel.checkIfBlockedMe(loginUserId, feedUser.id);
+  if (!isMyFeed && !feedViewModel.isStatusChecked) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      feedViewModel.checkUserStatus(loginUserId, feedUser.id);
       context.read<FriendViewModel>().checkIfFriend(loginUserId, feedUser.id);
-    }
-  });
+    });
+  }
 
   return Consumer2<FeedViewModel, FriendViewModel>(
     builder: (context, feedViewModel, friendViewModel, child) {
@@ -190,7 +182,7 @@ Widget _buildUserHeader(
                                   ),
                                   SizedBox(width: 6),
                                   Text(
-                                    "친구 추가",
+                                    "친구 요청",
                                     style: TextStyle(
                                       decoration: TextDecoration.none,
                                       color: AppColors.opicWhite,
@@ -204,33 +196,66 @@ Widget _buildUserHeader(
                           ),
                         // 수락 대기중 버튼 (요청중일 때)
                         if (isRequested && !isFriend && !isBlocked)
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.opicWarmGrey,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.schedule_rounded,
-                                  color: AppColors.opicBlack,
-                                  size: 16,
+                          GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                barrierColor: Colors.black.withOpacity(0.6),
+                                builder: (context) => YesOrClosePopUp(
+                                  title: "친구 요청을 취소하시겠어요?",
+                                  text: "상대방이 수락하기 전인 친구 요청을 삭제할 수 있어요",
+                                  confirmText: "요청 취소",
+                                  onConfirm: () async {
+                                    context.pop();
+                                    await friendViewModel.deleteARequest(
+                                      loginUserId,
+                                      feedUser.id,
+                                    );
+                                    // 상태 다시 체크
+                                    await feedViewModel.checkIfRequested(
+                                      loginUserId,
+                                      feedUser.id,
+                                    );
+                                    await friendViewModel.checkIfFriend(
+                                      loginUserId,
+                                      feedUser.id,
+                                    );
+                                    showToast("친구 요청을 취소했어요");
+                                  },
+                                  onCancel: () {
+                                    context.pop();
+                                  },
                                 ),
-                                SizedBox(width: 6),
-                                Text(
-                                  "수락 대기중",
-                                  style: TextStyle(
+                              );
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.opicWarmGrey,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.schedule_rounded,
                                     color: AppColors.opicBlack,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
+                                    size: 16,
                                   ),
-                                ),
-                              ],
+                                  SizedBox(width: 6),
+                                  Text(
+                                    "요청 취소",
+                                    style: TextStyle(
+                                      color: AppColors.opicBlack,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         // 차단 버튼 (차단 안 되어있을 때)

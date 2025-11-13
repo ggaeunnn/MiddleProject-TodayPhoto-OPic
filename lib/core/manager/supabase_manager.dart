@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:opicproject/core/models/alarm_model.dart';
 import 'package:opicproject/core/models/alarm_setting_model.dart';
+import 'package:opicproject/core/models/post_model.dart';
 import 'package:opicproject/core/models/topic_model.dart';
 import 'package:opicproject/core/models/user_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -104,6 +105,15 @@ class SupabaseManager {
         .from('friend_request')
         .update({'answered_at': "${DateTime.now()}"})
         .eq('id', requestId);
+  }
+
+  // 친구 요청 취소하기
+  Future<void> deleteARequest(int loginId, int userId) async {
+    await supabase
+        .from("friend_request")
+        .delete()
+        .eq('request_id', loginId)
+        .eq('target_id', userId);
   }
 
   // 친구 요청 승낙 - 친구 추가
@@ -220,5 +230,18 @@ class SupabaseManager {
         .maybeSingle();
 
     return data != null;
+  }
+
+  // 특정 알림 정보 가져오기 (아이디로)
+  Future<Post?> fetchPostWriterId(int postId) async {
+    final Map<String, dynamic>? data = await supabase
+        .from("posts")
+        .select('*')
+        .eq('id', postId)
+        .maybeSingle();
+    if (data == null) {
+      return null;
+    }
+    return Post.fromJson(data);
   }
 }

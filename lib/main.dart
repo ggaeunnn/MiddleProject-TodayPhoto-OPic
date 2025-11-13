@@ -2,10 +2,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/core/manager/firebase_manager.dart';
 import 'package:opicproject/core/manager/go_router_manager.dart';
 import 'package:opicproject/features/alarm/data/alarm_view_model.dart';
-import 'package:opicproject/features/auth/ui/login_page.dart';
 import 'package:opicproject/features/auth/viewmodel/auth_viewmodel.dart';
 import 'package:opicproject/features/friend/data/friend_view_model.dart';
 import 'package:opicproject/features/home/viewmodel/home_viewmodel.dart';
@@ -17,7 +17,6 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/manager/locator.dart';
-import 'features/feed/data/feed_viewmodel.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -53,16 +52,14 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider.value(value: AuthManager.shared),
         ChangeNotifierProvider(
           //getIt을 통한 서비스 주입
           create: (context) =>
               OnboardingViewModel(locator<OnboardingService>()),
         ),
-        ChangeNotifierProvider(
-          create: (context) => AuthViewModel(),
-          child: LoginScreen(),
-        ),
-        ChangeNotifierProvider(create: (context) => FeedViewModel()),
+        ChangeNotifierProvider(create: (context) => AuthViewModel()),
+        //ChangeNotifierProvider(create: (context) => FeedViewModel()),
         ChangeNotifierProvider(create: (context) => FriendViewModel()),
         ChangeNotifierProvider(create: (context) => PostViewModel()),
         ChangeNotifierProvider(create: (context) => HomeViewModel()),
@@ -72,6 +69,7 @@ void main() async {
       child: MaterialApp.router(
         routerConfig: GoRouterManager.router,
         debugShowCheckedModeBanner: false,
+        theme: ThemeData(fontFamily: 'Pretendard'),
       ),
     ),
   );

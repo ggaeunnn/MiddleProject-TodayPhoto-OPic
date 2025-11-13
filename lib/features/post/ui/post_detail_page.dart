@@ -19,7 +19,12 @@ class PostDetailScreen extends StatelessWidget {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       viewmodel.fetchPostById(postId);
       viewmodel.loadLoginUserInfo();
+      viewmodel.fetchPostWriterId(postId);
     });
+
+    final thisPost = viewmodel.thisPost;
+    final postWriter = thisPost?.userId ?? 0;
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -41,7 +46,7 @@ class PostDetailScreen extends StatelessWidget {
                         children: [
                           TextButton(
                             onPressed: () {
-                              // context.go('/feed/${viewmodel.friendUserId}');
+                              context.go('/home/feed/$postWriter');
                             },
                             child: Text(
                               viewmodel.postWriter,

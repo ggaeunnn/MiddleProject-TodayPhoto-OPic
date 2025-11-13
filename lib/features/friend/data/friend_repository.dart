@@ -66,6 +66,14 @@ class FriendRepository {
     return await SupabaseManager.shared.answerARequest(requestId);
   }
 
+  // 요청 취소하기
+  Future<void> deleteARequest(int loginUserId, int targetUserId) async {
+    return await SupabaseManager.shared.deleteARequest(
+      loginUserId,
+      targetUserId,
+    );
+  }
+
   // 친구 요청 수락 - 친구 추가하기
   Future<void> acceptARequest(
     int requestId,

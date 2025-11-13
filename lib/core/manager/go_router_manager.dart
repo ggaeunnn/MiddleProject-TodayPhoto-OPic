@@ -1,9 +1,10 @@
-import 'package:go_router/go_router.dart'
-    show GoRouter, GoRoute, StatefulShellRoute, StatefulShellBranch;
+import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/features/alarm/ui/alarm_list_page.dart';
 import 'package:opicproject/features/auth/ui/login_page.dart';
+import 'package:opicproject/features/feed/data/feed_viewmodel.dart';
 import 'package:opicproject/features/feed/ui/feed.dart';
+import 'package:opicproject/features/friend/data/friend_view_model.dart';
 import 'package:opicproject/features/friend/ui/friend_page.dart';
 import 'package:opicproject/features/home/home.dart';
 import 'package:opicproject/features/onboarding/ui/onboarding_screen.dart';
@@ -11,6 +12,7 @@ import 'package:opicproject/features/post/ui/post_detail_page.dart';
 import 'package:opicproject/features/setting/ui/setting_alarm_page.dart';
 import 'package:opicproject/features/setting/ui/setting_page.dart';
 import 'package:opicproject/main_page.dart';
+import 'package:provider/provider.dart';
 
 class GoRouterManager {
   static final GoRouter router = GoRouter(
@@ -30,9 +32,11 @@ class GoRouterManager {
         '/setting_alarm_page',
       ];
 
+      // 로그인 안됐는데 다른 탭 가려고 함
       if (!isLoggedIn &&
-          lockedPaths.any((path) => currentPath.startsWith(path)))
+          lockedPaths.any((path) => currentPath.startsWith(path))) {
         return '/login';
+      }
 
       return null;
     },
@@ -58,7 +62,11 @@ class GoRouterManager {
                     path: 'feed/:id',
                     builder: (context, state) {
                       final userId = int.parse(state.pathParameters['id']!);
-                      return FeedScreen(userId: userId);
+                      // ✅ 독립적인 FeedViewModel 생성
+                      return ChangeNotifierProvider(
+                        create: (_) => FeedViewModel(),
+                        child: FeedScreen(userId: userId),
+                      );
                     },
                   ),
                 ],
@@ -70,13 +78,21 @@ class GoRouterManager {
             routes: [
               GoRoute(
                 path: '/friend',
-                builder: (context, state) => FriendScreen(),
+                builder: (context, state) {
+                  return ChangeNotifierProvider(
+                    create: (_) => FriendViewModel(),
+                    child: FriendScreen(),
+                  );
+                },
                 routes: [
                   GoRoute(
                     path: 'feed/:id',
                     builder: (context, state) {
                       final userId = int.parse(state.pathParameters['id']!);
-                      return FeedScreen(userId: userId);
+                      return ChangeNotifierProvider(
+                        create: (_) => FeedViewModel(),
+                        child: FeedScreen(userId: userId),
+                      );
                     },
                   ),
                 ],
@@ -90,7 +106,10 @@ class GoRouterManager {
                 path: '/my-feed',
                 builder: (context, state) {
                   final loginUserId = AuthManager.shared.userInfo?.id ?? 0;
-                  return FeedScreen(userId: loginUserId);
+                  return ChangeNotifierProvider(
+                    create: (_) => FeedViewModel(),
+                    child: FeedScreen(userId: loginUserId),
+                  );
                 },
               ),
             ],

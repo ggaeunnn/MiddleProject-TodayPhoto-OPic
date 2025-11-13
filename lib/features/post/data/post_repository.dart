@@ -1,4 +1,5 @@
 import 'package:opicproject/core/manager/supabase_manager.dart';
+import 'package:opicproject/core/models/post_model.dart';
 
 class PostRepository {
   static final PostRepository shared = PostRepository._internal();
@@ -95,9 +96,14 @@ class PostRepository {
     return result?['id'];
   }
 
+ post_delete
   Future<void> deletePostWithRelations(int postId) async {
     await supabase.from('likes').delete().eq('post_id', postId);
     await supabase.from('comments').delete().eq('post_id', postId);
     await supabase.from('posts').delete().eq('id', postId);
+
+  Future<Post?> fetchPostWriterId(int postId) async {
+    return await SupabaseManager.shared.fetchPostWriterId(postId);
+
   }
 }

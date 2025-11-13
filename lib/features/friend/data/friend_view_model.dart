@@ -259,6 +259,12 @@ class FriendViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  // 요청 취소하기
+  Future<void> deleteARequest(int loginUserId, int targetUserId) async {
+    await _repository.deleteARequest(loginUserId, targetUserId);
+    notifyListeners();
+  }
+
   // 친구 요청 응답하기
   Future<void> answerARequest(int requestId, int loginUserId) async {
     await _repository.answerARequest(requestId);

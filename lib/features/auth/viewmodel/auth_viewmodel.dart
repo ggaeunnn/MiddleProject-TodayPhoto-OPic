@@ -113,7 +113,7 @@ class AuthViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> signOutGoogle() async {
+  Future<bool> signOutGoogle() async {
     _setLoading(true);
     try {
       final supabase = SupabaseManager.shared.supabase.auth;
@@ -124,9 +124,11 @@ class AuthViewModel extends ChangeNotifier {
       await googleSignInInstance.signOut();
 
       Fluttertoast.showToast(msg: "로그아웃 성공");
+      return true;
     } catch (e) {
       debugPrint("Sign out error: $e");
       Fluttertoast.showToast(msg: "로그아웃 중 오류 발생");
+      return false;
     } finally {
       _setLoading(false);
     }

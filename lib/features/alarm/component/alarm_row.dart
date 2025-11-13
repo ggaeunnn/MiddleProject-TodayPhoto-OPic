@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/app_colors.dart';
-import 'package:opicproject/core/models/page_model.dart';
 import 'package:opicproject/features/alarm/data/alarm_view_model.dart';
 import 'package:opicproject/features/alarm/util/date_check.dart';
 import 'package:opicproject/features/friend/data/friend_view_model.dart';
@@ -29,34 +28,39 @@ class AlarmRow extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        final pageViewModel = context.read<PageCountViewmodel>();
         final friendViewModel = context.read<FriendViewModel>();
         final alarmViewModel = context.read<AlarmViewModel>();
 
         switch (alarmType) {
           case "NEW_TOPIC":
             context.pop();
-            pageViewModel.onPageChanged(0);
+            context.go('/home');
             alarmViewModel.checkAlarm(loginUserId, alarmId);
             break;
           case "NEW_FRIEND_REQUEST":
             context.pop();
-            pageViewModel.onPageChanged(1);
+            context.go('/friend');
             friendViewModel.changeTab(1);
             alarmViewModel.checkAlarm(loginUserId, alarmId);
             break;
           case "NEW_FRIEND":
             context.pop();
-            pageViewModel.onPageChanged(1);
+            context.go('/friend');
             friendViewModel.changeTab(0);
             alarmViewModel.checkAlarm(loginUserId, alarmId);
             break;
           case "NEW_LIKE":
             context.pop();
+            context.go('/home');
+
+            /// 해당 게시물을 보여줘야함
             alarmViewModel.checkAlarm(loginUserId, alarmId);
             break;
           case "NEW_REPLY":
             context.pop();
+            context.go('/home');
+
+            /// 해당 게시물로 이동해야함
             alarmViewModel.checkAlarm(loginUserId, alarmId);
             break;
           case null:

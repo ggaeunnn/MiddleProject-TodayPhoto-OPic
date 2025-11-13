@@ -18,7 +18,7 @@ class AuthManager extends ChangeNotifier {
     SupabaseManager.shared.supabase.auth.onAuthStateChange.listen((data) {
       final event = data.event; //auth상태
       final session = data.session; // 세션
-      String? uuid;
+      String? uuid = session?.user.id;
       print("Auth상태 변화 - 이벤트: $event");
 
       // auth상태에 따른 분기
@@ -41,10 +41,13 @@ class AuthManager extends ChangeNotifier {
         case AuthChangeEvent.signedOut:
           // 사용자 로그아웃
           print("인증매니저:AuthChangeEvent.signedOut");
-          FirebaseManager().deleteFCMToken(uuid!);
+          if (uuid != null) {
+            FirebaseManager().deleteFCMToken(uuid);
+          } else {
+            print("uid가 null이라 FCM 토큰 삭제 건너뜀");
+          }
 
           uuid = null;
-
           userInfo = null;
           notifyListeners();
           break;

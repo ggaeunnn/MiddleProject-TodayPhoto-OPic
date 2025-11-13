@@ -1,7 +1,7 @@
+// feed_viewmodel.dart
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/core/models/post_model.dart';
 import 'package:opicproject/core/models/user_model.dart';
 
@@ -39,41 +39,19 @@ class FeedViewModel extends ChangeNotifier {
   bool _isRequested = false;
   bool get isRequested => _isRequested;
 
-  // AuthManager 상태 구독
+  int? _currentFeedUserId;
+
+  bool _isStatusChecked = false;
+  bool get isStatusChecked => _isStatusChecked;
+
   FeedViewModel() {
-    AuthManager.shared.addListener(_onAuthChanged);
-  }
-
-  void _onAuthChanged() {
-    _checkCurrentAuth();
-  }
-
-  void _checkCurrentAuth() {
-    final userId = AuthManager.shared.userInfo?.id;
-
-    if (userId != null && !_isInitialized) {
-      _loginUserId = userId;
-      _isInitialized = true;
-      notifyListeners();
-      initialize(userId);
-    } else if (userId == null && _isInitialized) {
-      _loginUserId = null;
-      _isInitialized = false;
-      _posts = [];
-      notifyListeners();
-    } else if (userId != null && _isInitialized) {
-      print("초기화 완료");
-    }
-
-    debugPrint("userId: $userId");
+    _initializeScrollListener();
   }
 
   void _initializeScrollListener() {
     Timer? debounce;
 
-    // 바닥 감지
     scrollController.addListener(() {
-      // scroll 일어나면 기존 타이머 취소
       if (debounce?.isActive ?? false) debounce!.cancel();
 
       debounce = Timer(const Duration(milliseconds: 300), () {
@@ -95,16 +73,50 @@ class FeedViewModel extends ChangeNotifier {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {
         debugPrint('Scroll End');
-        //여기에 바닥감지시 실행할 코드를 작성한다.
-        fetchMorePosts(_loginUserId!);
+        if (_currentFeedUserId != null) {
+          fetchMorePosts(_currentFeedUserId!);
+        }
       }
     });
   }
 
-  Future<void> initialize(int loginUserId) async {
+  Future<void> initializeFeed(int feedUserId, int loginUserId) async {
+    if (_currentFeedUserId == feedUserId && _isInitialized) {
+      debugPrint("FeedViewModel already initialized for user $feedUserId");
+      return;
+    }
+
+    _currentFeedUserId = feedUserId;
     _loginUserId = loginUserId;
-    currentPage = 1;
-    await fetchPosts(currentPage, loginUserId);
+    _isInitialized = false;
+    _posts = [];
+    _feedUser = null;
+    _isStatusChecked = false;
+
+    _isLoading = true;
+    notifyListeners();
+
+    await fetchAUser(feedUserId);
+    await fetchPosts(1, feedUserId);
+
+    _isInitialized = true;
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> checkUserStatus(int loginUserId, int feedUserId) async {
+    if (_isStatusChecked) {
+      return;
+    }
+
+    await Future.wait([
+      checkIfBlocked(loginUserId, feedUserId),
+      checkIfRequested(loginUserId, feedUserId),
+      checkIfBlockedMe(loginUserId, feedUserId),
+    ]);
+
+    _isStatusChecked = true;
+    notifyListeners();
   }
 
   void moveScrollUp() {
@@ -113,26 +125,18 @@ class FeedViewModel extends ChangeNotifier {
       duration: const Duration(milliseconds: 300),
       curve: Curves.fastOutSlowIn,
     );
-    // scrollController.position.minScrollExtent
   }
 
-  // 리포지토리에서 데이터 가져오는데 이제 시작하자마자 가져오기
+  // 피드 게시물들 가져오기
   Future<void> fetchPosts(int startIndex, int userId) async {
-    _isLoading = true;
-    notifyListeners();
-
     _posts = await _repository.fetchPosts(startIndex, userId);
-    _isLoading = false;
-
-    //구독자(?)에게 알림보내기
-    notifyListeners();
-    debugPrint("FeedViewModel _initPosts 호출됨");
+    debugPrint("FeedViewModel fetchPosts 호출됨: ${_posts.length}개");
   }
 
   Future<void> refresh(int userId) async {
-    // isLoading을 true로 설정 (리스트는 비우지 않음)
     _isLoading = true;
     notifyListeners();
+
     await Future.delayed(const Duration(milliseconds: 1000));
     currentPage = 1;
     _posts = await _repository.fetchPosts(currentPage, userId);
@@ -145,6 +149,8 @@ class FeedViewModel extends ChangeNotifier {
     if (_isLoading) return;
 
     _isLoading = true;
+    notifyListeners();
+
     currentPage += 1;
     final fetchedPosts = await _repository.fetchPosts(currentPage, userId);
 
@@ -153,50 +159,48 @@ class FeedViewModel extends ChangeNotifier {
     } else {
       currentPage -= 1;
     }
+
     _isLoading = false;
     notifyListeners();
-    debugPrint("FriendViewmodel fetchedFriends 호출됨");
   }
 
-  // 유저 정보 가져오기
+  // 아이디로 유저 정보 조회
   Future<void> fetchAUser(int userId) async {
     _feedUser = await _repository.fetchAUser(userId);
     notifyListeners();
-    debugPrint("certainUser : $_feedUser");
   }
 
-  // 차단 여부 확인하기
+  // 내가 상대를 차단했는지 확인
   Future<void> checkIfBlocked(int loginUserId, int userId) async {
     _isBlocked = await _repository.checkIfBlocked(loginUserId, userId);
-    notifyListeners();
   }
 
-  // 날 차단했는지 확인하기
+  // 상대가 나를 차단했는지 확인
   Future<void> checkIfBlockedMe(int loginUserId, int userId) async {
     _isBlockedMe = await _repository.checkIfBlockedMe(loginUserId, userId);
-    notifyListeners();
   }
 
   // 차단하기
   Future<void> blockUser(int loginUserId, int userId) async {
     await _repository.blockUser(loginUserId, userId);
+    _isBlocked = true;
     notifyListeners();
   }
 
-  // 차단 해제 하기
+  // 차단해제하기
   Future<void> unblockUser(int loginUserId, int userId) async {
     await _repository.unblockUser(loginUserId, userId);
+    _isBlocked = false;
     notifyListeners();
   }
 
-  // 친구 신청 여부 확인하기
+  // 친구 요청중인지 확인
   Future<void> checkIfRequested(int loginUserId, int userId) async {
     _isRequested = await _repository.checkIfRequested(loginUserId, userId);
-    notifyListeners();
   }
 
+  @override
   void dispose() {
-    AuthManager.shared.removeListener(_onAuthChanged);
     scrollController.dispose();
     super.dispose();
   }

@@ -68,7 +68,7 @@ class FriendInfoRow extends StatelessWidget {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        context.push('/friend/feed/$friendUserId');
+                        context.go('/friend/feed/$friendUserId');
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.opicSoftBlue,

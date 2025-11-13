@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/app_colors.dart';
+import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/features/auth/viewmodel/auth_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -9,8 +10,9 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AuthViewModel>(
-      builder: (context, authViewModel, child) {
+    return Consumer2<AuthViewModel, AuthManager>(
+      builder: (context, authViewModel, authManager, child) {
+        final isLoggined = authManager.userInfo != null;
         return SafeArea(
           child: Scaffold(
             body: Container(
@@ -47,36 +49,24 @@ class LoginScreen extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.only(bottom: 30),
                             child: SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.9,
-                              height: 50,
-
-                              child: const SignInGoogle(),
-                            ),
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 50),
-                            child: SizedBox(
                               width: MediaQuery.of(context).size.width * 0.7,
                               height: 50,
-
-                              child: const SignOutGoogle(),
+                              child: !isLoggined
+                                  ? SignInGoogle()
+                                  : SignOutGoogle(),
                             ),
                           ),
                         ),
+
+                        if (authViewModel.isLoading)
+                          Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.opicBlue,
+                            ),
+                          ),
                       ],
                     ),
                   ),
-
-                  if (authViewModel.isLoading)
-                    Container(
-                      color: Colors.black54,
-                      child: const Center(
-                        child: CircularProgressIndicator(color: Colors.white),
-                      ),
-                    ),
                 ],
               ),
             ),
@@ -107,7 +97,31 @@ class SignInGoogle extends StatelessWidget {
           context.go('/home');
         }
       },
-      child: Image.asset('assets/images/sign_in_google.png'),
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.7,
+        decoration: BoxDecoration(
+          color: AppColors.opicSoftBlue,
+          borderRadius: BorderRadius.all(Radius.circular(24)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/images/google_logo.png',
+                width: 30,
+                height: 30,
+              ),
+              SizedBox(width: 10),
+              Text(
+                "구글 계정으로 로그인",
+                style: TextStyle(color: AppColors.opicWhite, fontSize: 15),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -120,11 +134,31 @@ class SignOutGoogle extends StatelessWidget {
     final authViewModel = context.read<AuthViewModel>();
 
     return ElevatedButton(
-      onPressed: () => authViewModel.signOutGoogle(),
+      onPressed: () async {
+        bool result = await authViewModel.signOutGoogle();
+
+        if (context.mounted && result) {
+          context.go('/home');
+        }
+      },
       style: ButtonStyle(
         backgroundColor: WidgetStateProperty.all(AppColors.opicRed),
       ),
-      child: const Text('로그아웃', style: TextStyle(color: AppColors.opicWhite)),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.opicRed,
+          borderRadius: BorderRadius.all(Radius.circular(24)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "로그아웃",
+              style: TextStyle(color: AppColors.opicWhite, fontSize: 15),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
