@@ -115,7 +115,7 @@ class PostViewModel extends ChangeNotifier {
     final data = await SupabaseManager.shared.supabase
         .from('user')
         .select()
-        .eq('auth_id', authId)
+        .eq('uuid', authId)
         .maybeSingle();
 
     if (data != null) {

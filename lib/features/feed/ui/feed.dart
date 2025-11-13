@@ -16,45 +16,39 @@ class FeedScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<FeedViewModel>(
-      builder: (context, feedViewModel, child) {
-        final authManager = context.watch<AuthManager>();
-        final loginUserId = authManager.userInfo?.id ?? 0;
-        final feedUserId = userId;
+    final feedViewModel = context.watch<FeedViewModel>();
+    final authManager = context.watch<AuthManager>();
+    final loginUserId = authManager.userInfo?.id ?? 0;
 
-        // 빌드 후에 데이터 로드 (한 번만 실행되도록)
-        if (feedViewModel.feedUser == null ||
-            feedViewModel.feedUser!.id != feedUserId) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            feedViewModel.fetchAUser(feedUserId);
-            feedViewModel.fetchPosts(1, feedUserId);
-          });
-        }
+    final needsInit =
+        !feedViewModel.isInitialized || feedViewModel.feedUser?.id != userId;
 
-        final feedUser = feedViewModel.feedUser;
+    if (needsInit && loginUserId != 0) {
+      debugPrint('⚡ Initializing feed for userId=$userId');
+      feedViewModel.initializeFeed(userId, loginUserId);
+    }
 
-        if (feedUser == null ||
-            (feedViewModel.isLoading && feedViewModel.posts.isEmpty)) {
-          return Container(
+    final feedUser = feedViewModel.feedUser;
+
+    if (feedUser == null || feedViewModel.isLoading) {
+      return Container(
+        color: AppColors.opicBackground,
+        child: Center(
+          child: CircularProgressIndicator(color: AppColors.opicBlue),
+        ),
+      );
+    }
+
+    return Column(
+      children: [
+        _buildUserHeader(context, feedViewModel, feedUser, loginUserId),
+        Expanded(
+          child: Container(
             color: AppColors.opicBackground,
-            child: Center(
-              child: CircularProgressIndicator(color: AppColors.opicBlue),
-            ),
-          );
-        }
-
-        return Column(
-          children: [
-            _buildUserHeader(context, feedViewModel, feedUser, loginUserId),
-            Expanded(
-              child: Container(
-                color: AppColors.opicBackground,
-                child: _postList(context, feedViewModel, feedUser),
-              ),
-            ),
-          ],
-        );
-      },
+            child: _postList(context, feedViewModel, feedUser),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -67,15 +61,12 @@ Widget _buildUserHeader(
 ) {
   final isMyFeed = feedUser.id == loginUserId;
 
-  // 초기 로드 시 한 번만 체크
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    if (!isMyFeed) {
-      feedViewModel.checkIfBlocked(loginUserId, feedUser.id);
-      feedViewModel.checkIfRequested(loginUserId, feedUser.id);
-      feedViewModel.checkIfBlockedMe(loginUserId, feedUser.id);
+  if (!isMyFeed && !feedViewModel.isStatusChecked) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      feedViewModel.checkUserStatus(loginUserId, feedUser.id);
       context.read<FriendViewModel>().checkIfFriend(loginUserId, feedUser.id);
-    }
-  });
+    });
+  }
 
   return Consumer2<FeedViewModel, FriendViewModel>(
     builder: (context, feedViewModel, friendViewModel, child) {

@@ -7,7 +7,7 @@ class AuthRepository {
     final Map<String, dynamic> data = await SupabaseManager.shared.supabase
         .from('user')
         .select("*")
-        .eq("uuid", uuid)
+        .eq('uuid', uuid)
         .single();
 
     UserInfo result = UserInfo.fromJson(data);
