@@ -9,12 +9,14 @@ import 'package:provider/provider.dart';
 class FriendInfoRow extends StatelessWidget {
   final int userId;
   final int friendId;
+  final int friendUserId;
   final String friendNickname;
 
   const FriendInfoRow({
     super.key,
     required this.userId,
     required this.friendId,
+    required this.friendUserId,
     required this.friendNickname,
   });
 
@@ -66,7 +68,7 @@ class FriendInfoRow extends StatelessWidget {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        context.pop();
+                        context.push('/feed/$friendUserId');
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.opicSoftBlue,

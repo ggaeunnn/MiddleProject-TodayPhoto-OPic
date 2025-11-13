@@ -241,6 +241,7 @@ Widget _friendList(BuildContext context, FriendViewModel viewModel) {
               child: FriendInfoRow(
                 userId: loginUserId,
                 friendId: friend.id,
+                friendUserId: friendUserId,
                 friendNickname: friendNickname,
               ),
             );
@@ -253,7 +254,7 @@ Widget _friendList(BuildContext context, FriendViewModel viewModel) {
 
 /// 친구 요청 화면
 Widget _friendRequest(BuildContext context, FriendViewModel viewModel) {
-  final loginUserId = viewModel.loginUserId!;
+  final loginUserId = AuthManager.shared.userInfo?.id ?? 0;
   final friendRequestsCount = viewModel.friendRequests.length;
 
   // 친구 요청이 없을 때

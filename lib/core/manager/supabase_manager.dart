@@ -161,4 +161,36 @@ class SupabaseManager {
   Future<void> checkAlarm(int alarmId) async {
     await supabase.from('alarm').update({'is_checked': true}).eq('id', alarmId);
   }
+
+  // 차단 여부 확인하기
+  Future<bool> checkIfBlocked(int loginId, int userId) async {
+    final data = await supabase
+        .from("block")
+        .select('id')
+        .eq('user_id', loginId)
+        .eq('blocked_user_id', userId)
+        .maybeSingle();
+    if (data == null) {
+      return false;
+    }
+    return true;
+  }
+
+  // 차단하기
+  Future<void> blockUser(int loginId, int userId) async {
+    await supabase.from("block").insert({
+      'user_id': loginId,
+      'blocked_user_id': userId,
+      'blocked_at': DateTime.now().toIso8601String(),
+    });
+  }
+
+  // 차단해제하기
+  Future<void> unblockUser(int loginId, int userId) async {
+    await supabase
+        .from("block")
+        .delete()
+        .eq('user_id', loginId)
+        .eq('blocked_user_id', userId);
+  }
 }

@@ -96,34 +96,7 @@ Widget _buildUserHeader(
           // 내 피드가 아닐 때만 차단 버튼 표시
           if (!isMyFeed)
             GestureDetector(
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text('사용자 차단'),
-                    content: Text('${feedUser.nickname}님을 차단하시겠습니까?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => context.pop(),
-                        child: Text('취소'),
-                      ),
-                      TextButton(
-                        onPressed: () async {
-                          await feedViewModel.blockUser(feedUser.id);
-                          if (context.mounted) {
-                            context.pop(); // 다이얼로그 닫기
-                            context.pop(); // 피드 화면 닫기
-                          }
-                        },
-                        child: Text(
-                          '차단',
-                          style: TextStyle(color: AppColors.opicRed),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
+              onTap: () {},
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(

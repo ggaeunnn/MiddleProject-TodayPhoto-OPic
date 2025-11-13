@@ -17,8 +17,18 @@ class FeedRepository {
     return await SupabaseManager.shared.fetchAUser(userId);
   }
 
-  Future<void> blockUser(int userId) async {
-    //TODO:데이터베이스 처리
-    return;
+  // 차단 여부 확인하기
+  Future<bool> checkIfBlocked(int loginUserId, int userId) async {
+    return await SupabaseManager.shared.checkIfBlocked(loginUserId, userId);
+  }
+
+  // 차단하기
+  Future<void> blockUser(int loginUserId, int userId) async {
+    return await SupabaseManager.shared.blockUser(loginUserId, userId);
+  }
+
+  // 차단 해제 하기
+  Future<void> unblockUser(int loginUserId, int userId) async {
+    return await SupabaseManager.shared.unblockUser(loginUserId, userId);
   }
 }

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:opicproject/core/models/alarm_model.dart';
 import 'package:opicproject/core/models/alarm_setting_model.dart';
+import 'package:opicproject/core/models/block_model.dart';
 import 'package:opicproject/core/models/friend_model.dart';
 import 'package:opicproject/core/models/friend_request_model.dart';
 import 'package:opicproject/core/models/post_model.dart';
@@ -223,6 +224,61 @@ class DioManager {
       final List data = response.data;
       final List<Post> results = data.map((json) {
         return Post.fromJson(json);
+      }).toList();
+      return results;
+    } else {
+      return List.empty();
+    }
+  }
+
+  // 유저가 차단한 사용자 불러오기
+  Future<List<Block>> fetchBlockUsers({required int userId}) async {
+    final response = await _dio.get(
+      'https://zoqxnpklgtcqkvskarls.supabase.co/rest/v1/block',
+      queryParameters: {'select': '*', 'user_id': 'eq.$userId'},
+      options: Options(
+        headers: {
+          'apikey':
+              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvcXhucGtsZ3RjcWt2c2thcmxzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0OTk4NTYsImV4cCI6MjA3ODA3NTg1Nn0.qR8GmGNztCm44qqm7xJK4VvmI1RcIJybGKeMVBy8yaA',
+          'Authorization':
+              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvcXhucGtsZ3RjcWt2c2thcmxzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0OTk4NTYsImV4cCI6MjA3ODA3NTg1Nn0.qR8GmGNztCm44qqm7xJK4VvmI1RcIJybGKeMVBy8yaA',
+        },
+      ),
+    );
+
+    if (response.data != null) {
+      final List data = response.data;
+      final List<Block> results = data.map((json) {
+        return Block.fromJson(json);
+      }).toList();
+      return results;
+    } else {
+      return List.empty();
+    }
+  }
+
+  // 유저가 차단했거나, 유저가 차단당한 사용자 불러오기
+  Future<List<Block>> fetchBlockOrBlockedUsers({required int userId}) async {
+    final response = await _dio.get(
+      'https://zoqxnpklgtcqkvskarls.supabase.co/rest/v1/block',
+      queryParameters: {
+        'select': '*',
+        'or': '(user_id.eq.$userId,blocked_user_id.eq.$userId)',
+      },
+      options: Options(
+        headers: {
+          'apikey':
+              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvcXhucGtsZ3RjcWt2c2thcmxzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0OTk4NTYsImV4cCI6MjA3ODA3NTg1Nn0.qR8GmGNztCm44qqm7xJK4VvmI1RcIJybGKeMVBy8yaA',
+          'Authorization':
+              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvcXhucGtsZ3RjcWt2c2thcmxzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0OTk4NTYsImV4cCI6MjA3ODA3NTg1Nn0.qR8GmGNztCm44qqm7xJK4VvmI1RcIJybGKeMVBy8yaA',
+        },
+      ),
+    );
+
+    if (response.data != null) {
+      final List data = response.data;
+      final List<Block> results = data.map((json) {
+        return Block.fromJson(json);
       }).toList();
       return results;
     } else {
