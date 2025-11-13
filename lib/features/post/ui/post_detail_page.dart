@@ -15,6 +15,7 @@ class PostDetailScreen extends StatelessWidget {
   const PostDetailScreen({required this.postId, super.key});
   Widget build(BuildContext context) {
     final viewmodel = context.watch<PostViewModel>();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       viewmodel.fetchPostById(postId);
       viewmodel.loadLoginUserInfo();
@@ -97,7 +98,8 @@ class PostDetailScreen extends StatelessWidget {
                           Spacer(),
 
                           // 내 게시물이라면 수정하기/삭제하기
-                          (viewmodel.loginUserName == viewmodel.postWriter)
+                          (AuthManager.shared.userInfo?.id ==
+                                  viewmodel.friendUserId)
                               ? Row(
                                   children: [
                                     ElevatedButton.icon(
@@ -145,10 +147,8 @@ class PostDetailScreen extends StatelessWidget {
                                       onPressed: () {
                                         showDialog(
                                           context: context,
-                                          barrierColor: AppColors.opicRed
-                                              .withOpacity(0.6),
-                                          builder: (context) => DeletePopup(
-                                            // currentNickname: loginUser.nickname,
+                                          builder: (_) => DeletePopup(
+                                            postId: viewmodel.post!['id'],
                                           ),
                                         );
                                       },
@@ -247,7 +247,7 @@ class PostDetailScreen extends StatelessWidget {
                                                     },
                                                     icon: Icon(Icons.person),
                                                   ),
-                                                  //이름 바꾸기
+                                                  //여기 이름 바꾸기
                                                   Text(
                                                     comment['user']?['nickname'],
                                                   ),

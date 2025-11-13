@@ -63,7 +63,7 @@ class PostRepository {
   Future<Map<String, dynamic>> getPostById(int id) async {
     final result = await supabase
         .from('posts')
-        .select('*, user:user_id(nickname)')
+        .select('*, user:user_id(id, nickname)')
         .eq('id', id)
         .maybeSingle();
 
@@ -93,5 +93,11 @@ class PostRepository {
         .maybeSingle();
 
     return result?['id'];
+  }
+
+  Future<void> deletePostWithRelations(int postId) async {
+    await supabase.from('likes').delete().eq('post_id', postId);
+    await supabase.from('comments').delete().eq('post_id', postId);
+    await supabase.from('posts').delete().eq('id', postId);
   }
 }

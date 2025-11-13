@@ -1,29 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
-import 'package:opicproject/features/post/ui/post_detail_page.dart';
+import 'package:opicproject/features/post/viewmodel/post_viewmodel.dart';
+import 'package:provider/provider.dart';
 
-class DeletePopup extends StatefulWidget {
-  const DeletePopup({super.key});
+class DeletePopup extends StatelessWidget {
+  final int postId;
 
-  @override
-  State<DeletePopup> createState() => _DeletePopupState();
-}
+  const DeletePopup({super.key, required this.postId});
 
-class _DeletePopupState extends State<DeletePopup> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      backgroundColor: Color(0xfffefefe),
+      backgroundColor: const Color(0xfffefefe),
       child: Padding(
-        padding: EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(
+            const SizedBox(
               width: double.infinity,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("게시물 삭제", style: TextStyle(fontWeight: FontWeight.bold)),
@@ -40,59 +38,31 @@ class _DeletePopupState extends State<DeletePopup> {
               ),
             ),
 
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
 
-            Padding(padding: EdgeInsets.only(bottom: 10)),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
-                      context.go('/home');
-                      showToast("게시물이 삭제되었습니다.");
+                    onPressed: () async {
+                      final viewmodel = context.read<PostViewModel>();
+
+                      await viewmodel.deletePost(postId);
+
+                      Fluttertoast.showToast(msg: "게시물이 삭제되었습니다.");
+
+                      if (context.mounted) {
+                        context.go('/home');
+                      }
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xff95b7db),
-                      foregroundColor: Color(0xfffefefe),
-                      padding: EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Text(
-                      "삭제하기",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xfffefefe),
-                      ),
-                    ),
+                    child: const Text("삭제하기"),
                   ),
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
-                      context.pop();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xffe8e8dc),
-                      foregroundColor: Color(0xfffefefe),
-                      padding: EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Text(
-                      "닫기",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xff515151),
-                      ),
-                    ),
+                    onPressed: () => context.pop(),
+                    child: const Text("닫기"),
                   ),
                 ),
               ],
