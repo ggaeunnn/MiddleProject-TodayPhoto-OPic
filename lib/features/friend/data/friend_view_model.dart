@@ -49,6 +49,7 @@ class FriendViewModel extends ChangeNotifier {
   // AuthManager 상태 구독
   FriendViewModel() {
     AuthManager.shared.addListener(_onAuthChanged);
+    _checkCurrentAuth();
   }
 
   void _onAuthChanged() {
@@ -246,9 +247,10 @@ class FriendViewModel extends ChangeNotifier {
   }
 
   // 친구 관계 확인하기
-  Future<void> checkIfFriend(int loginUserId, int friendUserId) async {
+  Future<bool> checkIfFriend(int loginUserId, int friendUserId) async {
     _isFriend = await _repository.checkIfFriend(loginUserId, friendUserId);
     notifyListeners();
+    return _isFriend;
   }
 
   // 친구 요청 하기

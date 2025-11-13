@@ -161,7 +161,7 @@ class FeedViewModel extends ChangeNotifier {
 
   // 차단 여부 확인하기
   Future<void> checkIfBlocked(int loginUserId, int userId) async {
-    await _repository.checkIfBlocked(loginUserId, userId);
+    _isBlocked = await _repository.checkIfBlocked(loginUserId, userId);
     notifyListeners();
   }
 

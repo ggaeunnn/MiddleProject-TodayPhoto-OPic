@@ -65,7 +65,7 @@ class BlockInfoRow extends StatelessWidget {
                     barrierColor: Colors.black.withOpacity(0.6),
                     builder: (context) => YesOrClosePopUp(
                       title: "차단을 해제하시겠어요?",
-                      text: "선택한 사용자의 차단을 해제합니다",
+                      text: "선택한 사용자의 게시물이 다시 보여요",
                       confirmText: "차단 해제",
                       onConfirm: () {
                         context.pop();
@@ -73,7 +73,7 @@ class BlockInfoRow extends StatelessWidget {
                           userId,
                           blockUserId,
                         );
-                        showToast("선택한 사용자를 친구 목록에서 삭제했어요");
+                        showToast("선택한 사용자를 차단 해제했어요");
                       },
                       onCancel: () {
                         context.pop();

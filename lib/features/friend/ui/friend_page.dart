@@ -123,7 +123,7 @@ Widget _buildHeader(BuildContext context, FriendViewModel viewModel) {
               Expanded(
                 child: _tabButton(
                   label: '차단',
-                  count: viewModel.friendRequests.length,
+                  count: viewModel.blockUsers.length,
                   isSelected: viewModel.tabNumber == 2,
                   onTap: () {
                     viewModel.changeTab(2);
