@@ -14,7 +14,7 @@ class AlarmRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.read<AlarmViewModel>();
+    final viewModel = context.watch<AlarmViewModel>();
     viewModel.fetchAnAlarm(this.alarmId);
     final alarm = viewModel.certainAlarm;
     final alarmId = alarm?.id ?? 0;
@@ -25,6 +25,9 @@ class AlarmRow extends StatelessWidget {
     final timeText = alarmTime != ""
         ? TimeAgoUtil.getTimeAgo(alarmTime)
         : "오류발생";
+
+    final friendId = alarm?.friendId;
+    final postId = alarm?.postId;
 
     return GestureDetector(
       onTap: () {
@@ -45,20 +48,19 @@ class AlarmRow extends StatelessWidget {
             break;
           case "NEW_FRIEND":
             context.pop();
-            context.go('/friend');
-            friendViewModel.changeTab(0);
+            context.go('/home/feed/$friendId');
             alarmViewModel.checkAlarm(loginUserId, alarmId);
             break;
           case "NEW_LIKE":
             context.pop();
-            context.go('/home');
+            context.push('/post_detail_page/$postId');
 
             /// 해당 게시물을 보여줘야함
             alarmViewModel.checkAlarm(loginUserId, alarmId);
             break;
           case "NEW_REPLY":
             context.pop();
-            context.go('/home');
+            context.push('/post_detail_page/$postId');
 
             /// 해당 게시물로 이동해야함
             alarmViewModel.checkAlarm(loginUserId, alarmId);

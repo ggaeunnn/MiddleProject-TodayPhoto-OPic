@@ -30,14 +30,14 @@ class _SettingScreenState extends State<_SettingScreen> {
     super.initState();
     // 초기 데이터 로드
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final authManager = context.watch<AuthManager>();
+      final authManager = context.read<AuthManager>();
       final loginUserId = authManager.userInfo?.id ?? 0;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final authManager = context.watch<AuthManager>();
+    final authManager = context.read<AuthManager>();
     final loginUserId = authManager.userInfo?.id ?? 0;
 
     return Scaffold(
