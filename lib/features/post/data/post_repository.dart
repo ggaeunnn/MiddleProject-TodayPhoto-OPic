@@ -88,10 +88,11 @@ class PostRepository {
   Future<int?> insertPost({
     required int userId,
     required String imageUrl,
+    required int topicId,
   }) async {
     final result = await supabase
         .from('posts')
-        .insert({'user_id': userId, 'image_url': imageUrl, 'topic_id': 3})
+        .insert({'user_id': userId, 'image_url': imageUrl, 'topic_id': topicId})
         .select('id')
         .maybeSingle();
 
@@ -102,5 +103,14 @@ class PostRepository {
     await supabase.from('likes').delete().eq('post_id', postId);
     await supabase.from('comments').delete().eq('post_id', postId);
     await supabase.from('posts').delete().eq('id', postId);
+  }
+
+  Future<List<Map<String, dynamic>>> getPostsByTopicId(int topicId) async {
+    final result = await supabase
+        .from('posts')
+        .select()
+        .eq('topic_id', topicId)
+        .order('id', ascending: false);
+    return List<Map<String, dynamic>>.from(result);
   }
 }

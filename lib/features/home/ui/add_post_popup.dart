@@ -43,6 +43,8 @@ class _addPostPopup extends State<addPostPopup> {
 
   @override
   Widget build(BuildContext context) {
+    final homeViewModel = context.watch<HomeViewModel>();
+
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       backgroundColor: Color(0xfffefefe),
@@ -69,7 +71,10 @@ class _addPostPopup extends State<addPostPopup> {
                           color: Color(0xff515151),
                         ),
                       ),
-                      Text("겨울풍경", style: TextStyle(color: Color(0xFF95B7DB))),
+                      Text(
+                        homeViewModel.todayTopic?['content'] ?? "주제 없음",
+                        style: TextStyle(color: Color(0xFF95B7DB)),
+                      ),
                     ],
                   ),
                 ],
@@ -80,7 +85,6 @@ class _addPostPopup extends State<addPostPopup> {
             selectedImage == null && takePicture == null
                 ? Container(
                     color: AppColors.opicCoolGrey,
-                    // width: double.infinity,
                     height: 350,
                     alignment: Alignment.center,
                     child: Stack(
@@ -169,12 +173,15 @@ class _addPostPopup extends State<addPostPopup> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () async {
-                      final homeViewModel = context.read<HomeViewModel>();
-
                       final viewmodel = context.read<PostViewModel>();
 
                       if (selectedImage == null && takePicture == null) {
                         Fluttertoast.showToast(msg: "이미지를 선택해주세요.");
+                        return;
+                      }
+                      final topicId = homeViewModel.todayTopic?['id'];
+                      if (topicId == null) {
+                        Fluttertoast.showToast(msg: "주제 정보를 불러올 수 없습니다.");
                         return;
                       }
 
@@ -188,8 +195,9 @@ class _addPostPopup extends State<addPostPopup> {
                         Fluttertoast.showToast(msg: "이미지 업로드 실패");
                         return;
                       }
-                      await viewmodel.createPost(imageUrl);
-                      await homeViewModel.fetchPosts();
+                      await viewmodel.createPost(imageUrl, topicId);
+                      await homeViewModel.fetchPostsByTopicId(topicId);
+
                       context.pop();
                       Fluttertoast.showToast(msg: "게시물이 작성되었습니다.");
                     },

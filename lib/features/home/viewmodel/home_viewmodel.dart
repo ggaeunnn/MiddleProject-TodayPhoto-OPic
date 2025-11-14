@@ -13,6 +13,23 @@ class HomeViewModel extends ChangeNotifier {
   bool _isInitialized = false;
   List<Map<String, dynamic>> posts = [];
 
+  bool get isToday {
+    if (todayTopic == null || todayTopic!['uploaded_at'] == null) {
+      return false;
+    }
+
+    try {
+      final topicDate = DateTime.parse(todayTopic!['uploaded_at']);
+      final now = DateTime.now();
+
+      return topicDate.year == now.year &&
+          topicDate.month == now.month &&
+          topicDate.day == now.day;
+    } catch (e) {
+      return false;
+    }
+  }
+
   Future<void> fetchPosts() async {
     posts = await repository.getAllPosts();
     notifyListeners();
@@ -20,7 +37,10 @@ class HomeViewModel extends ChangeNotifier {
 
   Future<void> fetchTopics() async {
     todayTopic = await topicRepository.fetchTodayTopic();
-    notifyListeners();
+
+    if (todayTopic != null && todayTopic!['id'] != null) {
+      await fetchPostsByTopicId(todayTopic!['id']);
+    }
   }
 
   void _setTodayTopic() {
@@ -35,7 +55,6 @@ class HomeViewModel extends ChangeNotifier {
 
   Future<void> initHome() async {
     if (_isInitialized) return;
-    await fetchPosts();
     await fetchTopics();
     _isInitialized = true;
   }
@@ -61,19 +80,28 @@ class HomeViewModel extends ChangeNotifier {
 
     final result = await Supabase.instance.client
         .from('topic')
-        .select('content, uploaded_at')
+        .select('id, content, uploaded_at')
         .gte('uploaded_at', startOfDay.toIso8601String())
         .lte('uploaded_at', endOfDay.toIso8601String())
         .maybeSingle();
 
     if (result != null && result['content'] != null) {
       todayTopic = {
+        'id': result['id'],
         'content': result['content'],
         'uploaded_at': result['uploaded_at'],
       };
+
+      await fetchPostsByTopicId(result['id']);
     } else {
       todayTopic = {'content': "주제 없음"};
+      posts = [];
+      notifyListeners();
     }
+  }
+
+  Future<void> fetchPostsByTopicId(int topicId) async {
+    posts = await repository.getPostsByTopicId(topicId);
     notifyListeners();
   }
 }

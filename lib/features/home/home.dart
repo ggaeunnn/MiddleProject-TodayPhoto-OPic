@@ -14,10 +14,6 @@ class HomeScreen extends StatelessWidget {
     final homeViewmodel = context.watch<HomeViewModel>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<HomeViewModel>().initHome();
-
-      if (viewmodel.posts.isEmpty) {
-        context.read<HomeViewModel>().fetchPosts();
-      }
     });
 
     return Container(
@@ -92,36 +88,32 @@ class HomeScreen extends StatelessWidget {
 
             //게시물 영역
             Expanded(
-              child: Builder(
-                builder: (context) {
-                  if (viewmodel.posts.isEmpty) {
-                    return const Text("게시물이 없습니다");
-                  }
-                  return ListView.builder(
-                    itemCount: viewmodel.posts.length,
-                    itemBuilder: (context, index) {
-                      final post = viewmodel.posts[index];
-                      return PostCard(post: post);
-                    },
-                  );
-                },
-              ),
+              child: viewmodel.posts.isEmpty
+                  ? const Center(child: Text("게시물이 없습니다"))
+                  : ListView.builder(
+                      itemCount: viewmodel.posts.length,
+                      itemBuilder: (context, index) {
+                        final post = viewmodel.posts[index];
+                        return PostCard(post: post);
+                      },
+                    ),
             ),
           ],
         ),
-
-        floatingActionButton: FloatingActionButton(
-          shape: CircleBorder(),
-          backgroundColor: AppColors.opicSoftBlue,
-          onPressed: () {
-            showDialog(
-              context: context,
-              barrierColor: AppColors.opicLightBlack.withOpacity(0.6),
-              builder: (context) => addPostPopup(),
-            );
-          },
-          child: const Icon(Icons.edit, color: AppColors.opicWhite),
-        ),
+        floatingActionButton: viewmodel.isToday
+            ? FloatingActionButton(
+                shape: CircleBorder(),
+                backgroundColor: AppColors.opicSoftBlue,
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    barrierColor: AppColors.opicLightBlack.withOpacity(0.6),
+                    builder: (context) => addPostPopup(),
+                  );
+                },
+                child: const Icon(Icons.edit, color: AppColors.opicWhite),
+              )
+            : null,
       ),
     );
   }

@@ -100,16 +100,20 @@ class PostViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<int?> createPost(String imageUrl) async {
-    final userId = AuthManager.shared.userInfo?.id;
+  Future<void> createPost(String imageUrl, int topicId) async {
+    final authManager = AuthManager.shared;
+    final userId = authManager.userInfo?.id;
 
     if (userId == null) {
-      print("로그인된 사용자 없음");
-      return null;
+      print("로그인이 필요합니다.");
+      return;
     }
 
-    final id = await _repository.insertPost(userId: userId, imageUrl: imageUrl);
-    return id;
+    await _repository.insertPost(
+      userId: userId,
+      imageUrl: imageUrl,
+      topicId: topicId,
+    );
   }
 
   Future<String?> uploadImageToSupabase(File file) async {
