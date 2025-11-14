@@ -63,6 +63,9 @@ class HomeScreen extends StatelessWidget {
                             );
 
                             if (selectedDate != null) {
+                              await homeViewmodel.fetchTopicByDate(
+                                selectedDate,
+                              );
                               Fluttertoast.showToast(
                                 msg: '선택한 날짜: ${selectedDate.toLocal()}',
                               );

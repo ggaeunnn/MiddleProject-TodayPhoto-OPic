@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:opicproject/features/home/data/home_repository.dart';
 import 'package:opicproject/features/post/data/post_repository.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeViewModel extends ChangeNotifier {
   final PostRepository repository = PostRepository.shared;
@@ -9,7 +10,7 @@ class HomeViewModel extends ChangeNotifier {
   List<Map<String, dynamic>> topics = [];
   Map<String, dynamic>? todayTopic;
   int currentTopicIndex = 0;
-
+  bool _isInitialized = false;
   List<Map<String, dynamic>> posts = [];
 
   Future<void> fetchPosts() async {
@@ -33,7 +34,46 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   Future<void> initHome() async {
+    if (_isInitialized) return;
     await fetchPosts();
     await fetchTopics();
+    _isInitialized = true;
+  }
+
+  Future<void> fetchTopicByDate(DateTime selectedDate) async {
+    final startOfDay = DateTime(
+      selectedDate.year,
+      selectedDate.month,
+      selectedDate.day,
+      0,
+      0,
+      0,
+    );
+
+    final endOfDay = DateTime(
+      selectedDate.year,
+      selectedDate.month,
+      selectedDate.day,
+      23,
+      59,
+      59,
+    );
+
+    final result = await Supabase.instance.client
+        .from('topic')
+        .select('content, uploaded_at')
+        .gte('uploaded_at', startOfDay.toIso8601String())
+        .lte('uploaded_at', endOfDay.toIso8601String())
+        .maybeSingle();
+
+    if (result != null && result['content'] != null) {
+      todayTopic = {
+        'content': result['content'],
+        'uploaded_at': result['uploaded_at'],
+      };
+    } else {
+      todayTopic = {'content': "주제 없음"};
+    }
+    notifyListeners();
   }
 }
