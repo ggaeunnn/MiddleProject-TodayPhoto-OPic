@@ -12,18 +12,12 @@ class HomeViewModel extends ChangeNotifier {
 
   List<Map<String, dynamic>> posts = [];
 
-  // 게시글 올리기
-  Future<void> loadPosts() async {
-    posts = await repository.getAllPosts();
-    notifyListeners();
-  }
-
   Future<void> fetchPosts() async {
     posts = await repository.getAllPosts();
     notifyListeners();
   }
 
-  Future<void> loadTopics() async {
+  Future<void> fetchTopics() async {
     todayTopic = await topicRepository.fetchTodayTopic();
     notifyListeners();
   }
@@ -39,7 +33,7 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   Future<void> initHome() async {
-    await loadPosts();
-    await loadTopics();
+    await fetchPosts();
+    await fetchTopics();
   }
 }
