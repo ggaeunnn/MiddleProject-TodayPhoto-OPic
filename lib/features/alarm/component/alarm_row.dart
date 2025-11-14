@@ -1,3 +1,4 @@
+// alarm_row.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/app_colors.dart';
@@ -10,24 +11,39 @@ import 'package:provider/provider.dart';
 class AlarmRow extends StatelessWidget {
   final int alarmId;
   final int loginUserId;
+
   const AlarmRow({super.key, required this.alarmId, required this.loginUserId});
 
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<AlarmViewModel>();
-    viewModel.fetchAnAlarm(this.alarmId);
-    final alarm = viewModel.certainAlarm;
-    final alarmId = alarm?.id ?? 0;
-    final loginUserId = this.loginUserId;
-    final alarmType = alarm?.alarmType;
-    final alarmContent = alarm?.content ?? "존재하지 않는 알림입니다";
-    final alarmTime = alarm?.createdAt ?? "";
-    final timeText = alarmTime != ""
+
+    // ✅ alarms 리스트에서 해당 알람 찾기
+    final alarm = viewModel.alarms.where((a) => a.id == alarmId).firstOrNull;
+
+    // 알람을 찾지 못한 경우
+    if (alarm == null) {
+      return Container(
+        width: MediaQuery.of(context).size.width,
+        padding: const EdgeInsets.symmetric(vertical: 10.0),
+        child: Center(
+          child: Text(
+            "알림을 불러올 수 없습니다",
+            style: TextStyle(fontSize: 13, color: AppColors.opicCoolGrey),
+          ),
+        ),
+      );
+    }
+
+    final alarmType = alarm.alarmType;
+    final alarmContent = alarm.content;
+    final alarmTime = alarm.createdAt;
+    final timeText = alarmTime.isNotEmpty
         ? TimeAgoUtil.getTimeAgo(alarmTime)
         : "오류발생";
 
-    final friendId = alarm?.friendId;
-    final postId = alarm?.postId;
+    final friendId = alarm.friendId;
+    final postId = alarm.postId;
 
     return GestureDetector(
       onTap: () {
@@ -40,32 +56,45 @@ class AlarmRow extends StatelessWidget {
             context.go('/home');
             alarmViewModel.checkAlarm(loginUserId, alarmId);
             break;
+
           case "NEW_FRIEND_REQUEST":
             context.pop();
             context.go('/friend');
             friendViewModel.changeTab(1);
             alarmViewModel.checkAlarm(loginUserId, alarmId);
             break;
+
           case "NEW_FRIEND":
-            context.pop();
-            context.go('/home/feed/$friendId');
-            alarmViewModel.checkAlarm(loginUserId, alarmId);
+            if (friendId != null) {
+              context.pop();
+              context.go('/home/feed/$friendId');
+              alarmViewModel.checkAlarm(loginUserId, alarmId);
+            } else {
+              showToast("친구 정보를 찾을 수 없습니다");
+            }
             break;
+
           case "NEW_LIKE":
-            context.pop();
-            context.push('/post_detail_page/$postId');
-
-            /// 해당 게시물을 보여줘야함
-            alarmViewModel.checkAlarm(loginUserId, alarmId);
+            if (postId != null) {
+              context.pop();
+              context.push('/post_detail_page/$postId');
+              alarmViewModel.checkAlarm(loginUserId, alarmId);
+            } else {
+              showToast("게시물을 찾을 수 없습니다");
+            }
             break;
+
           case "NEW_REPLY":
-            context.pop();
-            context.push('/post_detail_page/$postId');
-
-            /// 해당 게시물로 이동해야함
-            alarmViewModel.checkAlarm(loginUserId, alarmId);
+            if (postId != null) {
+              context.pop();
+              context.push('/post_detail_page/$postId');
+              alarmViewModel.checkAlarm(loginUserId, alarmId);
+            } else {
+              showToast("게시물을 찾을 수 없습니다");
+            }
             break;
-          case null:
+
+          default:
             showToast("오류 발생");
             break;
         }
@@ -111,12 +140,11 @@ class AlarmRow extends StatelessWidget {
                     size: 20,
                     color: AppColors.opicBlue,
                   ),
-                  null => Icon(
-                    Icons.question_mark_rounded,
+                  _ => Icon(
+                    Icons.notifications,
                     size: 20,
                     color: AppColors.opicBlue,
                   ),
-                  String() => throw UnimplementedError(),
                 },
               ),
               Column(

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
-import 'package:opicproject/core/models/alarm_model.dart';
 import 'package:opicproject/features/alarm/component/alarm_row.dart';
 import 'package:opicproject/features/alarm/data/alarm_view_model.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +11,7 @@ class AlarmListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Placeholder(child: _AlarmListScreen());
+    return const _AlarmListScreen();
   }
 }
 
@@ -29,8 +28,12 @@ class _AlarmListScreenState extends State<_AlarmListScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final viewModel = context.read<AlarmViewModel>();
-      final authManager = context.watch<AuthManager>();
+      final authManager = context.read<AuthManager>();
       final loginUserId = authManager.userInfo?.id ?? 0;
+
+      if (loginUserId != 0) {
+        viewModel.fetchAlarms(1, loginUserId);
+      }
     });
   }
 
@@ -95,7 +98,7 @@ Widget _buildHeader(BuildContext context) {
               if (context.canPop()) {
                 context.pop();
               } else {
-                context.go('/');
+                context.go('/home');
               }
             },
             splashColor: Colors.transparent,
@@ -126,7 +129,7 @@ Widget _buildAlarmList(
   final alarmCount = alarmList.length;
 
   // 알림이 없을 때
-  if (alarmCount == 0) {
+  if (alarmCount == 0 && !viewModel.isLoading) {
     return RefreshIndicator(
       onRefresh: () => viewModel.refresh(loginUserId),
       child: SingleChildScrollView(
@@ -150,32 +153,15 @@ Widget _buildAlarmList(
     child: ListView.builder(
       physics: AlwaysScrollableScrollPhysics(),
       controller: viewModel.scrollController,
-      padding: EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       itemCount: alarmCount,
       itemBuilder: (context, index) {
         final alarm = alarmList[index];
 
-        return FutureBuilder<Alarm?>(
-          key: ValueKey('alarm_${alarm.id}_$index'),
-          future: viewModel
-              .fetchAnAlarm(alarm.id)
-              .then((_) => viewModel.certainAlarm),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Container(
-                color: AppColors.opicBackground,
-                padding: EdgeInsets.symmetric(vertical: 20),
-                child: Center(
-                  child: CircularProgressIndicator(color: AppColors.opicBlue),
-                ),
-              );
-            }
-
-            return Container(
-              color: AppColors.opicBackground,
-              child: AlarmRow(alarmId: alarm.id, loginUserId: loginUserId),
-            );
-          },
+        // ✅ FutureBuilder 제거 - 이미 alarms 리스트에 데이터가 있음
+        return Container(
+          color: AppColors.opicBackground,
+          child: AlarmRow(alarmId: alarm.id, loginUserId: loginUserId),
         );
       },
     ),
