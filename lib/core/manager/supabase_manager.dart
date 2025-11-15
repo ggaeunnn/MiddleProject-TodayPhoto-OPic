@@ -276,4 +276,15 @@ class SupabaseManager {
 
     return data.length;
   }
+
+  // 로그인 유저가 특정 포스트를 좋아요 했는지 여부 확인
+  Future<bool> checkIfLikedPost(int loginUserId, int postId) async {
+    final List<dynamic> data = await supabase
+        .from("likes")
+        .select('id')
+        .eq('user_id', loginUserId)
+        .eq('post_id', postId);
+
+    return data.isNotEmpty;
+  }
 }

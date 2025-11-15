@@ -29,6 +29,10 @@ class PostRepository {
     }
   }
 
+  Future<bool> checkIfLikedPost(int loginUserId, int postId) async {
+    return await SupabaseManager.shared.checkIfLikedPost(loginUserId, postId);
+  }
+
   Future<void> commentSend(int userId, int postId, String text) async {
     final supabase = SupabaseManager.shared.supabase;
 

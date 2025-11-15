@@ -18,10 +18,14 @@ class PostDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewmodel = context.watch<PostViewModel>();
+    final authManager = context.read<AuthManager>();
+    final loginUserId = authManager.userInfo?.id ?? 0;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      viewmodel.fetchPostById(this.postId);
+      viewmodel.fetchPostById(postId);
       viewmodel.loadLoginUserInfo();
+      viewmodel.fetchLikeCount(postId);
+      viewmodel.ifLikedPost(loginUserId, postId);
     });
 
     final postWriterUserId = viewmodel.friendUserId ?? 0;
@@ -152,9 +156,9 @@ class PostDetailScreen extends StatelessWidget {
                                     children: [
                                       IconButton(
                                         icon: Icon(
-                                          viewmodel.buttonLike
-                                              ? Icons.favorite_border
-                                              : Icons.favorite,
+                                          viewmodel.likedPost
+                                              ? Icons.favorite_rounded
+                                              : Icons.favorite_border_rounded,
                                         ),
                                         iconSize: 20,
                                         color: AppColors.opicRed,
