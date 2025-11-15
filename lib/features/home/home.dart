@@ -7,14 +7,24 @@ import 'package:opicproject/features/home/ui/add_post_popup.dart';
 import 'package:opicproject/features/home/viewmodel/home_viewmodel.dart';
 import 'package:provider/provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    final viewmodel = context.watch<HomeViewModel>();
-    final homeViewmodel = context.watch<HomeViewModel>();
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // 한 번만 호출
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<HomeViewModel>().initHome();
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final viewmodel = context.watch<HomeViewModel>();
 
     return Container(
       child: Scaffold(
@@ -67,16 +77,14 @@ class HomeScreen extends StatelessWidget {
                             );
 
                             if (selectedDate != null) {
-                              await homeViewmodel.fetchTopicByDate(
-                                selectedDate,
-                              );
+                              await viewmodel.fetchTopicByDate(selectedDate);
                               Fluttertoast.showToast(
                                 msg: '선택한 날짜: ${selectedDate.toLocal()}',
                               );
                             }
                           },
                           child: Text(
-                            homeViewmodel.todayTopic?['content'] ?? "주제가 없습니다.",
+                            viewmodel.todayTopic?['content'] ?? "주제가 없습니다.",
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -88,7 +96,6 @@ class HomeScreen extends StatelessWidget {
                       ],
                     ),
                     const Spacer(),
-                    // const Icon(Icons.bookmark_border, color: Colors.grey),
                   ],
                 ),
               ),
@@ -111,7 +118,10 @@ class HomeScreen extends StatelessWidget {
                         itemCount: viewmodel.posts.length,
                         itemBuilder: (context, index) {
                           final post = viewmodel.posts[index];
-                          return PostCard(post: post);
+                          return PostCard(
+                            key: ValueKey(post['id']), // 중요!
+                            post: post,
+                          );
                         },
                       ),
                     ),
@@ -137,7 +147,7 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-//게시물 컴포넌트
+//게시물 컴포넌트 - 이미 StatefulWidget으로 되어있어서 OK
 class PostCard extends StatefulWidget {
   final Map<String, dynamic> post;
   const PostCard({super.key, required this.post});
@@ -162,8 +172,8 @@ class _PostCardState extends State<PostCard> {
     final postId = widget.post['id'];
 
     // 각 포스트별로 독립적으로 좋아요/댓글 수 가져오기
-    await viewModel.getCommentCount(postId);
     await viewModel.getLikeCount(postId);
+    await viewModel.getCommentCount(postId);
 
     if (mounted) {
       setState(() {
