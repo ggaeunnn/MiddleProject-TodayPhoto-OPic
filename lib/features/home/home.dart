@@ -138,20 +138,47 @@ class HomeScreen extends StatelessWidget {
 }
 
 //게시물 컴포넌트
-class PostCard extends StatelessWidget {
+class PostCard extends StatefulWidget {
   final Map<String, dynamic> post;
   const PostCard({super.key, required this.post});
 
   @override
+  State<PostCard> createState() => _PostCardState();
+}
+
+class _PostCardState extends State<PostCard> {
+  int likeCount = 0;
+  int commentCount = 0;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCounts();
+  }
+
+  Future<void> _loadCounts() async {
+    final viewModel = context.read<HomeViewModel>();
+    final postId = widget.post['id'];
+
+    // 각 포스트별로 독립적으로 좋아요/댓글 수 가져오기
+    await viewModel.getCommentCount(postId);
+    await viewModel.getLikeCount(postId);
+
+    if (mounted) {
+      setState(() {
+        likeCount = viewModel.likes;
+        commentCount = viewModel.comments;
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final authManager = context.watch<AuthManager>();
-    final viewModel = context.read<HomeViewModel>();
     final loginUserId = authManager.userInfo?.id ?? 0;
-    final postId = post['id'];
-    viewModel.getCommentCount(postId);
-    viewModel.getLikeCount(postId);
-    final likeCounts = viewModel.likes;
-    final commentCounts = viewModel.comments;
+    final postId = widget.post['id'];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,7 +193,7 @@ class PostCard extends StatelessWidget {
             }
           },
           child: Image.network(
-            post['image_url'],
+            widget.post['image_url'],
             width: double.infinity,
             height: 300,
             fit: BoxFit.cover,
@@ -176,32 +203,49 @@ class PostCard extends StatelessWidget {
         //좋아요 댓글 부분
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              //좋아요
-              const Icon(Icons.favorite, color: AppColors.opicRed, size: 20),
-              const SizedBox(width: 4),
-              Text(
-                "$likeCounts",
-                style: const TextStyle(color: AppColors.opicRed),
-              ),
+          child: _isLoading
+              ? Row(
+                  children: [
+                    SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.opicSoftBlue,
+                      ),
+                    ),
+                  ],
+                )
+              : Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    //좋아요
+                    const Icon(
+                      Icons.favorite,
+                      color: AppColors.opicRed,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      "$likeCount",
+                      style: const TextStyle(color: AppColors.opicRed),
+                    ),
 
-              const SizedBox(width: 16),
+                    const SizedBox(width: 16),
 
-              // 댓글
-              const Icon(
-                Icons.chat_bubble_outline_rounded,
-                color: AppColors.opicCoolGrey,
-                size: 20,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                "$commentCounts",
-                style: const TextStyle(color: AppColors.opicCoolGrey),
-              ),
-            ],
-          ),
+                    // 댓글
+                    const Icon(
+                      Icons.chat_bubble_outline_rounded,
+                      color: AppColors.opicCoolGrey,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      "$commentCount",
+                      style: const TextStyle(color: AppColors.opicCoolGrey),
+                    ),
+                  ],
+                ),
         ),
 
         //게시글 구분선
