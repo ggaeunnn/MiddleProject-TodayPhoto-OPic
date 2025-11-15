@@ -60,6 +60,12 @@ class PostViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  bool likedPost = false;
+  Future<void> ifLikedPost(int loginUserId, int postId) async {
+    likedPost = await _repository.checkIfLikedPost(loginUserId, postId);
+    notifyListeners();
+  }
+
   Future<void> fetchLikeCount(int postId) async {
     likeCount = await _repository.getLikeCount(postId);
     notifyListeners();

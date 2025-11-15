@@ -25,6 +25,11 @@ class AlarmViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  int _unreadCount = 0;
+  int get unreadCount => _unreadCount;
+
+  bool get hasUnreadAlarm => _unreadCount > 0;
+
   AlarmViewModel() {
     _initializeScrollListener();
   }
@@ -70,6 +75,10 @@ class AlarmViewModel extends ChangeNotifier {
     );
   }
 
+  void _updateUnreadCount() {
+    _unreadCount = _alarms.where((alarm) => !alarm.isChecked).length;
+  }
+
   // 리포지토리에서 데이터 가져오는데 이제 시작하자마자 가져오기
   Future<void> fetchAlarms(int startIndex, int loginUserId) async {
     _isLoading = true;
@@ -78,6 +87,7 @@ class AlarmViewModel extends ChangeNotifier {
     notifyListeners();
 
     _alarms = await _repository.fetchAlarms(startIndex, loginUserId);
+    _updateUnreadCount();
     _isLoading = false;
 
     //구독자(?)에게 알림보내기
@@ -92,6 +102,7 @@ class AlarmViewModel extends ChangeNotifier {
     await Future.delayed(const Duration(milliseconds: 500));
     currentPage = 1;
     _alarms = await _repository.fetchAlarms(currentPage, loginUserId);
+    _updateUnreadCount();
 
     _isLoading = false;
     notifyListeners();
@@ -106,6 +117,7 @@ class AlarmViewModel extends ChangeNotifier {
 
     if (fetchedAlarms.isNotEmpty) {
       _alarms.addAll(fetchedAlarms);
+      _updateUnreadCount();
     } else {
       currentPage -= 1;
     }

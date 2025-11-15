@@ -7,14 +7,24 @@ import 'package:opicproject/features/home/ui/add_post_popup.dart';
 import 'package:opicproject/features/home/viewmodel/home_viewmodel.dart';
 import 'package:provider/provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    final viewmodel = context.watch<HomeViewModel>();
-    final homeViewmodel = context.watch<HomeViewModel>();
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // 한 번만 호출
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<HomeViewModel>().initHome();
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final viewmodel = context.watch<HomeViewModel>();
 
     return Container(
       child: Scaffold(
@@ -40,13 +50,21 @@ class HomeScreen extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          '오늘의 주제',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: AppColors.opicLightBlack,
-                          ),
-                        ),
+                        viewmodel.isToday
+                            ? Text(
+                                '오늘의 주제',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: AppColors.opicCoolGrey,
+                                ),
+                              )
+                            : Text(
+                                '그날의 주제',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: AppColors.opicCoolGrey,
+                                ),
+                              ),
                         const SizedBox(height: 4),
                         //데이트피커
                         GestureDetector(
@@ -59,16 +77,14 @@ class HomeScreen extends StatelessWidget {
                             );
 
                             if (selectedDate != null) {
-                              await homeViewmodel.fetchTopicByDate(
-                                selectedDate,
-                              );
+                              await viewmodel.fetchTopicByDate(selectedDate);
                               Fluttertoast.showToast(
                                 msg: '선택한 날짜: ${selectedDate.toLocal()}',
                               );
                             }
                           },
                           child: Text(
-                            homeViewmodel.todayTopic?['content'] ?? "주제가 없습니다.",
+                            viewmodel.todayTopic?['content'] ?? "주제가 없습니다.",
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -80,7 +96,6 @@ class HomeScreen extends StatelessWidget {
                       ],
                     ),
                     const Spacer(),
-                    // const Icon(Icons.bookmark_border, color: Colors.grey),
                   ],
                 ),
               ),
@@ -103,7 +118,10 @@ class HomeScreen extends StatelessWidget {
                         itemCount: viewmodel.posts.length,
                         itemBuilder: (context, index) {
                           final post = viewmodel.posts[index];
-                          return PostCard(post: post);
+                          return PostCard(
+                            key: ValueKey(post['id']), // 중요!
+                            post: post,
+                          );
                         },
                       ),
                     ),
@@ -129,15 +147,49 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-//게시물 컴포넌트
-class PostCard extends StatelessWidget {
+//게시물 컴포넌트 - 이미 StatefulWidget으로 되어있어서 OK
+class PostCard extends StatefulWidget {
   final Map<String, dynamic> post;
   const PostCard({super.key, required this.post});
+
+  @override
+  State<PostCard> createState() => _PostCardState();
+}
+
+class _PostCardState extends State<PostCard> {
+  int likeCount = 0;
+  int commentCount = 0;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCounts();
+  }
+
+  Future<void> _loadCounts() async {
+    final viewModel = context.read<HomeViewModel>();
+    final postId = widget.post['id'];
+
+    // 각 포스트별로 독립적으로 좋아요/댓글 수 가져오기
+    await viewModel.getLikeCount(postId);
+    await viewModel.getCommentCount(postId);
+
+    if (mounted) {
+      setState(() {
+        likeCount = viewModel.likes;
+        commentCount = viewModel.comments;
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final authManager = context.watch<AuthManager>();
     final loginUserId = authManager.userInfo?.id ?? 0;
+    final postId = widget.post['id'];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -147,12 +199,11 @@ class PostCard extends StatelessWidget {
             if (loginUserId == 0) {
               Fluttertoast.showToast(msg: "로그인 해주세요");
             } else {
-              final postId = post['id'];
               context.go('/post_detail_page/$postId');
             }
           },
           child: Image.network(
-            post['image_url'],
+            widget.post['image_url'],
             width: double.infinity,
             height: 300,
             fit: BoxFit.cover,
@@ -162,32 +213,49 @@ class PostCard extends StatelessWidget {
         //좋아요 댓글 부분
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              //좋아요
-              const Icon(Icons.favorite, color: AppColors.opicRed, size: 20),
-              const SizedBox(width: 4),
-              Text(
-                '${post['likes'] ?? 0}',
-                style: const TextStyle(color: AppColors.opicRed),
-              ),
+          child: _isLoading
+              ? Row(
+                  children: [
+                    SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.opicSoftBlue,
+                      ),
+                    ),
+                  ],
+                )
+              : Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    //좋아요
+                    const Icon(
+                      Icons.favorite,
+                      color: AppColors.opicRed,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      "$likeCount",
+                      style: const TextStyle(color: AppColors.opicRed),
+                    ),
 
-              const SizedBox(width: 16),
+                    const SizedBox(width: 16),
 
-              // 댓글
-              const Icon(
-                Icons.chat_bubble_outline_rounded,
-                color: AppColors.opicCoolGrey,
-                size: 20,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                '${post['comments'] ?? 0}',
-                style: const TextStyle(color: AppColors.opicCoolGrey),
-              ),
-            ],
-          ),
+                    // 댓글
+                    const Icon(
+                      Icons.chat_bubble_outline_rounded,
+                      color: AppColors.opicCoolGrey,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      "$commentCount",
+                      style: const TextStyle(color: AppColors.opicCoolGrey),
+                    ),
+                  ],
+                ),
         ),
 
         //게시글 구분선

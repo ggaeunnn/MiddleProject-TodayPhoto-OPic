@@ -13,6 +13,7 @@ import 'package:opicproject/features/onboarding/data/onboarding_service.dart';
 import 'package:opicproject/features/onboarding/viewmodel/onboarding_viewmodel.dart';
 import 'package:opicproject/features/post/viewmodel/post_viewmodel.dart';
 import 'package:opicproject/features/setting/data/setting_view_model.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -46,6 +47,8 @@ void main() async {
   await FirebaseManager().initialize();
   //getIt 로케이터 초기화
   initLocator();
+
+  await [Permission.camera, Permission.photos].request();
 
   runApp(
     MultiProvider(

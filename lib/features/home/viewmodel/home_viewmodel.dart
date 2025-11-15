@@ -13,6 +13,10 @@ class HomeViewModel extends ChangeNotifier {
   bool _isInitialized = false;
   List<Map<String, dynamic>> posts = [];
 
+  // postId별로 likes/comments 저장 (중요!)
+  int likes = 0;
+  int comments = 0;
+
   bool get isToday {
     if (todayTopic == null || todayTopic!['uploaded_at'] == null) {
       return false;
@@ -41,16 +45,6 @@ class HomeViewModel extends ChangeNotifier {
     if (todayTopic != null && todayTopic!['id'] != null) {
       await fetchPostsByTopicId(todayTopic!['id']);
     }
-  }
-
-  void _setTodayTopic() {
-    final now = DateTime.now();
-    final dayNumber = now.difference(DateTime(2025)).inDays;
-
-    currentTopicIndex = dayNumber % topics.length;
-    todayTopic = topics[currentTopicIndex];
-
-    notifyListeners();
   }
 
   Future<void> initHome() async {
@@ -103,5 +97,15 @@ class HomeViewModel extends ChangeNotifier {
   Future<void> fetchPostsByTopicId(int topicId) async {
     posts = await repository.getPostsByTopicId(topicId);
     notifyListeners();
+  }
+
+  Future<void> getLikeCount(int postId) async {
+    likes = await topicRepository.getLikeCounts(postId);
+    // notifyListeners() 제거 - PostCard가 setState로 관리
+  }
+
+  Future<void> getCommentCount(int postId) async {
+    comments = await topicRepository.getCommentCounts(postId);
+    // notifyListeners() 제거 - PostCard가 setState로 관리
   }
 }

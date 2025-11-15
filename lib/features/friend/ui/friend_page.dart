@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
-import 'package:opicproject/core/manager/supabase_manager.dart';
-import 'package:opicproject/core/models/user_model.dart';
 import 'package:opicproject/features/friend/component/add_friend_pop_up.dart';
 import 'package:opicproject/features/friend/component/block_info_row.dart';
 import 'package:opicproject/features/friend/component/friend_info_row.dart';
@@ -39,7 +37,6 @@ class FriendScreen extends StatelessWidget {
                       0 => _friendList(context, viewModel, loginUserId),
                       1 => _friendRequest(context, viewModel, loginUserId),
                       2 => _blockList(context, viewModel, loginUserId),
-                      // TODO: Handle this case.
                       int() => throw UnimplementedError(),
                     },
                   ),
@@ -202,8 +199,6 @@ Widget _tabButton({
   );
 }
 
-@override
-/// 친구 목록 화면
 Widget _friendList(
   BuildContext context,
   FriendViewModel viewModel,
@@ -211,7 +206,6 @@ Widget _friendList(
 ) {
   final friendsCount = viewModel.friends.length;
 
-  // 친구 목록이 비어있을 때
   if (friendsCount == 0) {
     return RefreshIndicator(
       onRefresh: () => viewModel.refresh(loginUserId),
@@ -243,38 +237,23 @@ Widget _friendList(
             ? friend.user2Id
             : friend.user1Id;
 
-        return FutureBuilder<UserInfo?>(
-          future: SupabaseManager.shared.fetchAUser(friendUserId),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Container(
-                color: AppColors.opicBackground,
-                padding: EdgeInsets.symmetric(vertical: 20),
-                child: Center(
-                  child: CircularProgressIndicator(color: AppColors.opicBlue),
-                ),
-              );
-            }
+        final friendInfo = viewModel.userInfoCache[friendUserId];
+        final friendNickname = friendInfo?.nickname ?? "알 수 없음";
 
-            final friendNickname = snapshot.data?.nickname ?? "알 수 없음";
-
-            return Container(
-              color: AppColors.opicBackground,
-              child: FriendInfoRow(
-                userId: loginUserId,
-                friendId: friend.id,
-                friendUserId: friendUserId,
-                friendNickname: friendNickname,
-              ),
-            );
-          },
+        return Container(
+          color: AppColors.opicBackground,
+          child: FriendInfoRow(
+            userId: loginUserId,
+            friendId: friend.id,
+            friendUserId: friendUserId,
+            friendNickname: friendNickname,
+          ),
         );
       },
     ),
   );
 }
 
-/// 친구 요청 화면
 Widget _friendRequest(
   BuildContext context,
   FriendViewModel viewModel,
@@ -282,7 +261,6 @@ Widget _friendRequest(
 ) {
   final friendRequestsCount = viewModel.friendRequests.length;
 
-  // 친구 요청이 없을 때
   if (friendRequestsCount == 0) {
     return RefreshIndicator(
       onRefresh: () => viewModel.refresh(loginUserId),
@@ -313,38 +291,23 @@ Widget _friendRequest(
         final requestId = friendRequest.id;
         final requesterId = friendRequest.requestId;
 
-        return FutureBuilder<UserInfo?>(
-          future: SupabaseManager.shared.fetchAUser(requesterId),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Container(
-                color: AppColors.opicBackground,
-                padding: EdgeInsets.symmetric(vertical: 20),
-                child: Center(
-                  child: CircularProgressIndicator(color: AppColors.opicBlue),
-                ),
-              );
-            }
+        final requesterInfo = viewModel.userInfoCache[requesterId];
+        final requesterNickname = requesterInfo?.nickname ?? "알 수 없음";
 
-            final requesterNickname = snapshot.data?.nickname ?? "알 수 없음";
-
-            return Container(
-              color: AppColors.opicBackground,
-              child: FriendRequestRow(
-                userId: loginUserId,
-                requestId: requestId,
-                requesterNickname: requesterNickname,
-                requesterId: requesterId,
-              ),
-            );
-          },
+        return Container(
+          color: AppColors.opicBackground,
+          child: FriendRequestRow(
+            userId: loginUserId,
+            requestId: requestId,
+            requesterNickname: requesterNickname,
+            requesterId: requesterId,
+          ),
         );
       },
     ),
   );
 }
 
-/// 차단 유저 목록 화면
 Widget _blockList(
   BuildContext context,
   FriendViewModel viewModel,
@@ -352,7 +315,6 @@ Widget _blockList(
 ) {
   final blockCount = viewModel.blockUsers.length;
 
-  // 차단한 사용자가 비어있을 때
   if (blockCount == 0) {
     return RefreshIndicator(
       onRefresh: () => viewModel.refresh(loginUserId),
@@ -383,31 +345,17 @@ Widget _blockList(
         final blockId = block.id;
         final blockUserId = block.blockedUserId;
 
-        return FutureBuilder<UserInfo?>(
-          future: SupabaseManager.shared.fetchAUser(blockUserId),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Container(
-                color: AppColors.opicBackground,
-                padding: EdgeInsets.symmetric(vertical: 20),
-                child: Center(
-                  child: CircularProgressIndicator(color: AppColors.opicBlue),
-                ),
-              );
-            }
+        final blockUserInfo = viewModel.userInfoCache[blockUserId];
+        final blockUserNickname = blockUserInfo?.nickname ?? "알 수 없음";
 
-            final blockUserNickname = snapshot.data?.nickname ?? "알 수 없음";
-
-            return Container(
-              color: AppColors.opicBackground,
-              child: BlockInfoRow(
-                userId: loginUserId,
-                blockId: blockId,
-                blockUserId: blockUserId,
-                blockUserNickname: blockUserNickname,
-              ),
-            );
-          },
+        return Container(
+          color: AppColors.opicBackground,
+          child: BlockInfoRow(
+            userId: loginUserId,
+            blockId: blockId,
+            blockUserId: blockUserId,
+            blockUserNickname: blockUserNickname,
+          ),
         );
       },
     ),

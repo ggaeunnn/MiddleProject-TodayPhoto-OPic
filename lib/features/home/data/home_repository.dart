@@ -18,4 +18,12 @@ class HomeRepository {
 
     return result;
   }
+
+  Future<int> getLikeCounts(int postId) async {
+    return await SupabaseManager.shared.getLikeCount(postId);
+  }
+
+  Future<int> getCommentCounts(int postId) async {
+    return await SupabaseManager.shared.getCommentCount(postId);
+  }
 }
