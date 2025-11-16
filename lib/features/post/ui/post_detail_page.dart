@@ -11,10 +11,40 @@ import 'package:opicproject/features/post/viewmodel/post_viewmodel.dart';
 import 'package:opicproject/features/post_report/ui/post_report_page.dart';
 import 'package:provider/provider.dart';
 
-class PostDetailScreen extends StatelessWidget {
+class PostDetailScreen extends StatefulWidget {
   final int postId;
-
   const PostDetailScreen({super.key, required this.postId});
+
+  @override
+  State<PostDetailScreen> createState() => _PostDetailScreenState();
+}
+
+class _PostDetailScreenState extends State<PostDetailScreen> {
+  bool _isInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_isInitialized) {
+        _loadData();
+        _isInitialized = true;
+      }
+    });
+  }
+
+  Future<void> _loadData() async {
+    final viewmodel = context.read<PostViewModel>();
+    final authManager = context.read<AuthManager>();
+    final loginUserId = authManager.userInfo?.id ?? 0;
+
+    await Future.wait([
+      viewmodel.fetchPostById(widget.postId),
+      viewmodel.loadLoginUserInfo(),
+      viewmodel.fetchLikeCount(widget.postId),
+      viewmodel.ifLikedPost(loginUserId, widget.postId),
+    ]);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +52,6 @@ class PostDetailScreen extends StatelessWidget {
     final authManager = context.read<AuthManager>();
     final homeViewmodel = context.watch<HomeViewModel>();
     final loginUserId = authManager.userInfo?.id ?? 0;
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      viewmodel.fetchPostById(postId);
-      viewmodel.loadLoginUserInfo();
-      viewmodel.fetchLikeCount(postId);
-      viewmodel.ifLikedPost(loginUserId, postId);
-    });
 
     final postWriterUserId = viewmodel.friendUserId ?? 0;
 
@@ -182,7 +205,7 @@ class PostDetailScreen extends StatelessWidget {
                                                 0;
                                             viewmodel.toggleLike(
                                               loginUserId,
-                                              postId,
+                                              widget.postId,
                                             );
                                             viewmodel.buttonLike =
                                                 !viewmodel.buttonLike;
@@ -305,10 +328,19 @@ class PostDetailScreen extends StatelessWidget {
                                   ),
                                 ),
                                 TextButton(
-                                  onPressed: () => context.go('/home'),
+                                  onPressed: () {
+                                    final topicId = viewmodel.post?['topic_id'];
+
+                                    if (topicId != null) {
+                                      context.go('/home?topicId=$topicId');
+                                    } else {
+                                      Fluttertoast.showToast(msg: "주제가 없습니다.");
+                                    }
+                                  },
                                   child: Text(
-                                    homeViewmodel.todayTopic?['content'] ??
-                                        "주제가 없습니다.",
+                                    viewmodel.post?['topic']?['content'] ??
+                                        "주제 없음",
+
                                     style: TextStyle(
                                       color: AppColors.opicSoftBlue,
                                     ),
@@ -535,7 +567,7 @@ class PostDetailScreen extends StatelessWidget {
                             onPressed: () {
                               final loginUserId =
                                   AuthManager.shared.userInfo?.id ?? 0;
-                              viewmodel.addComment(loginUserId, postId);
+                              viewmodel.addComment(loginUserId, widget.postId);
                             },
                           ),
                         ),

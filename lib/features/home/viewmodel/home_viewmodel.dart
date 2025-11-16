@@ -113,4 +113,34 @@ class HomeViewModel extends ChangeNotifier {
     await Future.delayed(const Duration(milliseconds: 1000));
     posts = await repository.getAllPosts();
   }
+
+  Future<void> fetchTopicAndPostsById(int topicId) async {
+    _isInitialized = true;
+
+    try {
+      final result = await Supabase.instance.client
+          .from('topic')
+          .select('id, content, uploaded_at')
+          .eq('id', topicId)
+          .maybeSingle();
+
+      if (result != null) {
+        todayTopic = {
+          'id': result['id'],
+          'content': result['content'],
+          'uploaded_at': result['uploaded_at'],
+        };
+
+        await fetchPostsByTopicId(topicId);
+      } else {
+        todayTopic = {'content': "주제를 찾을 수 없습니다"};
+        posts = [];
+        notifyListeners();
+      }
+    } catch (e) {
+      todayTopic = {'content': "오류 발생"};
+      posts = [];
+      notifyListeners();
+    }
+  }
 }

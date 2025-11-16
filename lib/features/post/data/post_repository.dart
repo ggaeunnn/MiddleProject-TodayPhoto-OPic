@@ -69,7 +69,9 @@ class PostRepository {
   Future<Map<String, dynamic>> getPostById(int id) async {
     final result = await supabase
         .from('posts')
-        .select('*, user:user_id(id, nickname)')
+        .select(
+          '*, user:user_id(id, nickname), topic:topic_id(id, content, uploaded_at)',
+        )
         .eq('id', id)
         .maybeSingle();
 

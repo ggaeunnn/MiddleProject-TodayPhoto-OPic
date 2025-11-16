@@ -8,6 +8,8 @@ import 'package:opicproject/features/home/viewmodel/home_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
+  final int? topicId;
+  const HomeScreen({super.key, this.topicId});
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -16,9 +18,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // 한 번만 호출
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<HomeViewModel>().initHome();
+      if (widget.topicId != null) {
+        context.read<HomeViewModel>().fetchTopicAndPostsById(widget.topicId!);
+      } else {
+        context.read<HomeViewModel>().initHome();
+      }
     });
   }
 

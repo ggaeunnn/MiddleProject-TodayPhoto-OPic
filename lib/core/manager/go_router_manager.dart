@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/features/alarm/ui/alarm_list_page.dart';
@@ -56,13 +57,19 @@ class GoRouterManager {
             routes: [
               GoRoute(
                 path: '/home',
-                builder: (context, state) => HomeScreen(),
+                builder: (context, state) {
+                  final topicIdString = state.uri.queryParameters['topicId'];
+                  final topicId = topicIdString != null
+                      ? int.tryParse(topicIdString)
+                      : null;
+
+                  return HomeScreen(key: ValueKey(topicId), topicId: topicId);
+                },
                 routes: [
                   GoRoute(
                     path: 'feed/:id',
                     builder: (context, state) {
                       final userId = int.parse(state.pathParameters['id']!);
-                      // ✅ 독립적인 FeedViewModel 생성
                       return ChangeNotifierProvider(
                         create: (_) => FeedViewModel(),
                         child: FeedScreen(userId: userId),
