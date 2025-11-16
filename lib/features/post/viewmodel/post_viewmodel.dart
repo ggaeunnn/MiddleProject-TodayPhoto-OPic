@@ -24,7 +24,6 @@ class PostViewModel extends ChangeNotifier {
 
   DateTime now = DateTime.now();
   late String formattedDate = DateFormat('yyyy-MM-dd').format(now);
-  String todayTopic = "겨울풍경";
 
   Future<void> fetchPostById(int id) async {
     post = await _repository.getPostById(id);

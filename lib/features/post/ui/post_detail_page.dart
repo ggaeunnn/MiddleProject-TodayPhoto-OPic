@@ -3,6 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
+import 'package:opicproject/features/home/viewmodel/home_viewmodel.dart';
 import 'package:opicproject/features/post/component/edit_menu_widget.dart';
 import 'package:opicproject/features/post/ui/post_delete_popup.dart';
 import 'package:opicproject/features/post/ui/post_edit_popup.dart';
@@ -19,6 +20,7 @@ class PostDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewmodel = context.watch<PostViewModel>();
     final authManager = context.read<AuthManager>();
+    final homeViewmodel = context.watch<HomeViewModel>();
     final loginUserId = authManager.userInfo?.id ?? 0;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -305,7 +307,8 @@ class PostDetailScreen extends StatelessWidget {
                                 TextButton(
                                   onPressed: () => context.go('/home'),
                                   child: Text(
-                                    viewmodel.todayTopic,
+                                    homeViewmodel.todayTopic?['content'] ??
+                                        "주제가 없습니다.",
                                     style: TextStyle(
                                       color: AppColors.opicSoftBlue,
                                     ),
