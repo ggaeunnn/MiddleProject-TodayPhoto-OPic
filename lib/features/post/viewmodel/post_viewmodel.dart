@@ -14,6 +14,7 @@ class PostViewModel extends ChangeNotifier {
   int likeCount = 0;
   bool buttonLike = true;
   String loginUserName = "친구1";
+  bool isLoading = false;
 
   File? selectedImage;
   final commentListController = TextEditingController();
@@ -106,19 +107,26 @@ class PostViewModel extends ChangeNotifier {
   }
 
   Future<void> createPost(String imageUrl, int topicId) async {
-    final authManager = AuthManager.shared;
-    final userId = authManager.userInfo?.id;
+    isLoading = true;
+    notifyListeners();
+    try {
+      final authManager = AuthManager.shared;
+      final userId = authManager.userInfo?.id;
 
-    if (userId == null) {
-      print("로그인이 필요합니다.");
-      return;
+      if (userId == null) {
+        print("로그인이 필요합니다.");
+        return;
+      }
+
+      await _repository.insertPost(
+        userId: userId,
+        imageUrl: imageUrl,
+        topicId: topicId,
+      );
+    } finally {
+      isLoading = false;
+      notifyListeners();
     }
-
-    await _repository.insertPost(
-      userId: userId,
-      imageUrl: imageUrl,
-      topicId: topicId,
-    );
   }
 
   Future<String?> uploadImageToSupabase(File file) async {

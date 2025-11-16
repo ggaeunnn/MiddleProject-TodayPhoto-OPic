@@ -44,6 +44,7 @@ class _addPostPopup extends State<addPostPopup> {
   @override
   Widget build(BuildContext context) {
     final homeViewModel = context.watch<HomeViewModel>();
+    final viewmodel = context.watch<PostViewModel>();
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -209,14 +210,24 @@ class _addPostPopup extends State<addPostPopup> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: Text(
-                      "올리기",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xfffefefe),
-                      ),
-                    ),
+                    child: viewmodel.isLoading
+                        ? SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              strokeCap: StrokeCap.round,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Text(
+                            "올리기",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xfffefefe),
+                            ),
+                          ),
                   ),
                 ),
                 SizedBox(width: 12),
