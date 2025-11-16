@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:opicproject/core/manager/firebase_manager.dart';
 import 'package:opicproject/core/manager/supabase_manager.dart';
@@ -13,7 +14,10 @@ class AuthManager extends ChangeNotifier {
 
   UserInfo? userInfo;
   SupabaseClient supabase = SupabaseManager.shared.supabase;
-
+  SupabaseClient admin = SupabaseClient(
+    dotenv.get("Supabase_URL"),
+    dotenv.get("Supabase_Role_key"),
+  );
   AuthManager() {
     SupabaseManager.shared.supabase.auth.onAuthStateChange.listen((data) {
       final event = data.event; //auth상태
@@ -90,10 +94,10 @@ class AuthManager extends ChangeNotifier {
           break;
 
         case AuthChangeEvent.userDeleted:
-          // TODO: Handle this case.
+          print('인증매니저: 사용자 삭제 요청됨.');
           break;
         case AuthChangeEvent.mfaChallengeVerified:
-          // TODO: Handle this case.
+          print('인증매니저: mfaChallengeVerified.');
           break;
       }
     });
@@ -110,5 +114,13 @@ class AuthManager extends ChangeNotifier {
   void updateUserInfo(UserInfo newUserInfo) {
     userInfo = newUserInfo;
     notifyListeners();
+  }
+
+  void withdraw() {
+    if (userInfo != null) {
+      admin.auth.admin.deleteUser(userInfo!.uuid!);
+      supabase.auth.signOut();
+      notifyListeners();
+    }
   }
 }

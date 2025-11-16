@@ -290,7 +290,9 @@ class _SettingScreenState extends State<_SettingScreen> {
                                       text: "회원 탈퇴 시 삭제되는 데이터는 복구할 수 없습니다",
                                       confirmText: "탈퇴하기",
                                       onConfirm: () {
+                                        AuthManager.shared.withdraw();
                                         context.pop();
+                                        context.go("/home");
                                       },
                                       onCancel: () {
                                         context.pop();
