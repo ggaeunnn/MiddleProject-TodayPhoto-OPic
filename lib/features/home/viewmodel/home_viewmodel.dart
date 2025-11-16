@@ -108,4 +108,9 @@ class HomeViewModel extends ChangeNotifier {
     comments = await topicRepository.getCommentCounts(postId);
     // notifyListeners() 제거 - PostCard가 setState로 관리
   }
+
+  Future<void> refreshData() async {
+    await Future.delayed(const Duration(milliseconds: 1000));
+    posts = await repository.getAllPosts();
+  }
 }

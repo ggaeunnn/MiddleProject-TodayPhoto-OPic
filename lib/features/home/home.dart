@@ -26,122 +26,128 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final viewmodel = context.watch<HomeViewModel>();
 
-    return Container(
-      child: Scaffold(
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            //주제 영역
-            Container(
-              decoration: BoxDecoration(
-                color: AppColors.opicWhite,
-                border: Border(
-                  top: BorderSide(color: AppColors.opicSoftBlue, width: 0.5),
-                  bottom: BorderSide(color: AppColors.opicSoftBlue, width: 0.5),
+    return RefreshIndicator(
+      onRefresh: viewmodel.refreshData,
+      child: Container(
+        child: Scaffold(
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              //주제 영역
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.opicWhite,
+                  border: Border(
+                    top: BorderSide(color: AppColors.opicSoftBlue, width: 0.5),
+                    bottom: BorderSide(
+                      color: AppColors.opicSoftBlue,
+                      width: 0.5,
+                    ),
+                  ),
                 ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 8.0,
-                ),
-                child: Row(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        viewmodel.isToday
-                            ? Text(
-                                '오늘의 주제',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.opicCoolGrey,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 8.0,
+                  ),
+                  child: Row(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          viewmodel.isToday
+                              ? Text(
+                                  '오늘의 주제',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: AppColors.opicCoolGrey,
+                                  ),
+                                )
+                              : Text(
+                                  '그날의 주제',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: AppColors.opicCoolGrey,
+                                  ),
                                 ),
-                              )
-                            : Text(
-                                '그날의 주제',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.opicCoolGrey,
-                                ),
-                              ),
-                        const SizedBox(height: 4),
-                        //데이트피커
-                        GestureDetector(
-                          onTap: () async {
-                            DateTime? selectedDate = await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(2020),
-                              lastDate: DateTime(2100),
-                            );
-
-                            if (selectedDate != null) {
-                              await viewmodel.fetchTopicByDate(selectedDate);
-                              Fluttertoast.showToast(
-                                msg: '선택한 날짜: ${selectedDate.toLocal()}',
+                          const SizedBox(height: 4),
+                          //데이트피커
+                          GestureDetector(
+                            onTap: () async {
+                              DateTime? selectedDate = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(2020),
+                                lastDate: DateTime(2100),
                               );
-                            }
-                          },
-                          child: Text(
-                            viewmodel.todayTopic?['content'] ?? "주제가 없습니다.",
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              decoration: TextDecoration.underline,
-                              color: AppColors.opicBlack,
+
+                              if (selectedDate != null) {
+                                await viewmodel.fetchTopicByDate(selectedDate);
+                                Fluttertoast.showToast(
+                                  msg: '선택한 날짜: ${selectedDate.toLocal()}',
+                                );
+                              }
+                            },
+                            child: Text(
+                              viewmodel.todayTopic?['content'] ?? "주제가 없습니다.",
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline,
+                                color: AppColors.opicBlack,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const Spacer(),
-                  ],
+                        ],
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            //게시물 영역
-            Expanded(
-              child: viewmodel.posts.isEmpty
-                  ? Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.opicBackground,
+              //게시물 영역
+              Expanded(
+                child: viewmodel.posts.isEmpty
+                    ? Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.opicBackground,
+                        ),
+                        child: const Center(child: Text("게시물이 없습니다")),
+                      )
+                    : Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.opicBackground,
+                        ),
+                        child: ListView.builder(
+                          itemCount: viewmodel.posts.length,
+                          itemBuilder: (context, index) {
+                            final post = viewmodel.posts[index];
+                            return PostCard(
+                              key: ValueKey(post['id']), // 중요!
+                              post: post,
+                            );
+                          },
+                        ),
                       ),
-                      child: const Center(child: Text("게시물이 없습니다")),
-                    )
-                  : Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.opicBackground,
-                      ),
-                      child: ListView.builder(
-                        itemCount: viewmodel.posts.length,
-                        itemBuilder: (context, index) {
-                          final post = viewmodel.posts[index];
-                          return PostCard(
-                            key: ValueKey(post['id']), // 중요!
-                            post: post,
-                          );
-                        },
-                      ),
-                    ),
-            ),
-          ],
+              ),
+            ],
+          ),
+          floatingActionButton: viewmodel.isToday
+              ? FloatingActionButton(
+                  shape: CircleBorder(),
+                  backgroundColor: AppColors.opicSoftBlue,
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      barrierColor: AppColors.opicLightBlack.withOpacity(0.6),
+                      builder: (context) => addPostPopup(),
+                    );
+                  },
+                  child: const Icon(Icons.edit, color: AppColors.opicWhite),
+                )
+              : null,
         ),
-        floatingActionButton: viewmodel.isToday
-            ? FloatingActionButton(
-                shape: CircleBorder(),
-                backgroundColor: AppColors.opicSoftBlue,
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    barrierColor: AppColors.opicLightBlack.withOpacity(0.6),
-                    builder: (context) => addPostPopup(),
-                  );
-                },
-                child: const Icon(Icons.edit, color: AppColors.opicWhite),
-              )
-            : null,
       ),
     );
   }
