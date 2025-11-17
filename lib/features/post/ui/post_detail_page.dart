@@ -196,19 +196,17 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                           ),
                                           iconSize: 20,
                                           color: AppColors.opicRed,
-                                          onPressed: () {
+                                          onPressed: () async {
                                             final loginUserId =
                                                 AuthManager
                                                     .shared
                                                     .userInfo
                                                     ?.id ??
                                                 0;
-                                            viewmodel.toggleLike(
+                                            await viewmodel.toggleLike(
                                               loginUserId,
                                               widget.postId,
                                             );
-                                            viewmodel.buttonLike =
-                                                !viewmodel.buttonLike;
                                           },
                                         ),
                                         Text(

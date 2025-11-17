@@ -357,6 +357,7 @@ class FriendViewModel extends ChangeNotifier {
   Future<void> answerARequest(int requestId, int loginUserId) async {
     await _repository.answerARequest(requestId);
 
+    currentPage = 1;
     await _fetchFriendRequests(currentPage, loginUserId);
     await _loadAllUserInfos();
     notifyListeners();
@@ -372,6 +373,7 @@ class FriendViewModel extends ChangeNotifier {
 
     await _repository.answerARequest(requestId);
 
+    currentPage = 1;
     await Future.wait([
       _fetchFriends(currentPage, loginUserId),
       _fetchFriendRequests(currentPage, loginUserId),
@@ -421,6 +423,7 @@ class FriendViewModel extends ChangeNotifier {
   // 차단 해제하기
   Future<void> unblockUser(int loginUserId, int userId) async {
     await _repository.unblockUser(loginUserId, userId);
+    currentPage = 1;
     await _fetchBlockUsers(currentPage, loginUserId);
     await _loadAllUserInfos();
     notifyListeners();

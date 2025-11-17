@@ -268,7 +268,7 @@ Widget _buildUserHeader(
                                 barrierColor: Colors.black.withOpacity(0.6),
                                 builder: (context) => YesOrClosePopUp(
                                   title: "차단하시겠어요?",
-                                  text: "앞으로 차단한 사용자의 게시물은 보이지 않아요",
+                                  text: "앞으로 해당 사용자의 게시물이 보이지 않아요",
                                   confirmText: "차단하기",
                                   onConfirm: () async {
                                     context.pop();

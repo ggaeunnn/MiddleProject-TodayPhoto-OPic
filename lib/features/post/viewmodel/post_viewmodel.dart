@@ -15,6 +15,7 @@ class PostViewModel extends ChangeNotifier {
   bool buttonLike = true;
   String loginUserName = "친구1";
   bool isLoading = false;
+  bool likedPost = false;
 
   File? selectedImage;
   final commentListController = TextEditingController();
@@ -56,11 +57,11 @@ class PostViewModel extends ChangeNotifier {
 
   Future<void> toggleLike(int userId, int postId) async {
     await _repository.toggleLike(userId, postId);
+    likedPost = !likedPost;
     await fetchLikeCount(postId);
     notifyListeners();
   }
 
-  bool likedPost = false;
   Future<void> ifLikedPost(int loginUserId, int postId) async {
     likedPost = await _repository.checkIfLikedPost(loginUserId, postId);
     notifyListeners();
