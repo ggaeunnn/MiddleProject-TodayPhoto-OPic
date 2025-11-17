@@ -5,11 +5,8 @@ import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/core/models/user_model.dart';
 import 'package:opicproject/features/feed/viewmodel/feed_viewmodel.dart';
 import 'package:opicproject/features/friend/viewmodel/friend_view_model.dart';
+import 'package:opicproject/features/post/ui/post_detail_page.dart';
 import 'package:provider/provider.dart';
-
-void showToast(String message) {
-  // Toast 구현 (기존 코드 사용)
-}
 
 class FeedButtons extends StatelessWidget {
   final UserInfo feedUser;
@@ -33,13 +30,15 @@ class FeedButtons extends StatelessWidget {
           spacing: 5,
           children: [
             // 친구 추가 버튼
-            if (!isFriend && !isRequested && !isBlocked)
+            if (!isFriend && !isRequested)
               _buildAddFriendButton(context, feedViewModel, friendViewModel),
             // 친구 요청 취소 버튼
-            if (isRequested && !isBlocked)
+            if (!isFriend && isRequested)
               _buildCancelRequestButton(context, feedViewModel),
             // 차단 해제 버튼
             if (isBlocked) _buildUnblockButton(context, feedViewModel),
+            // 차단 버튼
+            if (!isBlocked) _buildBlockButton(context, feedViewModel),
           ],
         );
       },
@@ -86,6 +85,17 @@ class FeedButtons extends StatelessWidget {
         icon: Icons.check_circle_outline_rounded,
         label: "차단해제",
         color: AppColors.opicCoolGrey,
+      ),
+    );
+  }
+
+  Widget _buildBlockButton(BuildContext context, FeedViewModel feedViewModel) {
+    return GestureDetector(
+      onTap: () => _showBlockDialog(context, feedViewModel),
+      child: _buildActionButton(
+        icon: Icons.block_rounded,
+        label: "차단하기",
+        color: AppColors.opicRed,
       ),
     );
   }
@@ -178,6 +188,25 @@ class FeedButtons extends StatelessWidget {
           await feedViewModel.unblockUser(loginUserId, feedUser.id);
           await feedViewModel.checkUserStatus(loginUserId, feedUser.id);
           showToast("사용자를 차단해제했어요");
+        },
+        onCancel: () => context.pop(),
+      ),
+    );
+  }
+
+  void _showBlockDialog(BuildContext context, FeedViewModel feedViewModel) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.6),
+      builder: (context) => YesOrClosePopUp(
+        title: "차단하시겠어요?",
+        text: "앞으로 해당 사용자의 게시물은 보이지 않아요",
+        confirmText: "차단하기",
+        onConfirm: () async {
+          context.pop();
+          await feedViewModel.blockUser(loginUserId, feedUser.id);
+          await feedViewModel.checkUserStatus(loginUserId, feedUser.id);
+          showToast("사용자를 차단했어요");
         },
         onCancel: () => context.pop(),
       ),

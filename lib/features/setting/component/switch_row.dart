@@ -5,10 +5,10 @@ class SwitchRow extends StatelessWidget {
   final String title;
   final bool value;
   final Function(bool)? onChanged;
-  final Color circleColor = Color(0xfffafafa);
-  final Color backgroundColor = Color(0xff95b7db);
-  final Color inactiveCircleColor = Color(0xfffafafa);
-  final Color inactiveBackgroundColor = Color(0xffe8e8dc);
+  final Color circleColor = AppColors.opicWhite;
+  final Color backgroundColor = AppColors.opicSoftBlue;
+  final Color inactiveCircleColor = AppColors.opicWhite;
+  final Color inactiveBackgroundColor = AppColors.opicCoolGrey;
 
   SwitchRow({
     super.key,

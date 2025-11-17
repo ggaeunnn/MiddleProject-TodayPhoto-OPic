@@ -1,8 +1,8 @@
-// setting_view_model.dart
 import 'package:flutter/foundation.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/core/models/alarm_setting_model.dart';
 import 'package:opicproject/core/models/user_model.dart';
+import 'package:opicproject/features/setting/data/nickname_check_state.dart';
 
 import '../data/setting_repository.dart';
 
@@ -17,52 +17,13 @@ class SettingViewModel extends ChangeNotifier {
   AlarmSetting? _alarmSetting;
   AlarmSetting? get alarmSetting => _alarmSetting;
 
-  // 로그인 유저 아이디
-  int? _loginUserId;
-  int? get loginUserId => _loginUserId;
+  // 닉네임 체크 상태
+  NicknameCheckState _nicknameCheckState = const NicknameCheckState.idle();
+  NicknameCheckState get nicknameCheckState => _nicknameCheckState;
 
-  // 닉네임 존재 여부
-  bool _isExist = false;
-  bool get isExist => _isExist;
-
-  // 초기 설정 여부
-  bool _isInitialized = false;
-  bool get isInitialized => _isInitialized;
-
-  // 로딩중
-  late bool _isLoading = false;
+  // 로딩 상태
+  bool _isLoading = false;
   bool get isLoading => _isLoading;
-
-  SettingViewModel() {
-    AuthManager.shared.addListener(_onAuthChanged);
-  }
-
-  // 로그인 관련
-  void _onAuthChanged() {
-    _checkCurrentAuth();
-  }
-
-  void _checkCurrentAuth() {
-    final userId = AuthManager.shared.userInfo?.id;
-
-    if (userId != null && !_isInitialized) {
-      _loginUserId = userId;
-      _isInitialized = true;
-      notifyListeners();
-      initialize(userId);
-    } else if (userId == null && _isInitialized) {
-      _loginUserId = null;
-      _isInitialized = false;
-      notifyListeners();
-    } else if (userId != null && _isInitialized) {
-      print("초기화 완료");
-    }
-  }
-
-  // 초기 설정
-  Future<void> initialize(int loginUserId) async {
-    _loginUserId = loginUserId;
-  }
 
   // 로그인 유저 정보 불러오기
   Future<void> fetchUserInfo(int userId) async {
@@ -70,45 +31,60 @@ class SettingViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // 해당 닉네임이 존재하는지(중복방지)
-  Future<bool> checkIfExist(String nickname, int currentUserId) async {
+  // 닉네임 중복 체크
+  Future<bool> checkNicknameAvailability(
+    String nickname,
+    int currentUserId,
+  ) async {
+    // 현재 닉네임과 동일하면 중복 아님
     if (_loginUser?.nickname == nickname) {
-      _isExist = false;
+      _nicknameCheckState = const NicknameCheckState.current();
       notifyListeners();
       return false;
     }
 
-    _isExist = await _repository.checkIfExist(
+    final exists = await _repository.isNicknameExists(
       nickname,
       excludeUserId: currentUserId,
     );
+
+    _nicknameCheckState = exists
+        ? const NicknameCheckState.duplicate()
+        : const NicknameCheckState.available();
+
     notifyListeners();
-    return _isExist;
+    return exists;
+  }
+
+  // 닉네임 체크 상태 업데이트
+  void updateNicknameCheckState(NicknameCheckState state) {
+    _nicknameCheckState = state;
+    notifyListeners();
   }
 
   // 닉네임 변경하기
-  Future<bool> editNickname(int loginUserId, String nickname) async {
+  Future<bool> updateNickname(int userId, String nickname) async {
     _isLoading = true;
     notifyListeners();
 
-    final updatedUser = await _repository.editNickname(loginUserId, nickname);
+    try {
+      final updatedUser = await _repository.updateNickname(userId, nickname);
 
-    if (updatedUser != null) {
-      _loginUser = updatedUser;
-      AuthManager.shared.updateUserInfo(updatedUser);
-      _isLoading = false;
-      notifyListeners();
-      return true;
-    } else {
-      _isLoading = false;
-      notifyListeners();
+      if (updatedUser != null) {
+        _loginUser = updatedUser;
+        AuthManager.shared.updateUserInfo(updatedUser);
+        return true;
+      }
       return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
   // 푸시 알람 설정 불러오기
-  Future<void> fetchAlarmSetting(int loginId) async {
-    _alarmSetting = await _repository.fetchAlarmSetting(loginId: loginId);
+  Future<void> fetchAlarmSetting(int userId) async {
+    _alarmSetting = await _repository.fetchAlarmSetting(loginId: userId);
     notifyListeners();
   }
 
@@ -129,10 +105,8 @@ class SettingViewModel extends ChangeNotifier {
     }
   }
 
-  // API 중복 호출 방지
   @override
   void dispose() {
-    AuthManager.shared.removeListener(_onAuthChanged);
     super.dispose();
   }
 }

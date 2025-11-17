@@ -1,4 +1,3 @@
-// setting_repository.dart
 import 'package:dio/dio.dart';
 import 'package:opicproject/core/manager/dio_manager.dart';
 import 'package:opicproject/core/manager/supabase_manager.dart';
@@ -24,12 +23,12 @@ class SettingRepository {
   }
 
   // 해당 닉네임을 사용하는 사용자가 있는지 확인하기
-  Future<bool> checkIfExist(String userNickname, {int? excludeUserId}) async {
+  Future<bool> isNicknameExists(String nickname, {int? excludeUserId}) async {
     if (excludeUserId != null) {
       final List<dynamic> data = await _supabase
           .from("user")
           .select('id')
-          .eq('nickname', userNickname);
+          .eq('nickname', nickname);
 
       final filtered = data
           .where((user) => user['id'] != excludeUserId)
@@ -39,22 +38,20 @@ class SettingRepository {
       final Map<String, dynamic>? data = await _supabase
           .from("user")
           .select('*')
-          .eq('nickname', userNickname)
+          .eq('nickname', nickname)
           .maybeSingle();
-      if (data == null) {
-        return false;
-      }
-      return true;
+      return data != null;
     }
   }
 
   // 닉네임 변경하기
-  Future<UserInfo?> editNickname(int loginUserId, String nickname) async {
+  // 닉네임 변경하기
+  Future<UserInfo?> updateNickname(int userId, String nickname) async {
     await _supabase
         .from('user')
         .update({'nickname': nickname})
-        .eq('id', loginUserId);
-    return await fetchAUser(loginUserId);
+        .eq('id', userId);
+    return await fetchAUser(userId);
   }
 
   // 로그인 유저의 푸시 알림 설정 정보 가져오기
@@ -69,10 +66,9 @@ class SettingRepository {
         response.data is List &&
         (response.data as List).isNotEmpty) {
       final List<dynamic> dataList = response.data as List<dynamic>;
-      return AlarmSetting.fromJson(dataList.first); // 첫 번째 항목만 반환
-    } else {
-      return null; // 데이터가 없으면 null 반환
+      return AlarmSetting.fromJson(dataList.first);
     }
+    return null;
   }
 
   // 푸시 알림 설정 업데이트

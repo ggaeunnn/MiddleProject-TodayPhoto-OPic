@@ -1,10 +1,12 @@
-// edit_nickname_pop_up.dart
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:opicproject/component/toast_pop.dart';
 import 'package:opicproject/core/app_colors.dart';
+import 'package:opicproject/features/setting/component/nickname_validation_message.dart';
+import 'package:opicproject/features/setting/data/nickname_check_state.dart';
+import 'package:opicproject/features/setting/utils/nickname_validator.dart';
 import 'package:opicproject/features/setting/viewmodel/setting_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -26,25 +28,12 @@ class _EditNicknamePopUpState extends State<EditNicknamePopUp> {
   final TextEditingController _nicknameController = TextEditingController();
   String _currentInput = '';
   Timer? _debounce;
-  bool _isChecking = false;
-  bool _isDuplicate = false;
-  String _checkMessage = '';
 
   @override
   void initState() {
     super.initState();
     _nicknameController.text = widget.loginUserNickname;
-
-    _nicknameController.addListener(() {
-      setState(() {
-        _currentInput = _nicknameController.text;
-      });
-
-      if (_debounce?.isActive ?? false) _debounce!.cancel();
-      _debounce = Timer(const Duration(milliseconds: 500), () {
-        _checkNickname();
-      });
-    });
+    _nicknameController.addListener(_onNicknameChanged);
   }
 
   @override
@@ -54,52 +43,44 @@ class _EditNicknamePopUpState extends State<EditNicknamePopUp> {
     super.dispose();
   }
 
+  void _onNicknameChanged() {
+    setState(() {
+      _currentInput = _nicknameController.text;
+    });
+
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+    _debounce = Timer(Duration(milliseconds: 500), _checkNickname);
+  }
+
   Future<void> _checkNickname() async {
     final nickname = _currentInput.trim();
+    final viewModel = context.read<SettingViewModel>();
 
-    if (!_isValidNickname(nickname)) {
-      setState(() {
-        _isChecking = false;
-        _isDuplicate = false;
-        _checkMessage = '';
-      });
+    if (!NicknameValidator.isValid(nickname)) {
+      viewModel.updateNicknameCheckState(const NicknameCheckState.idle());
       return;
     }
 
     if (nickname == widget.loginUserNickname) {
-      setState(() {
-        _isChecking = false;
-        _isDuplicate = false;
-        _checkMessage = '현재 닉네임입니다';
-      });
+      viewModel.updateNicknameCheckState(const NicknameCheckState.current());
       return;
     }
 
-    setState(() {
-      _isChecking = true;
-      _checkMessage = '확인 중...';
-    });
+    viewModel.updateNicknameCheckState(const NicknameCheckState.checking());
 
-    final viewModel = context.read<SettingViewModel>();
-    final isDuplicate = await viewModel.checkIfExist(
+    final isDuplicate = await viewModel.checkNicknameAvailability(
       nickname,
       widget.loginUserId,
     );
-
-    if (mounted) {
-      setState(() {
-        _isChecking = false;
-        _isDuplicate = isDuplicate;
-        _checkMessage = isDuplicate ? '이미 사용 중인 닉네임이에요' : '사용 가능한 닉네임이에요 ✓';
-      });
-    }
   }
 
   Future<void> _saveNickname() async {
     final nickname = _currentInput.trim();
+    final viewModel = context.read<SettingViewModel>();
 
-    if (!_isValidNickname(nickname)) {
-      showToast('닉네임은 2~10글자여야 해요');
+    if (!NicknameValidator.isValid(nickname)) {
+      ToastPop.show('닉네임은 2~10글자여야 해요');
       return;
     }
 
@@ -108,48 +89,40 @@ class _EditNicknamePopUpState extends State<EditNicknamePopUp> {
       return;
     }
 
-    if (_isChecking) {
-      showToast('중복 확인 중이에요. 잠시만 기다려주세요');
+    if (viewModel.nicknameCheckState.isChecking) {
+      ToastPop.show('중복 확인 중이에요. 잠시만 기다려주세요');
       return;
     }
 
-    if (_isDuplicate) {
-      showToast('이미 사용 중인 닉네임이에요');
+    if (viewModel.nicknameCheckState.isDuplicate) {
+      ToastPop.show('이미 사용 중인 닉네임이에요');
       return;
     }
 
-    final viewModel = context.read<SettingViewModel>();
-    final finalCheck = await viewModel.checkIfExist(
+    // 최종 중복 확인
+    final finalCheck = await viewModel.checkNicknameAvailability(
       nickname,
       widget.loginUserId,
     );
 
     if (finalCheck) {
-      showToast('이미 사용 중인 닉네임이에요');
+      ToastPop.show('이미 사용 중인 닉네임이에요');
       return;
     }
 
-    final success = await viewModel.editNickname(widget.loginUserId, nickname);
+    final success = await viewModel.updateNickname(
+      widget.loginUserId,
+      nickname,
+    );
 
     if (mounted) {
       if (success) {
-        showToast('닉네임을 변경했어요');
+        ToastPop.show('닉네임을 변경했어요');
         context.pop();
       } else {
-        showToast('닉네임 변경에 실패했어요');
+        ToastPop.show('닉네임 변경에 실패했어요');
       }
     }
-  }
-
-  void showToast(String message) {
-    Fluttertoast.showToast(
-      msg: message,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: AppColors.opicBlue,
-      fontSize: 14,
-      textColor: AppColors.opicWhite,
-      toastLength: Toast.LENGTH_SHORT,
-    );
   }
 
   @override
@@ -158,220 +131,128 @@ class _EditNicknamePopUpState extends State<EditNicknamePopUp> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       backgroundColor: AppColors.opicWhite,
       child: Padding(
-        padding: EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "새로운 닉네임을 입력 한 뒤\n변경하기를 눌러주세요",
+              '새로운 닉네임을 입력 한 뒤\n변경하기를 눌러주세요',
               style: TextStyle(
                 fontWeight: FontWeight.w500,
-                fontSize: 14,
+                fontSize: 14.0,
                 color: AppColors.opicBlack,
               ),
             ),
-            SizedBox(height: 8),
-            _buildAlert(_currentInput),
-            SizedBox(height: 16),
-            TextField(
-              controller: _nicknameController,
-              obscureText: false,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: AppColors.opicBackground,
-                hintText: '닉네임을 입력하세요',
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 1,
-                    color: AppColors.opicSoftBlue,
-                  ),
-                  borderRadius: BorderRadius.all(Radius.circular(16)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 1,
-                    color: AppColors.opicWarmGrey,
-                  ),
-                  borderRadius: BorderRadius.all(Radius.circular(16)),
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(16)),
-                ),
-              ),
-              keyboardType: TextInputType.text,
-            ),
-            SizedBox(height: 24),
+            const SizedBox(height: 8),
             Consumer<SettingViewModel>(
               builder: (context, viewModel, child) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed:
-                            (_isValidNickname(_currentInput) &&
-                                !_isDuplicate &&
-                                !_isChecking &&
-                                !viewModel.isLoading)
-                            ? _saveNickname
-                            : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.opicSoftBlue,
-                          foregroundColor: AppColors.opicWhite,
-                          disabledBackgroundColor: AppColors.opicWarmGrey,
-                          padding: EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: viewModel.isLoading
-                            ? SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: AppColors.opicWhite,
-                                ),
-                              )
-                            : Text(
-                                "변경하기",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColors.opicWhite,
-                                ),
-                              ),
-                      ),
-                    ),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: viewModel.isLoading
-                            ? null
-                            : () => context.pop(),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.opicWarmGrey,
-                          foregroundColor: AppColors.opicWhite,
-                          padding: EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Text(
-                          "닫기",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.opicBlack,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                return NicknameValidationMessage(
+                  nickname: _currentInput,
+                  currentNickname: widget.loginUserNickname,
+                  checkState: viewModel.nicknameCheckState,
                 );
               },
             ),
+            const SizedBox(height: 16),
+            _buildTextField(),
+            const SizedBox(height: 24),
+            _buildButtons(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildAlert(String nickname) {
-    if (_isChecking) {
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            width: 12,
-            height: 12,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: AppColors.opicBlue,
-            ),
-          ),
-          SizedBox(width: 8),
-          Text(
-            _checkMessage,
-            style: TextStyle(
-              fontWeight: FontWeight.w400,
-              fontSize: 11,
-              color: AppColors.opicBlue,
-            ),
-          ),
-        ],
-      );
-    }
-
-    if (_checkMessage.isNotEmpty &&
-        nickname != widget.loginUserNickname &&
-        _isValidNickname(nickname)) {
-      return Text(
-        _checkMessage,
-        style: TextStyle(
-          fontWeight: FontWeight.w400,
-          fontSize: 11,
-          color: _isDuplicate ? AppColors.opicRed : AppColors.opicBlue,
+  Widget _buildTextField() {
+    return TextField(
+      controller: _nicknameController,
+      obscureText: false,
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: AppColors.opicBackground,
+        hintText: '닉네임을 입력하세요',
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(width: 1, color: AppColors.opicSoftBlue),
+          borderRadius: BorderRadius.circular(16),
         ),
-      );
-    }
-
-    if (nickname.isEmpty) {
-      return Text(
-        "닉네임을 입력해주세요",
-        style: TextStyle(
-          fontWeight: FontWeight.w400,
-          fontSize: 11,
-          color: AppColors.opicLightBlack,
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(width: 1, color: AppColors.opicWarmGrey),
+          borderRadius: BorderRadius.circular(16),
         ),
-      );
-    }
-
-    if (nickname.length < 2) {
-      return Text(
-        "닉네임 길이가 너무 짧아요 (최소 2글자)",
-        style: TextStyle(
-          fontWeight: FontWeight.w400,
-          fontSize: 11,
-          color: AppColors.opicRed,
-        ),
-      );
-    }
-
-    if (nickname.length > 10) {
-      return Text(
-        "닉네임 길이가 너무 길어요 (10글자 이내)",
-        style: TextStyle(
-          fontWeight: FontWeight.w400,
-          fontSize: 11,
-          color: AppColors.opicRed,
-        ),
-      );
-    }
-
-    if (nickname == widget.loginUserNickname) {
-      return Text(
-        "현재 닉네임입니다",
-        style: TextStyle(
-          fontWeight: FontWeight.w400,
-          fontSize: 11,
-          color: AppColors.opicLightBlack,
-        ),
-      );
-    }
-
-    return Text(
-      "변경하기를 눌러주세요 ✓",
-      style: TextStyle(
-        fontWeight: FontWeight.w400,
-        fontSize: 11,
-        color: AppColors.opicLightBlack,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
       ),
+      keyboardType: TextInputType.text,
     );
   }
 
-  bool _isValidNickname(String nickname) {
-    return nickname.isNotEmpty && nickname.length >= 2 && nickname.length <= 10;
+  Widget _buildButtons() {
+    return Consumer<SettingViewModel>(
+      builder: (context, viewModel, child) {
+        final isValid = NicknameValidator.isValid(_currentInput);
+        final canSave =
+            isValid &&
+            !viewModel.nicknameCheckState.isDuplicate &&
+            !viewModel.nicknameCheckState.isChecking &&
+            !viewModel.isLoading;
+
+        return Row(
+          children: [
+            Expanded(
+              child: ElevatedButton(
+                onPressed: canSave ? _saveNickname : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.opicSoftBlue,
+                  foregroundColor: AppColors.opicWhite,
+                  disabledBackgroundColor: AppColors.opicWarmGrey,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: viewModel.isLoading
+                    ? SizedBox(
+                        width: 20.0,
+                        height: 20.0,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.0,
+                          color: AppColors.opicWhite,
+                        ),
+                      )
+                    : Text(
+                        '변경하기',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.opicWhite,
+                        ),
+                      ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: viewModel.isLoading ? null : () => context.pop(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.opicWarmGrey,
+                  foregroundColor: AppColors.opicWhite,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Text(
+                  "닫기",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.opicBlack,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
