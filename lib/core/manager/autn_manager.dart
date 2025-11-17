@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
@@ -14,11 +16,15 @@ class AuthManager extends ChangeNotifier {
 
   UserInfo? userInfo;
   SupabaseClient supabase = SupabaseManager.shared.supabase;
+  bool _isInitialized = false; // 플래그 추가
+  bool get isInitialized => _isInitialized; // 외부에서 접근 가능하게 함
   SupabaseClient admin = SupabaseClient(
     dotenv.get("Supabase_URL"),
     dotenv.get("Supabase_Role_key"),
   );
   AuthManager() {
+    print("AuthManager초기화");
+    log("AuthManager초기화");
     SupabaseManager.shared.supabase.auth.onAuthStateChange.listen((data) {
       final event = data.event; //auth상태
       final session = data.session; // 세션
@@ -73,11 +79,13 @@ class AuthManager extends ChangeNotifier {
               fetchUser(uuid);
             } else {
               debugPrint("AuthManager:현재 uuid가 null");
+              _isInitialized = true;
             }
             notifyListeners();
           } else {
             //로그아웃을 하고 앱을 종료했다면
             print('인증매니저: 초기 세션 없음 (로그아웃 상태)');
+            _isInitialized = true;
           }
           break;
 
@@ -108,6 +116,7 @@ class AuthManager extends ChangeNotifier {
         .fetchUserDataWithUUID(uuid);
     debugPrint("유저 가져오기:${result.email}");
     userInfo = result;
+    _isInitialized = true;
     notifyListeners();
   }
 
