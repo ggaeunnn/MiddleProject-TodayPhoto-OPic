@@ -151,23 +151,10 @@ class AlarmViewModel extends ChangeNotifier {
   Future<void> checkAlarm(int loginUserId, int alarmId) async {
     await _repository.checkAlarm(alarmId);
 
-    final index = _alarms.indexWhere((alarm) => alarm.id == alarmId);
-    if (index != -1) {
-      final oldAlarm = _alarms[index];
+    _alarms.removeWhere((alarm) => alarm.id == alarmId);
 
-      _alarms[index] = Alarm(
-        id: oldAlarm.id,
-        createdAt: oldAlarm.createdAt,
-        userId: oldAlarm.userId,
-        alarmType: oldAlarm.alarmType,
-        content: oldAlarm.content,
-        isChecked: true,
-        data: oldAlarm.data,
-      );
-
-      _updateUnreadCount();
-      notifyListeners();
-    }
+    _updateUnreadCount();
+    notifyListeners();
   }
 
   // API 중복 호출 방지

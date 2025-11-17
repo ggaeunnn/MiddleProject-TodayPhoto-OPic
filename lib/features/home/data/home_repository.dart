@@ -22,9 +22,9 @@ class HomeRepository {
     return result;
   }
 
-  //게시물 주제연결
+  //게시물 주제 연결
   Future<List<Map<String, dynamic>>> getPostsByTopicId(int topicId) async {
-    final result = await SupabaseManager.shared.supabase
+    final result = await _supabase
         .from('posts')
         .select()
         .eq('topic_id', topicId)
