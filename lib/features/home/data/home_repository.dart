@@ -22,14 +22,16 @@ class HomeRepository {
     return result;
   }
 
-  //게시물 주제 연결
+  //게시물 주제연결
   Future<List<Map<String, dynamic>>> getPostsByTopicId(int topicId) async {
-    final result = await _supabase
+    final result = await SupabaseManager.shared.supabase
         .from('posts')
-        .select()
+        .select('*, user:user_id(id, nickname)')
         .eq('topic_id', topicId)
         .order('id', ascending: false);
-    return List<Map<String, dynamic>>.from(result);
+    return result.where((post) {
+      return post['user']?['nickname'] != '알수없음';
+    }).toList();
   }
 
   //좋아요 가져오기
