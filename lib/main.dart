@@ -5,7 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/core/manager/firebase_manager.dart';
 import 'package:opicproject/core/manager/go_router_manager.dart';
-import 'package:opicproject/features/alarm/data/alarm_view_model.dart';
+import 'package:opicproject/features/alarm/viewmodel/alarm_view_model.dart';
 import 'package:opicproject/features/auth/viewmodel/auth_viewmodel.dart';
 import 'package:opicproject/features/friend/viewmodel/friend_view_model.dart';
 import 'package:opicproject/features/home/viewmodel/home_viewmodel.dart';

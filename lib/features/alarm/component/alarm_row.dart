@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/app_colors.dart';
-import 'package:opicproject/features/alarm/data/alarm_view_model.dart';
 import 'package:opicproject/features/alarm/util/date_check.dart';
+import 'package:opicproject/features/alarm/viewmodel/alarm_view_model.dart';
 import 'package:opicproject/features/friend/viewmodel/friend_view_model.dart';
 import 'package:opicproject/features/post/ui/post_detail_page.dart';
 import 'package:provider/provider.dart';
