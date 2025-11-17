@@ -14,7 +14,7 @@ class SupabaseManager {
 
   SupabaseClient get supabase => Supabase.instance.client;
 
-  /// 오늘의 주제 가져오기
+  // 오늘의 주제 가져오기
   Future<Topic?> fetchATopic(DateTime date) async {
     final startOfDay = DateTime(date.year, date.month, date.day);
     final startOfNextDay = DateTime(date.year, date.month, date.day + 1);

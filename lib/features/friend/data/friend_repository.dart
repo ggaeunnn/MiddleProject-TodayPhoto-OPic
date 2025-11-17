@@ -50,7 +50,8 @@ class FriendRepository {
     final response = await _dio.get(
       '/friends',
       queryParameters: {
-        'select': '*',
+        'select':
+            '''*,user1:user!user1_id(exit_at), user2:user!user2_id(exit_at)''',
         'or': '(user1_id.eq.$loginId,user2_id.eq.$loginId)',
       },
       options: Options(headers: {'Range': range}),
@@ -58,9 +59,17 @@ class FriendRepository {
 
     if (response.data != null) {
       final List data = response.data;
-      final List<Friend> results = data.map((json) {
-        return Friend.fromJson(json);
-      }).toList();
+      final List<Friend> results = data
+          .where((json) {
+            if (json['user1_id'] == loginId) {
+              return json['user2']?['exit_at'] == null;
+            } else {
+              return json['user1']?['exit_at'] == null;
+            }
+          })
+          .map((json) => Friend.fromJson(json))
+          .toList();
+
       return results;
     } else {
       return List.empty();
@@ -80,7 +89,10 @@ class FriendRepository {
     final response = await _dio.get(
       '/friend_request',
       queryParameters: {
-        'select': '*',
+        'select': '''
+          *,
+          requester:user!request_id(exit_at)
+        ''',
         'target_id': 'eq.$loginId',
         'answered_at': 'is.null',
       },
@@ -89,9 +101,12 @@ class FriendRepository {
 
     if (response.data != null) {
       final List data = response.data;
-      final List<FriendRequest> results = data.map((json) {
-        return FriendRequest.fromJson(json);
-      }).toList();
+      final List<FriendRequest> results = data
+          .where((json) {
+            return json['requester']?['exit_at'] == null;
+          })
+          .map((json) => FriendRequest.fromJson(json))
+          .toList();
       return results;
     } else {
       return List.empty();
@@ -185,15 +200,21 @@ class FriendRepository {
 
     final response = await _dio.get(
       '/block',
-      queryParameters: {'select': '*', 'user_id': 'eq.$loginId'},
+      queryParameters: {
+        'select': '''*, blocked:user!blocked_user_id(exit_at)''',
+        'user_id': 'eq.$loginId',
+      },
       options: Options(headers: {'Range': range}),
     );
 
     if (response.data != null) {
       final List data = response.data;
-      final List<BlockUser> results = data.map((json) {
-        return BlockUser.fromJson(json);
-      }).toList();
+      final List<BlockUser> results = data
+          .where((json) {
+            return json['blocked']?['exit_at'] == null;
+          })
+          .map((json) => BlockUser.fromJson(json))
+          .toList();
       return results;
     } else {
       return List.empty();
