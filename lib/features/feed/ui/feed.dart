@@ -107,19 +107,21 @@ Widget _buildUserHeader(
                   // 닉네임
                   Row(
                     children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.arrow_back_rounded,
-                          color: AppColors.opicBlack,
-                        ),
-                        onPressed: () {
-                          context.pop();
-                        },
-                        splashColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                        hoverColor: Colors.transparent,
-                        focusColor: Colors.transparent,
-                      ),
+                      isMyFeed
+                          ? SizedBox(width: 5.0)
+                          : IconButton(
+                              icon: Icon(
+                                Icons.arrow_back_rounded,
+                                color: AppColors.opicBlack,
+                              ),
+                              onPressed: () {
+                                context.pop();
+                              },
+                              splashColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              hoverColor: Colors.transparent,
+                              focusColor: Colors.transparent,
+                            ),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 6.0),
                         child: Text(
