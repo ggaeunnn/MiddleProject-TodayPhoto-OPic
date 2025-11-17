@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/features/alarm/component/alarm_row.dart';
-import 'package:opicproject/features/alarm/data/alarm_view_model.dart';
+import 'package:opicproject/features/alarm/viewmodel/alarm_view_model.dart';
 import 'package:provider/provider.dart';
 
 class AlarmListScreen extends StatelessWidget {
@@ -31,7 +31,9 @@ class _AlarmListScreenState extends State<_AlarmListScreen> {
       final authManager = context.read<AuthManager>();
       final loginUserId = authManager.userInfo?.id ?? 0;
 
-      if (loginUserId != 0) {
+      if (loginUserId != 0 &&
+          viewModel.alarms.isEmpty &&
+          !viewModel.isLoading) {
         viewModel.fetchAlarms(1, loginUserId);
       }
     });

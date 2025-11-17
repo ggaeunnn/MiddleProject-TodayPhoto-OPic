@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:opicproject/core/app_colors.dart';
-import 'package:opicproject/features/friend/data/friend_view_model.dart';
+import 'package:opicproject/features/friend/viewmodel/friend_view_model.dart';
 import 'package:opicproject/features/post/ui/post_detail_page.dart';
 import 'package:provider/provider.dart';
 
@@ -90,9 +90,8 @@ Widget _buttonBuilder(
     children: [
       Expanded(
         child: ElevatedButton(
-          onPressed: () {
-            viewModel.answerARequest(requestId, loginUserId);
-            viewModel.acceptARequest(requestId, loginUserId, requesterId);
+          onPressed: () async {
+            await viewModel.acceptARequest(requestId, loginUserId, requesterId);
             showToast("친구가 되었어요 😘");
           },
           style: ElevatedButton.styleFrom(
@@ -127,8 +126,8 @@ Widget _buttonBuilder(
       ),
       Expanded(
         child: ElevatedButton(
-          onPressed: () {
-            viewModel.answerARequest(requestId, loginUserId);
+          onPressed: () async {
+            await viewModel.answerARequest(requestId, loginUserId);
             showToast("친구 요청을 거절했어요");
           },
           style: ElevatedButton.styleFrom(

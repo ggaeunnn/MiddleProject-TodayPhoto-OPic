@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/component/yes_or_close_pop_up.dart';
 import 'package:opicproject/core/app_colors.dart';
-import 'package:opicproject/features/friend/data/friend_view_model.dart';
+import 'package:opicproject/features/friend/viewmodel/friend_view_model.dart';
 import 'package:opicproject/features/post/ui/post_detail_page.dart';
 import 'package:provider/provider.dart';
 
@@ -67,9 +67,9 @@ class BlockInfoRow extends StatelessWidget {
                       title: "차단을 해제하시겠어요?",
                       text: "선택한 사용자의 게시물이 다시 보여요",
                       confirmText: "차단 해제",
-                      onConfirm: () {
+                      onConfirm: () async {
                         context.pop();
-                        context.read<FriendViewModel>().unblockUser(
+                        await context.read<FriendViewModel>().unblockUser(
                           userId,
                           blockUserId,
                         );

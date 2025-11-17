@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:opicproject/core/models/alarm_model.dart';
 
-import 'alarm_repository.dart';
+import '../data/alarm_repository.dart';
 
 class AlarmViewModel extends ChangeNotifier {
   final AlarmRepository _repository = AlarmRepository();

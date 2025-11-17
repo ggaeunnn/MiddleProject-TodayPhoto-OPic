@@ -5,7 +5,7 @@ import 'package:opicproject/features/friend/component/add_friend_pop_up.dart';
 import 'package:opicproject/features/friend/component/block_info_row.dart';
 import 'package:opicproject/features/friend/component/friend_info_row.dart';
 import 'package:opicproject/features/friend/component/friend_request_row.dart';
-import 'package:opicproject/features/friend/data/friend_view_model.dart';
+import 'package:opicproject/features/friend/viewmodel/friend_view_model.dart';
 import 'package:provider/provider.dart';
 
 class FriendScreen extends StatelessWidget {

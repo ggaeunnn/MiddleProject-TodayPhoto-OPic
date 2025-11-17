@@ -4,7 +4,7 @@ import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/core/models/alarm_setting_model.dart';
 import 'package:opicproject/core/models/user_model.dart';
 
-import 'setting_repository.dart';
+import '../data/setting_repository.dart';
 
 class SettingViewModel extends ChangeNotifier {
   final SettingRepository _repository = SettingRepository();

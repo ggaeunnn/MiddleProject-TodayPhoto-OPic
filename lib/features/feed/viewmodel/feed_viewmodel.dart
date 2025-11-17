@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:opicproject/core/models/post_model.dart';
 import 'package:opicproject/core/models/user_model.dart';
 
-import 'feed_repository.dart';
+import '../data/feed_repository.dart';
 
 class FeedViewModel extends ChangeNotifier {
   final FeedRepository _repository = FeedRepository();
@@ -100,6 +100,8 @@ class FeedViewModel extends ChangeNotifier {
 
   // 피드 정보 초기설정 (다른 유저 피드로 이동할 때 이전 유저 정보 남지 않게)
   Future<void> initializeFeed(int feedUserId, int loginUserId) async {
+    if (_isLoading) return;
+
     if (_currentFeedUserId == feedUserId && _isInitialized) {
       return;
     }

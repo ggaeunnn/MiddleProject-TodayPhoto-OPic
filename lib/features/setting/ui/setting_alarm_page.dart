@@ -6,7 +6,7 @@ import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/core/models/alarm_setting_model.dart';
 import 'package:opicproject/features/setting/component/switch_row.dart';
-import 'package:opicproject/features/setting/data/setting_view_model.dart';
+import 'package:opicproject/features/setting/viewmodel/setting_view_model.dart';
 import 'package:provider/provider.dart';
 
 class SettingAlarmScreen extends StatefulWidget {

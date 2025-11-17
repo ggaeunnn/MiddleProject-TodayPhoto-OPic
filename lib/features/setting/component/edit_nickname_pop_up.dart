@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/app_colors.dart';
-import 'package:opicproject/features/setting/data/setting_view_model.dart';
+import 'package:opicproject/features/setting/viewmodel/setting_view_model.dart';
 import 'package:provider/provider.dart';
 
 class EditNicknamePopUp extends StatefulWidget {
