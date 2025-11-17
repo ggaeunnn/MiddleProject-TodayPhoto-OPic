@@ -1,9 +1,11 @@
 import 'package:opicproject/core/manager/supabase_manager.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PostRepository {
   static final PostRepository shared = PostRepository._internal();
   PostRepository._internal();
 
+  final SupabaseClient _supabase = SupabaseManager.shared.supabase;
   final supabase = SupabaseManager.shared.supabase;
 
   Future<void> toggleLike(int userId, int postId) async {
@@ -29,8 +31,15 @@ class PostRepository {
     }
   }
 
+  // 로그인 유저가 특정 포스트를 좋아요 했는지 여부 확인
   Future<bool> checkIfLikedPost(int loginUserId, int postId) async {
-    return await SupabaseManager.shared.checkIfLikedPost(loginUserId, postId);
+    final List<dynamic> data = await _supabase
+        .from("likes")
+        .select('id')
+        .eq('user_id', loginUserId)
+        .eq('post_id', postId);
+
+    return data.isNotEmpty;
   }
 
   Future<void> commentSend(int userId, int postId, String text) async {
@@ -57,13 +66,14 @@ class PostRepository {
     return List<Map<String, dynamic>>.from(result);
   }
 
+  // 특정 포스트의 좋아요 갯수 가져오기
   Future<int> getLikeCount(int postId) async {
-    final result = await supabase
-        .from('likes')
-        .select('id')
+    final List<dynamic> data = await supabase
+        .from("likes")
+        .select('id') // id만 가져오기
         .eq('post_id', postId);
 
-    return result.length;
+    return data.length;
   }
 
   Future<Map<String, dynamic>> getPostById(int id) async {
