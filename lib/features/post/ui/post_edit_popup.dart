@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:opicproject/core/app_colors.dart';
+import 'package:opicproject/features/home/data/home_repository.dart';
+import 'package:opicproject/features/home/viewmodel/home_viewmodel.dart';
 import 'package:opicproject/features/post/ui/post_detail_page.dart';
 import 'package:opicproject/features/post/viewmodel/post_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -17,24 +19,26 @@ class EditPopup extends StatefulWidget {
 
 class _EditPopupState extends State<EditPopup> {
   final pick = ImagePicker();
+  final HomeRepository repository = HomeRepository.shared;
 
   Future<void> openGallery() async {
     final pickImage = await pick.pickImage(source: ImageSource.gallery);
     if (pickImage != null) {
-      context.read<PostViewModel>().setImage(File(pickImage.path));
+      context.read<HomeViewModel>().setImage(File(pickImage.path));
     }
   }
 
   Future<void> camera() async {
     final pickImage = await pick.pickImage(source: ImageSource.camera);
     if (pickImage != null) {
-      context.read<PostViewModel>().setImage(File(pickImage.path));
+      context.read<HomeViewModel>().setImage(File(pickImage.path));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final viewmodel = context.watch<PostViewModel>();
+    final homeViewmodel = context.watch<HomeViewModel>();
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       backgroundColor: AppColors.opicWhite,
@@ -155,7 +159,7 @@ class _EditPopupState extends State<EditPopup> {
                         ? null
                         : () async {
                             if (viewmodel.selectedImage != null) {
-                              final newImageUrl = await viewmodel
+                              final newImageUrl = await HomeRepository.shared
                                   .uploadImageToSupabase(
                                     viewmodel.selectedImage!,
                                   );
@@ -198,7 +202,7 @@ class _EditPopupState extends State<EditPopup> {
                   child: Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        context.read<PostViewModel>().setImage(null);
+                        context.read<HomeViewModel>().setImage(null);
                         context.pop();
                       },
                       style: ElevatedButton.styleFrom(

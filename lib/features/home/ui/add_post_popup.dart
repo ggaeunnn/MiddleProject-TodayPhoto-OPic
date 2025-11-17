@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:opicproject/core/app_colors.dart';
+import 'package:opicproject/features/home/data/home_repository.dart';
 import 'package:opicproject/features/home/viewmodel/home_viewmodel.dart';
 import 'package:opicproject/features/post/viewmodel/post_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,7 @@ class addPostPopup extends StatefulWidget {
 
 class _addPostPopup extends State<addPostPopup> {
   File? selectedImage;
+  final HomeRepository repository = HomeRepository.shared;
   final pick = ImagePicker();
 
   Future<void> openGallery() async {
@@ -189,16 +191,15 @@ class _addPostPopup extends State<addPostPopup> {
                             }
 
                             final file = selectedImage ?? takePicture!;
-
-                            final imageUrl = await viewmodel
+                            final imageUrl = await HomeRepository.shared
                                 .uploadImageToSupabase(file);
 
                             if (imageUrl == null) {
                               Fluttertoast.showToast(msg: "이미지 업로드 실패");
                               return;
                             }
-                            await viewmodel.createPost(imageUrl, topicId);
-                            await homeViewModel.fetchPostsByTopicId(topicId);
+                            await homeViewModel.createPost(imageUrl, topicId);
+                            await homeViewModel.fetchTopicAndPostsById(topicId);
 
                             context.pop();
                             Fluttertoast.showToast(msg: "게시물이 작성되었습니다.");
@@ -211,7 +212,7 @@ class _addPostPopup extends State<addPostPopup> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: viewmodel.isLoading
+                    child: homeViewModel.isLoading
                         ? SizedBox(
                             width: 20,
                             height: 20,

@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
+import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/features/home/data/home_repository.dart';
 import 'package:opicproject/features/post/data/post_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeViewModel extends ChangeNotifier {
   final PostRepository repository = PostRepository.shared;
+  final HomeRepository homeRepository = HomeRepository.shared;
   final HomeRepository topicRepository = HomeRepository.shared;
 
   List<Map<String, dynamic>> topics = [];
@@ -12,6 +16,9 @@ class HomeViewModel extends ChangeNotifier {
   int currentTopicIndex = 0;
   bool _isInitialized = false;
   List<Map<String, dynamic>> posts = [];
+  bool isLoading = false;
+  File? selectedImage;
+  String loginUserName = "친구1";
 
   // postId별로 likes/comments 저장 (중요!)
   int likes = 0;
@@ -34,25 +41,38 @@ class HomeViewModel extends ChangeNotifier {
     }
   }
 
+  //게시물 불러오기
   Future<void> fetchPosts() async {
-    posts = await repository.getAllPosts();
+    final id = todayTopic?['id'];
+
+    if (id == null) {
+      posts = [];
+      notifyListeners();
+      return;
+    }
+
+    posts = await homeRepository.getPostsByTopicId(id);
     notifyListeners();
   }
 
+  //주제 불러오기
   Future<void> fetchTopics() async {
     todayTopic = await topicRepository.fetchTodayTopic();
 
     if (todayTopic != null && todayTopic!['id'] != null) {
-      await fetchPostsByTopicId(todayTopic!['id']);
+      await fetchTopicAndPostsById(todayTopic!['id']);
     }
   }
 
+  //홈화면
   Future<void> initHome() async {
     if (_isInitialized) return;
     await fetchTopics();
+    await fetchPosts();
     _isInitialized = true;
   }
 
+  //날짜선택시 이동
   Future<void> fetchTopicByDate(DateTime selectedDate) async {
     final startOfDay = DateTime(
       selectedDate.year,
@@ -86,7 +106,7 @@ class HomeViewModel extends ChangeNotifier {
         'uploaded_at': result['uploaded_at'],
       };
 
-      await fetchPostsByTopicId(result['id']);
+      await fetchTopicAndPostsById(result['id']);
     } else {
       todayTopic = {'content': "주제 없음"};
       posts = [];
@@ -94,26 +114,7 @@ class HomeViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchPostsByTopicId(int topicId) async {
-    posts = await repository.getPostsByTopicId(topicId);
-    notifyListeners();
-  }
-
-  Future<void> getLikeCount(int postId) async {
-    likes = await topicRepository.getLikeCounts(postId);
-    // notifyListeners() 제거 - PostCard가 setState로 관리
-  }
-
-  Future<void> getCommentCount(int postId) async {
-    comments = await topicRepository.getCommentCounts(postId);
-    // notifyListeners() 제거 - PostCard가 setState로 관리
-  }
-
-  Future<void> refreshData() async {
-    await Future.delayed(const Duration(milliseconds: 1000));
-    posts = await repository.getAllPosts();
-  }
-
+  //주제 선택시 이동
   Future<void> fetchTopicAndPostsById(int topicId) async {
     _isInitialized = true;
 
@@ -131,7 +132,8 @@ class HomeViewModel extends ChangeNotifier {
           'uploaded_at': result['uploaded_at'],
         };
 
-        await fetchPostsByTopicId(topicId);
+        posts = await homeRepository.getPostsByTopicId(topicId);
+        notifyListeners();
       } else {
         todayTopic = {'content': "주제를 찾을 수 없습니다"};
         posts = [];
@@ -142,5 +144,62 @@ class HomeViewModel extends ChangeNotifier {
       posts = [];
       notifyListeners();
     }
+  }
+
+  //새로고침
+  Future<void> refreshData() async {
+    await Future.delayed(const Duration(milliseconds: 1000));
+
+    final id = todayTopic?['id'];
+    if (id == null) return;
+
+    posts = await homeRepository.getPostsByTopicId(id);
+  }
+
+  //좋아요 개수
+  Future<void> getLikeCount(int postId) async {
+    likes = await topicRepository.getLikeCounts(postId);
+    // notifyListeners() 제거 - PostCard가 setState로 관리
+  }
+
+  //댓글 개수
+  Future<void> getCommentCount(int postId) async {
+    comments = await topicRepository.getCommentCounts(postId);
+    // notifyListeners() 제거 - PostCard가 setState로 관리
+  }
+
+  //게시물 추가
+  Future<void> createPost(String imageUrl, int topicId) async {
+    isLoading = true;
+    notifyListeners();
+    try {
+      final authManager = AuthManager.shared;
+      final userId = authManager.userInfo?.id;
+
+      if (userId == null) {
+        print("로그인이 필요합니다.");
+        return;
+      }
+
+      await repository.insertPost(
+        userId: userId,
+        imageUrl: imageUrl,
+        topicId: topicId,
+      );
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void setImage(File? image) {
+    selectedImage = image;
+    notifyListeners();
+  }
+
+  //로그인정보
+  Future<void> loadLoginUserInfo() async {
+    loginUserName = AuthManager.shared.userInfo?.nickname ?? "알수없음";
+    notifyListeners();
   }
 }

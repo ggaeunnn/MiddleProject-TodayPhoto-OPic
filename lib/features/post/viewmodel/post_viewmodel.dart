@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/core/manager/supabase_manager.dart';
 import 'package:opicproject/features/post/data/post_repository.dart';
 import 'package:opicproject/features/post/ui/post_detail_page.dart';
@@ -13,8 +12,6 @@ class PostViewModel extends ChangeNotifier {
   Map<String, dynamic>? post;
   int likeCount = 0;
   bool buttonLike = true;
-  String loginUserName = "친구1";
-  bool isLoading = false;
 
   File? selectedImage;
   final commentListController = TextEditingController();
@@ -26,6 +23,7 @@ class PostViewModel extends ChangeNotifier {
   DateTime now = DateTime.now();
   late String formattedDate = DateFormat('yyyy-MM-dd').format(now);
 
+  //게시물 상세 불러오기
   Future<void> fetchPostById(int id) async {
     post = await _repository.getPostById(id);
 
@@ -43,34 +41,34 @@ class PostViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  //수정하면 반영하기
   Future<void> updatePostImage(int id, String newUrl) async {
     await _repository.updatePostImage(id, newUrl);
     post?['image_url'] = newUrl;
     notifyListeners();
   }
 
-  void setImage(File? image) {
-    selectedImage = image;
-    notifyListeners();
-  }
-
+  //좋아요 하트
   Future<void> toggleLike(int userId, int postId) async {
     await _repository.toggleLike(userId, postId);
     await fetchLikeCount(postId);
     notifyListeners();
   }
 
+  //좋아요 눌렀는지
   bool likedPost = false;
   Future<void> ifLikedPost(int loginUserId, int postId) async {
     likedPost = await _repository.checkIfLikedPost(loginUserId, postId);
     notifyListeners();
   }
 
+  //좋아요 수
   Future<void> fetchLikeCount(int postId) async {
     likeCount = await _repository.getLikeCount(postId);
     notifyListeners();
   }
 
+  //댓글달기
   Future<void> addComment(int userId, int postId) async {
     final text = commentListController.text.trim();
     if (text.isEmpty) return;
@@ -84,65 +82,28 @@ class PostViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  //댓글가져오기
   Future<void> fetchComments(int postId) async {
     commentList = await _repository.fetchComments(postId);
     notifyListeners();
   }
 
-  void clearPostData() {
-    post = null;
-    commentList.clear();
-    notifyListeners();
-  }
-
+  //댓글창에서 전에 달았던 텍스트 없애기
   @override
   void dispose() {
     commentListController.dispose();
     super.dispose();
   }
 
-  Future<void> loadLoginUserInfo() async {
-    loginUserName = AuthManager.shared.userInfo?.nickname ?? "알수없음";
-    notifyListeners();
-  }
-
-  Future<void> createPost(String imageUrl, int topicId) async {
-    isLoading = true;
-    notifyListeners();
-    try {
-      final authManager = AuthManager.shared;
-      final userId = authManager.userInfo?.id;
-
-      if (userId == null) {
-        print("로그인이 필요합니다.");
-        return;
-      }
-
-      await _repository.insertPost(
-        userId: userId,
-        imageUrl: imageUrl,
-        topicId: topicId,
-      );
-    } finally {
-      isLoading = false;
-      notifyListeners();
-    }
-  }
-
-  Future<String?> uploadImageToSupabase(File file) async {
-    final supabase = SupabaseManager.shared.supabase;
-    final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
-
-    await supabase.storage.from('post_images').upload(fileName, file);
-
-    return supabase.storage.from('post_images').getPublicUrl(fileName);
-  }
-
+  //게시물 삭제
   Future<void> deletePost(int postId) async {
     await _repository.deletePostWithRelations(postId);
-    clearPostData();
+    post = null;
+    commentList.clear();
+    notifyListeners();
   }
 
+  //댓글삭제
   Future<void> deleteComment(int commentId) async {
     try {
       await SupabaseManager.shared.supabase

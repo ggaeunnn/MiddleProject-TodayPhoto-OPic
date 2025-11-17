@@ -6,6 +6,7 @@ class PostRepository {
 
   final supabase = SupabaseManager.shared.supabase;
 
+  //좋아요 버튼
   Future<void> toggleLike(int userId, int postId) async {
     final supabase = SupabaseManager.shared.supabase;
 
@@ -29,10 +30,12 @@ class PostRepository {
     }
   }
 
+  //좋아요 눌렀는지
   Future<bool> checkIfLikedPost(int loginUserId, int postId) async {
     return await SupabaseManager.shared.checkIfLikedPost(loginUserId, postId);
   }
 
+  // 댓글달기
   Future<void> commentSend(int userId, int postId, String text) async {
     final supabase = SupabaseManager.shared.supabase;
 
@@ -45,6 +48,7 @@ class PostRepository {
     });
   }
 
+  //댓글 가져오기
   Future<List<Map<String, dynamic>>> fetchComments(int postId) async {
     final supabase = SupabaseManager.shared.supabase;
 
@@ -57,6 +61,7 @@ class PostRepository {
     return List<Map<String, dynamic>>.from(result);
   }
 
+  //좋아요 개수
   Future<int> getLikeCount(int postId) async {
     final result = await supabase
         .from('likes')
@@ -66,6 +71,7 @@ class PostRepository {
     return result.length;
   }
 
+  //상세게시물 불러오기
   Future<Map<String, dynamic>> getPostById(int id) async {
     final result = await supabase
         .from('posts')
@@ -78,19 +84,12 @@ class PostRepository {
     return result ?? {};
   }
 
+  //이미지 수정
   Future<void> updatePostImage(int id, String newUrl) async {
     await supabase.from('posts').update({'image_url': newUrl}).eq('id', id);
   }
 
-  Future<List<Map<String, dynamic>>> getAllPosts() async {
-    final result = await supabase
-        .from('posts')
-        .select()
-        .order('id', ascending: false);
-
-    return List<Map<String, dynamic>>.from(result);
-  }
-
+  //게시물 추가
   Future<int?> insertPost({
     required int userId,
     required String imageUrl,
@@ -105,18 +104,10 @@ class PostRepository {
     return result?['id'];
   }
 
+  //게시물 삭제
   Future<void> deletePostWithRelations(int postId) async {
     await supabase.from('likes').delete().eq('post_id', postId);
     await supabase.from('comments').delete().eq('post_id', postId);
     await supabase.from('posts').delete().eq('id', postId);
-  }
-
-  Future<List<Map<String, dynamic>>> getPostsByTopicId(int topicId) async {
-    final result = await supabase
-        .from('posts')
-        .select()
-        .eq('topic_id', topicId)
-        .order('id', ascending: false);
-    return List<Map<String, dynamic>>.from(result);
   }
 }
