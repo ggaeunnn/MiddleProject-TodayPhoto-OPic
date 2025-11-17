@@ -18,7 +18,7 @@ class AlarmRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewModel = context.watch<AlarmViewModel>();
 
-    // ✅ alarms 리스트에서 해당 알람 찾기
+    // alarms 리스트에서 해당 알람 찾기
     final alarm = viewModel.alarms.where((a) => a.id == alarmId).firstOrNull;
 
     // 알람을 찾지 못한 경우

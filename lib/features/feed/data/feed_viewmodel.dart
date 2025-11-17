@@ -90,6 +90,14 @@ class FeedViewModel extends ChangeNotifier {
     });
   }
 
+  void moveScrollUp() {
+    scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.fastOutSlowIn,
+    );
+  }
+
   // 피드 정보  초기설정 (다른 유저 피드로 이동할 때 이전 유저 정보 남지 않게)
   Future<void> initializeFeed(int feedUserId, int loginUserId) async {
     if (_currentFeedUserId == feedUserId && _isInitialized) {
@@ -107,11 +115,11 @@ class FeedViewModel extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    await fetchAUser(feedUserId);
-    await fetchPosts(1, feedUserId);
+    await Future.wait([fetchAUser(feedUserId), fetchPosts(1, feedUserId)]);
 
     _isInitialized = true;
     _isLoading = false;
+
     notifyListeners();
   }
 
@@ -129,14 +137,6 @@ class FeedViewModel extends ChangeNotifier {
 
     _isStatusChecked = true;
     notifyListeners();
-  }
-
-  void moveScrollUp() {
-    scrollController.animateTo(
-      0,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.fastOutSlowIn,
-    );
   }
 
   // 새로고침
@@ -161,7 +161,6 @@ class FeedViewModel extends ChangeNotifier {
       currentPage: startIndex,
       userId: userId,
     );
-    debugPrint("FeedViewModel fetchPosts 호출됨: ${_posts.length}개");
   }
 
   // 피드 게시물 가져오기 (다음 페이지)
@@ -190,7 +189,6 @@ class FeedViewModel extends ChangeNotifier {
   // 아이디로 유저 정보 조회
   Future<void> fetchAUser(int userId) async {
     _feedUser = await _repository.fetchAUser(userId);
-    notifyListeners();
   }
 
   // 차단 여부 확인 (내가 상대를)
@@ -225,6 +223,7 @@ class FeedViewModel extends ChangeNotifier {
   // 친구 요청 취소하기
   Future<void> deleteARequest(int loginUserId, int targetUserId) async {
     await _repository.deleteARequest(loginUserId, targetUserId);
+    _isRequested = false;
     notifyListeners();
   }
 

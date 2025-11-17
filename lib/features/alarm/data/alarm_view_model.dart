@@ -84,7 +84,7 @@ class AlarmViewModel extends ChangeNotifier {
     _unreadCount = _alarms.where((alarm) => !alarm.isChecked).length;
   }
 
-  // 새로고침
+  // 새로고참
   Future<void> refresh(int loginUserId) async {
     _isLoading = true;
     notifyListeners();
@@ -101,7 +101,7 @@ class AlarmViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // 알람리스트 가져오기 -> 시작하자마자 가져오기
+  // 알람리스트 가져오기
   Future<void> fetchAlarms(int startIndex, int loginUserId) async {
     _isLoading = true;
     _loginUserId = loginUserId;
@@ -143,12 +143,31 @@ class AlarmViewModel extends ChangeNotifier {
   // 특정 알림의 정보 가져오기
   Future<void> fetchAnAlarm(int alarmId) async {
     _certainAlarm = await _repository.fetchAnAlarm(alarmId);
+
+    notifyListeners();
   }
 
-  // 알림 읽음 처리
+  // 알림 확인 처리하기
   Future<void> checkAlarm(int loginUserId, int alarmId) async {
     await _repository.checkAlarm(alarmId);
-    await refresh(loginUserId);
+
+    final index = _alarms.indexWhere((alarm) => alarm.id == alarmId);
+    if (index != -1) {
+      final oldAlarm = _alarms[index];
+
+      _alarms[index] = Alarm(
+        id: oldAlarm.id,
+        createdAt: oldAlarm.createdAt,
+        userId: oldAlarm.userId,
+        alarmType: oldAlarm.alarmType,
+        content: oldAlarm.content,
+        isChecked: true,
+        data: oldAlarm.data,
+      );
+
+      _updateUnreadCount();
+      notifyListeners();
+    }
   }
 
   // API 중복 호출 방지
