@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/features/home/ui/add_post_popup.dart';
 import 'package:opicproject/features/home/viewmodel/home_viewmodel.dart';
+import 'package:opicproject/features/post/ui/post_detail_page.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -88,9 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                               if (selectedDate != null) {
                                 await viewmodel.fetchTopicByDate(selectedDate);
-                                Fluttertoast.showToast(
-                                  msg: '선택한 날짜: ${selectedDate.toLocal()}',
-                                );
+                                showToast('선택한 날짜: ${selectedDate.toLocal()}');
                               }
                             },
                             child: Text(
@@ -158,7 +156,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-//게시물 컴포넌트 - 이미 StatefulWidget으로 되어있어서 OK
 class PostCard extends StatefulWidget {
   final Map<String, dynamic> post;
   const PostCard({super.key, required this.post});
@@ -182,7 +179,6 @@ class _PostCardState extends State<PostCard> {
     final viewModel = context.read<HomeViewModel>();
     final postId = widget.post['id'];
 
-    // 각 포스트별로 독립적으로 좋아요/댓글 수 가져오기
     await viewModel.getLikeCount(postId);
     await viewModel.getCommentCount(postId);
 
@@ -208,7 +204,7 @@ class _PostCardState extends State<PostCard> {
         InkWell(
           onTap: () {
             if (loginUserId == 0) {
-              Fluttertoast.showToast(msg: "로그인 해주세요");
+              showToast("로그인 해주세요");
             } else {
               context.go('/post_detail_page/$postId');
             }

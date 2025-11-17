@@ -333,7 +333,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                     if (topicId != null) {
                                       context.go('/home?topicId=$topicId');
                                     } else {
-                                      Fluttertoast.showToast(msg: "주제가 없습니다.");
+                                      showToast("주제가 없습니다.");
                                     }
                                   },
                                   child: Text(

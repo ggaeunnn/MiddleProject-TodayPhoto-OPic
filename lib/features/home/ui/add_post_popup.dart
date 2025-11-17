@@ -1,12 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/features/home/data/home_repository.dart';
 import 'package:opicproject/features/home/viewmodel/home_viewmodel.dart';
+import 'package:opicproject/features/post/ui/post_detail_page.dart';
 import 'package:opicproject/features/post/viewmodel/post_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -181,12 +181,12 @@ class _addPostPopup extends State<addPostPopup> {
                             final viewmodel = context.read<PostViewModel>();
 
                             if (selectedImage == null && takePicture == null) {
-                              Fluttertoast.showToast(msg: "이미지를 선택해주세요.");
+                              showToast("이미지를 선택해주세요.");
                               return;
                             }
                             final topicId = homeViewModel.todayTopic?['id'];
                             if (topicId == null) {
-                              Fluttertoast.showToast(msg: "주제 정보를 불러올 수 없습니다.");
+                              showToast("주제 정보를 불러올 수 없습니다.");
                               return;
                             }
 
@@ -195,14 +195,14 @@ class _addPostPopup extends State<addPostPopup> {
                                 .uploadImageToSupabase(file);
 
                             if (imageUrl == null) {
-                              Fluttertoast.showToast(msg: "이미지 업로드 실패");
+                              showToast("이미지 업로드 실패");
                               return;
                             }
                             await homeViewModel.createPost(imageUrl, topicId);
                             await homeViewModel.fetchTopicAndPostsById(topicId);
 
                             context.pop();
-                            Fluttertoast.showToast(msg: "게시물이 작성되었습니다.");
+                            showToast("게시물이 작성되었습니다.");
                           },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xff95b7db),
