@@ -173,35 +173,36 @@ class _addPostPopup extends State<addPostPopup> {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () async {
-                      final viewmodel = context.read<PostViewModel>();
+                    onPressed: (selectedImage == null && takePicture == null)
+                        ? null
+                        : () async {
+                            final viewmodel = context.read<PostViewModel>();
 
-                      if (selectedImage == null && takePicture == null) {
-                        Fluttertoast.showToast(msg: "이미지를 선택해주세요.");
-                        return;
-                      }
-                      final topicId = homeViewModel.todayTopic?['id'];
-                      if (topicId == null) {
-                        Fluttertoast.showToast(msg: "주제 정보를 불러올 수 없습니다.");
-                        return;
-                      }
+                            if (selectedImage == null && takePicture == null) {
+                              Fluttertoast.showToast(msg: "이미지를 선택해주세요.");
+                              return;
+                            }
+                            final topicId = homeViewModel.todayTopic?['id'];
+                            if (topicId == null) {
+                              Fluttertoast.showToast(msg: "주제 정보를 불러올 수 없습니다.");
+                              return;
+                            }
 
-                      final file = selectedImage ?? takePicture!;
+                            final file = selectedImage ?? takePicture!;
 
-                      final imageUrl = await viewmodel.uploadImageToSupabase(
-                        file,
-                      );
+                            final imageUrl = await viewmodel
+                                .uploadImageToSupabase(file);
 
-                      if (imageUrl == null) {
-                        Fluttertoast.showToast(msg: "이미지 업로드 실패");
-                        return;
-                      }
-                      await viewmodel.createPost(imageUrl, topicId);
-                      await homeViewModel.fetchPostsByTopicId(topicId);
+                            if (imageUrl == null) {
+                              Fluttertoast.showToast(msg: "이미지 업로드 실패");
+                              return;
+                            }
+                            await viewmodel.createPost(imageUrl, topicId);
+                            await homeViewModel.fetchPostsByTopicId(topicId);
 
-                      context.pop();
-                      Fluttertoast.showToast(msg: "게시물이 작성되었습니다.");
-                    },
+                            context.pop();
+                            Fluttertoast.showToast(msg: "게시물이 작성되었습니다.");
+                          },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xff95b7db),
                       foregroundColor: Color(0xfffefefe),
@@ -221,7 +222,7 @@ class _addPostPopup extends State<addPostPopup> {
                             ),
                           )
                         : const Text(
-                            "올리기",
+                            "선택",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,

@@ -62,7 +62,7 @@ class _EditPopupState extends State<EditPopup> {
                         ),
                       ),
                       Text(
-                        "겨울풍경",
+                        viewmodel.post?['topic']?['content'] ?? "주제 없음",
                         style: TextStyle(color: AppColors.opicSoftBlue),
                       ),
                     ],
@@ -151,26 +151,30 @@ class _EditPopupState extends State<EditPopup> {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () async {
-                      if (viewmodel.selectedImage != null) {
-                        final newImageUrl = await viewmodel
-                            .uploadImageToSupabase(viewmodel.selectedImage!);
+                    onPressed: (viewmodel.selectedImage == null)
+                        ? null
+                        : () async {
+                            if (viewmodel.selectedImage != null) {
+                              final newImageUrl = await viewmodel
+                                  .uploadImageToSupabase(
+                                    viewmodel.selectedImage!,
+                                  );
 
-                        if (newImageUrl != null) {
-                          await viewmodel.updatePostImage(
-                            viewmodel.post?['id'],
-                            newImageUrl,
-                          );
+                              if (newImageUrl != null) {
+                                await viewmodel.updatePostImage(
+                                  viewmodel.post?['id'],
+                                  newImageUrl,
+                                );
 
-                          showToast("게시물 수정이 완료되었습니다.");
-                          context.pop();
-                        } else {
-                          showToast("이미지 업로드에 실패했습니다.");
-                        }
-                      } else {
-                        showToast("수정할 이미지가 없습니다.");
-                      }
-                    },
+                                showToast("게시물 수정이 완료되었습니다.");
+                                context.pop();
+                              } else {
+                                showToast("이미지 업로드에 실패했습니다.");
+                              }
+                            } else {
+                              showToast("수정할 이미지가 없습니다.");
+                            }
+                          },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.opicSoftBlue,
                       foregroundColor: AppColors.opicWhite,
