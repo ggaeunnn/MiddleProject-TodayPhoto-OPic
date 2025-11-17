@@ -283,7 +283,9 @@ class FriendViewModel extends ChangeNotifier {
   // 친구 삭제하기
   Future<void> deleteFriend(int friendId, int loginUserId) async {
     await _repository.deleteFriend(friendId);
-    _friends.removeWhere((friend) => friend.id == friendId);
+    await _fetchFriends(currentPage, loginUserId);
+    await _loadAllUserInfos();
+
     notifyListeners();
   }
 
@@ -355,7 +357,8 @@ class FriendViewModel extends ChangeNotifier {
   Future<void> answerARequest(int requestId, int loginUserId) async {
     await _repository.answerARequest(requestId);
 
-    _friendRequests.removeWhere((request) => request.id == requestId);
+    await _fetchFriendRequests(currentPage, loginUserId);
+    await _loadAllUserInfos();
     notifyListeners();
   }
 
@@ -367,10 +370,14 @@ class FriendViewModel extends ChangeNotifier {
   ) async {
     await _repository.acceptARequest(requestId, loginUserId, requesterId);
 
+    await _repository.answerARequest(requestId);
+
     await Future.wait([
       _fetchFriends(currentPage, loginUserId),
       _fetchFriendRequests(currentPage, loginUserId),
     ]);
+
+    await _loadAllUserInfos();
 
     notifyListeners();
   }
@@ -414,7 +421,8 @@ class FriendViewModel extends ChangeNotifier {
   // 차단 해제하기
   Future<void> unblockUser(int loginUserId, int userId) async {
     await _repository.unblockUser(loginUserId, userId);
-    _blockUsers.removeWhere((block) => block.blockedUserId == userId);
+    await _fetchBlockUsers(currentPage, loginUserId);
+    await _loadAllUserInfos();
     notifyListeners();
   }
 
