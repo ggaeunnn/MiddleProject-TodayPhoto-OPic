@@ -19,12 +19,7 @@ class AlarmRepository {
     final String range = "$startIndex-$endIndex";
 
     final response = await _dio.get(
-      '/alarm',
-      queryParameters: {
-        'select': '*',
-        'user1_id': 'eq.$loginId',
-        'is_checked': 'eq.false',
-      },
+      '/alarm?select=*&user_id=eq.$loginId&is_checked=eq.false',
       options: Options(headers: {'Range': range}),
     );
 

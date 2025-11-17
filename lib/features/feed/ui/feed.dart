@@ -24,8 +24,14 @@ class FeedScreen extends StatelessWidget {
         !feedViewModel.isInitialized || feedViewModel.feedUser?.id != userId;
 
     if (needsInit && loginUserId != 0) {
-      debugPrint('⚡ Initializing feed for userId=$userId');
-      feedViewModel.initializeFeed(userId, loginUserId);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (feedViewModel.isLoading ||
+            (feedViewModel.isInitialized &&
+                feedViewModel.feedUser?.id == userId)) {
+          return;
+        }
+        feedViewModel.initializeFeed(userId, loginUserId);
+      });
     }
 
     final feedUser = feedViewModel.feedUser;
@@ -63,6 +69,8 @@ Widget _buildUserHeader(
 
   if (!isMyFeed && !feedViewModel.isStatusChecked) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (feedViewModel.isStatusChecked) return;
+
       feedViewModel.checkUserStatus(loginUserId, feedUser.id);
       context.read<FriendViewModel>().checkIfFriend(loginUserId, feedUser.id);
     });
@@ -147,14 +155,16 @@ Widget _buildUserHeader(
                                       feedUser.id,
                                     );
                                     // 상태 다시 체크
-                                    await feedViewModel.checkIfRequested(
-                                      loginUserId,
-                                      feedUser.id,
-                                    );
-                                    await friendViewModel.checkIfFriend(
-                                      loginUserId,
-                                      feedUser.id,
-                                    );
+                                    await Future.wait([
+                                      feedViewModel.checkIfRequested(
+                                        loginUserId,
+                                        feedUser.id,
+                                      ),
+                                      friendViewModel.checkIfFriend(
+                                        loginUserId,
+                                        feedUser.id,
+                                      ),
+                                    ]);
                                     showToast("친구 요청을 보냈어요 💌");
                                   },
                                   onCancel: () {
@@ -211,15 +221,6 @@ Widget _buildUserHeader(
                                       loginUserId,
                                       feedUser.id,
                                     );
-                                    // 상태 다시 체크
-                                    await feedViewModel.checkIfRequested(
-                                      loginUserId,
-                                      feedUser.id,
-                                    );
-                                    await friendViewModel.checkIfFriend(
-                                      loginUserId,
-                                      feedUser.id,
-                                    );
                                     showToast("친구 요청을 취소했어요");
                                   },
                                   onCancel: () {
@@ -272,11 +273,6 @@ Widget _buildUserHeader(
                                   onConfirm: () async {
                                     context.pop();
                                     await feedViewModel.blockUser(
-                                      loginUserId,
-                                      feedUser.id,
-                                    );
-                                    // 상태 다시 체크
-                                    await feedViewModel.checkIfBlocked(
                                       loginUserId,
                                       feedUser.id,
                                     );
