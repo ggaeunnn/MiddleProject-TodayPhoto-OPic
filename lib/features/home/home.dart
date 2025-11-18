@@ -102,14 +102,26 @@ class _HomeScreenState extends State<HomeScreen> {
                                 );
                               }
                             },
-                            child: Text(
-                              viewmodel.todayTopic?['content'] ?? "주제가 없습니다.",
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                decoration: TextDecoration.underline,
-                                color: AppColors.opicBlack,
-                              ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.calendar_today_rounded,
+                                  color: AppColors.opicSoftBlue,
+                                  size: 20,
+                                ),
+                                SizedBox(width: 5),
+                                Text(
+                                  viewmodel.todayTopic?['content'] ??
+                                      "주제가 없습니다.",
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    decoration: TextDecoration.none,
+                                    color: AppColors.opicBlack,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
