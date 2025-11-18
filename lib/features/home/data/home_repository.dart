@@ -24,14 +24,59 @@ class HomeRepository {
 
   //게시물 주제연결
   Future<List<Map<String, dynamic>>> getPostsByTopicId(int topicId) async {
-    final result = await SupabaseManager.shared.supabase
+    final loggedInUserUuid = Supabase.instance.client.auth.currentUser?.id;
+
+    if (loggedInUserUuid == null) {
+      throw Exception("로그인된 사용자가 없습니다.");
+    }
+
+    final myUserData = await SupabaseManager.shared.supabase
+        .from('user')
+        .select('id')
+        .eq('uuid', loggedInUserUuid)
+        .single();
+
+    final myUserId = myUserData['id'] as int;
+
+    final blockedList = await SupabaseManager.shared.supabase
+        .from('block')
+        .select('blocked_user')
+        .eq('user_id', myUserId);
+
+    final blockedUserIds = blockedList
+        .map((row) => row['blocked_user'] as int)
+        .toSet();
+
+    final posts = await SupabaseManager.shared.supabase
         .from('posts')
         .select('*, user:user_id(id, nickname)')
         .eq('topic_id', topicId)
         .order('id', ascending: false);
-    return result.where((post) {
-      return post['user']?['nickname'] != '알수없음';
+
+    if (posts.isEmpty) {
+      return [];
+    }
+
+    if (blockedUserIds.isEmpty) {
+      return posts;
+    }
+
+    final filtered = posts.where((post) {
+      final writerId = post['user']?['id'] as int?;
+      final nickname = post['user']?['nickname'];
+
+      if (nickname == '알수없음') {
+        return false;
+      }
+
+      if (writerId != null && blockedUserIds.contains(writerId)) {
+        return false;
+      }
+
+      return true;
     }).toList();
+
+    return filtered;
   }
 
   //좋아요 가져오기
