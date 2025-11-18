@@ -24,66 +24,77 @@ class HomeRepository {
 
   //게시물 주제연결
   Future<List<Map<String, dynamic>>> getPostsByTopicId(int topicId) async {
-    final loggedInUserUuid = Supabase.instance.client.auth.currentUser?.id;
+    try {
+      final loggedInUserUuid = _supabase.auth.currentUser?.id;
 
-    if (loggedInUserUuid == null) {
-      throw Exception("로그인된 사용자가 없습니다.");
-    }
+      Set<int> blockedUserIds = {};
+      Set<int> reportedPostIds = {};
 
-    final myUserData = await SupabaseManager.shared.supabase
-        .from('user')
-        .select('id')
-        .eq('uuid', loggedInUserUuid)
-        .single();
+      // 신고된 게시물
+      final reportedList = await _supabase
+          .from('post_report')
+          .select('reported_post_id')
+          .eq('is_checked', true);
 
-    final myUserId = myUserData['id'] as int;
+      reportedPostIds = reportedList
+          .map((row) => row['reported_post_id'] as int)
+          .toSet();
 
-    final blockedList = await SupabaseManager.shared.supabase
-        .from('block')
-        .select('blocked_user')
-        .eq('user_id', myUserId);
+      // 로그인한 경우 차단 목록 가져오기
+      if (loggedInUserUuid != null) {
+        final myUserData = await _supabase
+            .from('user')
+            .select('id')
+            .eq('uuid', loggedInUserUuid)
+            .maybeSingle();
 
-    final blockedUserIds = blockedList
-        .map((row) => row['blocked_user'] as int)
-        .toSet();
+        if (myUserData != null) {
+          final myUserId = myUserData['id'] as int;
 
-    final posts = await SupabaseManager.shared.supabase
-        .from('posts')
-        .select('*, user:user_id(id, nickname)')
-        .eq('topic_id', topicId)
-        .order('id', ascending: false);
+          final blockedList = await _supabase
+              .from('block')
+              .select('blocked_user')
+              .eq('user_id', myUserId);
 
-    if (posts.isEmpty) {
+          blockedUserIds = blockedList
+              .map((row) => row['blocked_user'] as int)
+              .toSet();
+        }
+      }
+
+      // 게시글 가져오기
+      final posts = await _supabase
+          .from('posts')
+          .select('*, user:user_id(id, nickname)')
+          .eq('topic_id', topicId)
+          .order('id', ascending: false);
+
+      if (posts.isEmpty) return [];
+
+      // 필터링
+      final filtered = posts.where((post) {
+        final postId = post['id'] as int?;
+        final writerId = post['user']?['id'] as int?;
+        final nickname = post['user']?['nickname'];
+
+        if (postId != null && reportedPostIds.contains(postId)) return false;
+        if (nickname == '알수없음') return false;
+        if (writerId != null && blockedUserIds.contains(writerId)) return false;
+
+        return true;
+      }).toList();
+
+      return filtered;
+    } catch (_) {
       return [];
     }
-
-    if (blockedUserIds.isEmpty) {
-      return posts;
-    }
-
-    final filtered = posts.where((post) {
-      final writerId = post['user']?['id'] as int?;
-      final nickname = post['user']?['nickname'];
-
-      if (nickname == '알수없음') {
-        return false;
-      }
-
-      if (writerId != null && blockedUserIds.contains(writerId)) {
-        return false;
-      }
-
-      return true;
-    }).toList();
-
-    return filtered;
   }
 
   //좋아요 가져오기
   Future<int> getLikeCounts(int postId) async {
-    final List<dynamic> data = await _supabase
+    final data = await _supabase
         .from("likes")
-        .select('id') // id만 가져오기
+        .select('id')
         .eq('post_id', postId);
 
     return data.length;
@@ -91,9 +102,9 @@ class HomeRepository {
 
   // 특정 포스트의 댓글 갯수 가져오기
   Future<int> getCommentCounts(int postId) async {
-    final List<dynamic> data = await _supabase
+    final data = await _supabase
         .from("comments")
-        .select('id') // id만 가져오기
+        .select('id')
         .eq('post_id', postId);
 
     return data.length;
@@ -101,11 +112,10 @@ class HomeRepository {
 
   //이미지 수파베이스에
   Future<String?> uploadImageToSupabase(File file) async {
-    final supabase = SupabaseManager.shared.supabase;
     final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
 
-    await supabase.storage.from('post_images').upload(fileName, file);
+    await _supabase.storage.from('post_images').upload(fileName, file);
 
-    return supabase.storage.from('post_images').getPublicUrl(fileName);
+    return _supabase.storage.from('post_images').getPublicUrl(fileName);
   }
 }

@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/features/home/ui/add_post_popup.dart';
 import 'package:opicproject/features/home/viewmodel/home_viewmodel.dart';
-import 'package:opicproject/features/onboarding/data/onboarding_repository.dart';
 import 'package:opicproject/features/onboarding/viewmodel/onboarding_viewmodel.dart';
 import 'package:opicproject/features/post/ui/post_detail_page.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   final int? topicId;
@@ -39,6 +36,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final viewmodel = context.watch<HomeViewModel>();
+    final authManager = context.watch<AuthManager>();
+    final loginUserId = authManager.userInfo?.id ?? 0;
 
     return RefreshIndicator(
       onRefresh: viewmodel.refreshData,
@@ -150,11 +149,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   shape: CircleBorder(),
                   backgroundColor: AppColors.opicSoftBlue,
                   onPressed: () {
-                    showDialog(
-                      context: context,
-                      barrierColor: AppColors.opicLightBlack.withOpacity(0.6),
-                      builder: (context) => addPostPopup(),
-                    );
+                    if (loginUserId == 0) {
+                      context.push('/login');
+                    } else {
+                      showDialog(
+                        context: context,
+                        barrierColor: AppColors.opicLightBlack.withOpacity(0.6),
+                        builder: (context) => addPostPopup(),
+                      );
+                    }
                   },
                   child: const Icon(Icons.edit, color: AppColors.opicWhite),
                 )
