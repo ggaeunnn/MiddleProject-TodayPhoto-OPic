@@ -13,18 +13,26 @@ import 'package:opicproject/features/post/ui/post_detail_page.dart';
 import 'package:opicproject/features/setting/ui/setting_alarm_page.dart';
 import 'package:opicproject/features/setting/ui/setting_page.dart';
 import 'package:opicproject/main_page.dart';
+import 'package:opicproject/splash_screen.dart';
 import 'package:provider/provider.dart';
 
 class GoRouterManager {
   static final GoRouter router = GoRouter(
-    initialLocation: '/home',
+    initialLocation: '/splash',
     refreshListenable: AuthManager.shared,
     redirect: (context, state) {
       final isLoggedIn = AuthManager.shared.userInfo != null;
       final currentPath = state.matchedLocation;
+
+      // 스플래시 리다이렉트 제외
+      if (currentPath == '/splash') {
+        return null;
+      }
+
       if (!AuthManager.shared.isInitialized) {
         return null;
       }
+
       // 로그인 안하면 못들어가는 곳
       final lockedPaths = [
         '/friend',
@@ -45,6 +53,10 @@ class GoRouterManager {
     },
 
     routes: [
+      GoRoute(
+        path: '/splash',
+        builder: (context, state) => const SplashScreen(),
+      ),
       GoRoute(path: '/', builder: (context, state) => OnboardingScreen()),
       GoRoute(path: '/login', builder: (context, state) => LoginScreen()),
       // Shell Route로 앱바+하단네비가 있는 메인 구조

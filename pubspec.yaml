@@ -49,6 +49,7 @@ dependencies:
   flutter_local_notifications: ^19.5.0
   permission_handler: ^11.3.1
   shared_preferences: ^2.5.3
+  lottie: ^3.1.0
 
 
 
@@ -86,6 +87,7 @@ flutter:
     - assets/images/logo_square_skyblue.png
     - assets/images/sign_in_google.png
     - assets/images/google_logo.png
+    - assets/animations/splash.json
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
