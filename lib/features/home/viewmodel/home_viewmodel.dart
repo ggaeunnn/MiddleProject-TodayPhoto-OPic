@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
+import 'package:opicproject/core/manager/supabase_manager.dart';
 import 'package:opicproject/features/home/data/home_repository.dart';
 import 'package:opicproject/features/post/data/post_repository.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeViewModel extends ChangeNotifier {
   final PostRepository repository = PostRepository.shared;
@@ -92,7 +92,7 @@ class HomeViewModel extends ChangeNotifier {
       59,
     );
 
-    final result = await Supabase.instance.client
+    final result = await SupabaseManager.shared.supabase
         .from('topic')
         .select('id, content, uploaded_at')
         .gte('uploaded_at', startOfDay.toIso8601String())
@@ -119,7 +119,7 @@ class HomeViewModel extends ChangeNotifier {
     _isInitialized = true;
 
     try {
-      final result = await Supabase.instance.client
+      final result = await SupabaseManager.shared.supabase
           .from('topic')
           .select('id, content, uploaded_at')
           .eq('id', topicId)
