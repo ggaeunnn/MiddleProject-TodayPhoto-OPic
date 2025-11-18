@@ -154,6 +154,7 @@ class HomeViewModel extends ChangeNotifier {
     if (id == null) return;
 
     posts = await homeRepository.getPostsByTopicId(id);
+    notifyListeners();
   }
 
   //좋아요 개수
