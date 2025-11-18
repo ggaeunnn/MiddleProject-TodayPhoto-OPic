@@ -6,6 +6,7 @@ import 'package:opicproject/features/home/ui/add_post_popup.dart';
 import 'package:opicproject/features/home/viewmodel/home_viewmodel.dart';
 import 'package:opicproject/features/post/ui/post_detail_page.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   final int? topicId;
@@ -18,6 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.topicId != null) {
         context.read<HomeViewModel>().fetchTopicAndPostsById(widget.topicId!);
@@ -274,4 +276,10 @@ class _PostCardState extends State<PostCard> {
       ],
     );
   }
+}
+
+void checkOnboarding() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  final String? storedMemo = prefs.getString('temp_memo');
 }

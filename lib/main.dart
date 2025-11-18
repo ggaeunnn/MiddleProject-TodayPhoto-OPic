@@ -2,10 +2,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get_it/get_it.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/core/manager/firebase_manager.dart';
 import 'package:opicproject/core/manager/go_router_manager.dart';
 import 'package:opicproject/features/alarm/viewmodel/alarm_view_model.dart';
+import 'package:opicproject/features/auth/data/auth_api_repository.dart';
 import 'package:opicproject/features/auth/viewmodel/auth_viewmodel.dart';
 import 'package:opicproject/features/friend/viewmodel/friend_view_model.dart';
 import 'package:opicproject/features/home/viewmodel/home_viewmodel.dart';
@@ -23,7 +25,22 @@ import 'core/manager/locator.dart';
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // 백그라운드 메시지 처리 시 Firebase 초기화 보장
   await Firebase.initializeApp();
+  await dotenv.load(fileName: "assets/config/.env");
 
+  await Supabase.initialize(
+    url: 'https://zoqxnpklgtcqkvskarls.supabase.co',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvcXhucGtsZ3RjcWt2c2thcmxzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0OTk4NTYsImV4cCI6MjA3ODA3NTg1Nn0.qR8GmGNztCm44qqm7xJK4VvmI1RcIJybGKeMVBy8yaA',
+  );
+
+  //백그라운드에서 실행시 앱실행과는 독립된 공간이므로 직접 레포지토리와 매니저를 등록해야함
+  if (!GetIt.instance.isRegistered<AuthRepository>()) {
+    GetIt.instance.registerLazySingleton<AuthRepository>(
+      () => AuthRepository(),
+    );
+
+    GetIt.instance.registerSingleton<AuthManager>(AuthManager());
+  }
   print("Handling a background message: ${message.messageId}");
   // TODO: 백그라운드에서 실행시 로직 처리
 }

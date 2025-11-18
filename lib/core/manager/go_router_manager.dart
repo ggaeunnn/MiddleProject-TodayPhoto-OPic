@@ -17,12 +17,14 @@ import 'package:provider/provider.dart';
 
 class GoRouterManager {
   static final GoRouter router = GoRouter(
-    initialLocation: '/',
+    initialLocation: '/home',
     refreshListenable: AuthManager.shared,
     redirect: (context, state) {
       final isLoggedIn = AuthManager.shared.userInfo != null;
       final currentPath = state.matchedLocation;
-
+      if (!AuthManager.shared.isInitialized) {
+        return null;
+      }
       // 로그인 안하면 못들어가는 곳
       final lockedPaths = [
         '/friend',
@@ -45,7 +47,6 @@ class GoRouterManager {
     routes: [
       GoRoute(path: '/', builder: (context, state) => OnboardingScreen()),
       GoRoute(path: '/login', builder: (context, state) => LoginScreen()),
-
       // Shell Route로 앱바+하단네비가 있는 메인 구조
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
