@@ -1,8 +1,9 @@
 //게시물 컴포넌트
 import 'package:flutter/material.dart';
 import 'package:opicproject/core/app_colors.dart';
+import 'package:opicproject/core/models/post_model.dart';
 
-import '../../../core/models/post_model.dart';
+// import '../../../core/models/post_model.dart';
 
 class PostCard extends StatelessWidget {
   final Post post;

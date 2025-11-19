@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/features/home/viewmodel/home_viewmodel.dart';
-import 'package:opicproject/features/post/component/edit_menu_widget.dart';
+import 'package:opicproject/features/post/ui/component/edit_menu_widget.dart';
 import 'package:opicproject/features/post/ui/post_delete_popup.dart';
 import 'package:opicproject/features/post/ui/post_edit_popup.dart';
 import 'package:opicproject/features/post/viewmodel/post_viewmodel.dart';
