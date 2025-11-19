@@ -215,6 +215,22 @@ class FeedViewModel extends ChangeNotifier {
     _updateState(isLoading: false);
   }
 
+  // 게시물 삭제 후 UI 업데이트
+  Future<void> onPostDeleted(int deletedPostId) async {
+    _posts.removeWhere((post) => post.id == deletedPostId);
+    notifyListeners();
+
+    if (_currentFeedUserId != null) {
+      await refresh(_currentFeedUserId!);
+    }
+  }
+
+  // 게시물 단순 제거 (API 호출 없이)
+  void removePost(int postId) {
+    _posts.removeWhere((post) => post.id == postId);
+    notifyListeners();
+  }
+
   // 아이디로 유저 정보 조회
   Future<void> _fetchAUser(int userId) async {
     _feedUser = await _repository.fetchAUser(userId);

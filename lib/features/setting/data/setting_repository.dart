@@ -1,13 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:opicproject/core/manager/dio_manager.dart';
-import 'package:opicproject/core/manager/supabase_manager.dart';
 import 'package:opicproject/core/models/alarm_setting_model.dart';
 import 'package:opicproject/core/models/user_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SettingRepository {
   final Dio _dio = DioManager.shared.dio;
-  final SupabaseClient _supabase = SupabaseManager.shared.supabase;
+  final SupabaseClient _supabase = Supabase.instance.client;
 
   // 특정 유저 정보 가져오기
   Future<UserInfo?> fetchAUser(int userId) async {

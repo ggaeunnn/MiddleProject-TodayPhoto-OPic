@@ -108,40 +108,48 @@ class FriendViewModel extends ChangeNotifier {
 
     // 친구 목록 실시간 업데이트 (필터 없이 콜백에서 처리)
     _friendsChannel = supabase
-        .channel('friends_$loginUserId')
+        .channel('friends_changes_$loginUserId')
         .onPostgresChanges(
-          event: PostgresChangeEvent.all,
+          event: PostgresChangeEvent.insert,
           schema: 'public',
           table: 'friends',
           callback: (payload) {
-            // 내가 포함된 친구 관계만 처리
             final newRecord = payload.newRecord;
-            final oldRecord = payload.oldRecord;
-
-            bool isRelevant = false;
-            if (newRecord.isNotEmpty) {
-              isRelevant =
-                  newRecord['user1_id'] == loginUserId ||
-                  newRecord['user2_id'] == loginUserId;
-            } else if (oldRecord.isNotEmpty) {
-              isRelevant =
-                  oldRecord['user1_id'] == loginUserId ||
-                  oldRecord['user2_id'] == loginUserId;
-            }
-
-            if (isRelevant) {
-              debugPrint('친구 목록 변경 감지: ${payload.eventType}');
+            if (newRecord.isNotEmpty &&
+                (newRecord['user1_id'] == loginUserId ||
+                    newRecord['user2_id'] == loginUserId)) {
               _handleFriendsChange(loginUserId);
             }
+          },
+        )
+        .onPostgresChanges(
+          event: PostgresChangeEvent.update,
+          schema: 'public',
+          table: 'friends',
+          callback: (payload) {
+            final newRecord = payload.newRecord;
+            if (newRecord.isNotEmpty &&
+                (newRecord['user1_id'] == loginUserId ||
+                    newRecord['user2_id'] == loginUserId)) {
+              _handleFriendsChange(loginUserId);
+            }
+          },
+        )
+        .onPostgresChanges(
+          event: PostgresChangeEvent.delete,
+          schema: 'public',
+          table: 'friends',
+          callback: (payload) {
+            _handleFriendsChange(loginUserId);
           },
         )
         .subscribe();
 
     // 친구 요청 실시간 업데이트
     _requestsChannel = supabase
-        .channel('friend_requests_$loginUserId')
+        .channel('friend_request_changes_$loginUserId')
         .onPostgresChanges(
-          event: PostgresChangeEvent.all,
+          event: PostgresChangeEvent.insert,
           schema: 'public',
           table: 'friend_request',
           filter: PostgresChangeFilter(
@@ -150,7 +158,27 @@ class FriendViewModel extends ChangeNotifier {
             value: loginUserId,
           ),
           callback: (payload) {
-            debugPrint('친구 요청 변경 감지: ${payload.eventType}');
+            _handleFriendRequestsChange(loginUserId);
+          },
+        )
+        .onPostgresChanges(
+          event: PostgresChangeEvent.update,
+          schema: 'public',
+          table: 'friend_request',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'target_id',
+            value: loginUserId,
+          ),
+          callback: (payload) {
+            _handleFriendRequestsChange(loginUserId);
+          },
+        )
+        .onPostgresChanges(
+          event: PostgresChangeEvent.delete,
+          schema: 'public',
+          table: 'friend_request',
+          callback: (payload) {
             _handleFriendRequestsChange(loginUserId);
           },
         )
@@ -158,9 +186,9 @@ class FriendViewModel extends ChangeNotifier {
 
     // 차단 목록 실시간 업데이트
     _blocksChannel = supabase
-        .channel('blocks_$loginUserId')
+        .channel('block_$loginUserId')
         .onPostgresChanges(
-          event: PostgresChangeEvent.all,
+          event: PostgresChangeEvent.insert,
           schema: 'public',
           table: 'block',
           filter: PostgresChangeFilter(
@@ -169,7 +197,27 @@ class FriendViewModel extends ChangeNotifier {
             value: loginUserId,
           ),
           callback: (payload) {
-            debugPrint('차단 목록 변경 감지: ${payload.eventType}');
+            _handleBlocksChange(loginUserId);
+          },
+        )
+        .onPostgresChanges(
+          event: PostgresChangeEvent.update,
+          schema: 'public',
+          table: 'block',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'user_id',
+            value: loginUserId,
+          ),
+          callback: (payload) {
+            _handleBlocksChange(loginUserId);
+          },
+        )
+        .onPostgresChanges(
+          event: PostgresChangeEvent.delete,
+          schema: 'public',
+          table: 'block',
+          callback: (payload) {
             _handleBlocksChange(loginUserId);
           },
         )
@@ -398,9 +446,6 @@ class FriendViewModel extends ChangeNotifier {
   // 친구 삭제하기
   Future<void> deleteFriend(int friendId, int loginUserId) async {
     await _repository.deleteFriend(friendId);
-    await _fetchFriends(currentPage, loginUserId);
-    await _loadAllUserInfos();
-
     notifyListeners();
   }
 
@@ -471,10 +516,6 @@ class FriendViewModel extends ChangeNotifier {
   // 친구 요청 응답하기(거절)
   Future<void> answerARequest(int requestId, int loginUserId) async {
     await _repository.answerARequest(requestId);
-
-    currentPage = 1;
-    await _fetchFriendRequests(currentPage, loginUserId);
-    await _loadAllUserInfos();
     notifyListeners();
   }
 
@@ -485,16 +526,7 @@ class FriendViewModel extends ChangeNotifier {
     int requesterId,
   ) async {
     await _repository.acceptARequest(requestId, loginUserId, requesterId);
-
     await _repository.answerARequest(requestId);
-
-    currentPage = 1;
-    await Future.wait([
-      _fetchFriends(currentPage, loginUserId),
-      _fetchFriendRequests(currentPage, loginUserId),
-    ]);
-
-    await _loadAllUserInfos();
 
     notifyListeners();
   }
@@ -504,13 +536,19 @@ class FriendViewModel extends ChangeNotifier {
     int currentPage,
     int loginUserId,
   ) async {
+    _isLoading = true;
+    notifyListeners();
+
+    await _fetchBlockUsers(currentPage, loginUserId);
+    await _loadAllUserInfos();
+
+    _isLoading = false;
+    notifyListeners();
+
     _blockUsers = await _repository.fetchBlockedUserWithPager(
       currentPage: currentPage,
       loginId: loginUserId,
     );
-
-    await _loadAllUserInfos();
-
     notifyListeners();
   }
 
@@ -535,12 +573,14 @@ class FriendViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  // 차단하기
+  Future<void> blockUser(int loginUserId, int targetUserId) async {
+    await _repository.blockUser(loginUserId, targetUserId);
+  }
+
   // 차단 해제하기
   Future<void> unblockUser(int loginUserId, int userId) async {
     await _repository.unblockUser(loginUserId, userId);
-    currentPage = 1;
-    await _fetchBlockUsers(currentPage, loginUserId);
-    await _loadAllUserInfos();
     notifyListeners();
   }
 

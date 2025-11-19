@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:opicproject/core/manager/dio_manager.dart';
-import 'package:opicproject/core/manager/supabase_manager.dart';
 import 'package:opicproject/core/models/block_model.dart';
 import 'package:opicproject/core/models/friend_model.dart';
 import 'package:opicproject/core/models/friend_request_model.dart';
@@ -9,7 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class FriendRepository {
   final Dio _dio = DioManager.shared.dio;
-  final SupabaseClient _supabase = SupabaseManager.shared.supabase;
+  final SupabaseClient _supabase = Supabase.instance.client;
 
   // 특정 유저 정보 가져오기
   Future<UserInfo?> fetchAUser(int userId) async {
@@ -189,6 +188,15 @@ class FriendRepository {
     } else {
       return List.empty();
     }
+  }
+
+  // 차단하기
+  Future<void> blockUser(int loginUserId, int userId) async {
+    await _supabase.from("block").insert({
+      'user_id': loginUserId,
+      'blocked_user': userId,
+      'blocked_at': DateTime.now().toIso8601String(),
+    });
   }
 
   // 차단 해제하기
