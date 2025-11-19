@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
-import 'package:opicproject/features/friend/component/block_info_row.dart';
-import 'package:opicproject/features/friend/component/friend_info_row.dart';
-import 'package:opicproject/features/friend/component/friend_request_row.dart';
-import 'package:opicproject/features/friend/component/friend_screen_header.dart';
-import 'package:opicproject/features/friend/component/refreshable_list_view.dart';
 import 'package:opicproject/features/friend/data/friend_extension.dart';
+import 'package:opicproject/features/friend/ui/component/block_info_row.dart';
+import 'package:opicproject/features/friend/ui/component/friend_info_row.dart';
+import 'package:opicproject/features/friend/ui/component/friend_request_row.dart';
+import 'package:opicproject/features/friend/ui/component/friend_screen_header.dart';
+import 'package:opicproject/features/friend/ui/component/refreshable_list_view.dart';
 import 'package:opicproject/features/friend/viewmodel/friend_view_model.dart';
 import 'package:provider/provider.dart';
 

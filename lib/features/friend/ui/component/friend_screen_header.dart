@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:opicproject/core/app_colors.dart';
-import 'package:opicproject/features/friend/component/add_friend_pop_up.dart';
-import 'package:opicproject/features/friend/component/friend_tab_button.dart';
 import 'package:opicproject/features/friend/data/friend_tab.dart';
+import 'package:opicproject/features/friend/ui/component/add_friend_pop_up.dart';
+import 'package:opicproject/features/friend/ui/component/friend_tab_button.dart';
 import 'package:opicproject/features/friend/viewmodel/friend_view_model.dart';
 
 class FriendScreenHeader extends StatelessWidget {
