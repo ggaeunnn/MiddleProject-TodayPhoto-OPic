@@ -6,12 +6,12 @@ import 'package:get_it/get_it.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/core/manager/firebase_manager.dart';
 import 'package:opicproject/core/manager/go_router_manager.dart';
+import 'package:opicproject/core/manager/supabase_manager.dart';
 import 'package:opicproject/features/alarm/viewmodel/alarm_view_model.dart';
 import 'package:opicproject/features/auth/data/auth_api_repository.dart';
 import 'package:opicproject/features/auth/viewmodel/auth_viewmodel.dart';
 import 'package:opicproject/features/friend/viewmodel/friend_view_model.dart';
 import 'package:opicproject/features/home/viewmodel/home_viewmodel.dart';
-import 'package:opicproject/features/onboarding/data/onboarding_service.dart';
 import 'package:opicproject/features/onboarding/viewmodel/onboarding_viewmodel.dart';
 import 'package:opicproject/features/post/viewmodel/post_viewmodel.dart';
 import 'package:opicproject/features/setting/viewmodel/setting_view_model.dart';
@@ -27,10 +27,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   await dotenv.load(fileName: "assets/config/.env");
 
-  await Supabase.initialize(
-    url: dotenv.env['Supabase_URL']!,
-    anonKey: dotenv.env['Supabase_Anonkey']!,
-  );
+  await SupabaseManager().initialize();
 
   //백그라운드에서 실행시 앱실행과는 독립된 공간이므로 직접 레포지토리와 매니저를 등록해야함
   if (!GetIt.instance.isRegistered<AuthRepository>()) {
@@ -53,10 +50,7 @@ void main() async {
   await Firebase.initializeApp();
 
   //supabase 초기화
-  await Supabase.initialize(
-    url: dotenv.env['Supabase_URL']!,
-    anonKey: dotenv.env['Supabase_Anonkey']!,
-  );
+  await SupabaseManager().initialize();
 
   //백그라운드 핸들러
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -73,8 +67,7 @@ void main() async {
         ChangeNotifierProvider.value(value: AuthManager.shared),
         ChangeNotifierProvider(
           //getIt을 통한 서비스 주입
-          create: (context) =>
-              OnboardingViewModel(locator<OnboardingService>()),
+          create: (context) => OnboardingViewModel(),
         ),
         ChangeNotifierProvider(create: (context) => AuthViewModel()),
         ChangeNotifierProvider(create: (context) => FriendViewModel()),

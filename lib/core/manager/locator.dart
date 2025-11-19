@@ -6,7 +6,6 @@ import 'package:opicproject/features/feed/data/feed_repository.dart';
 import 'package:opicproject/features/friend/data/friend_repository.dart';
 import 'package:opicproject/features/home/data/home_repository.dart';
 import 'package:opicproject/features/onboarding/data/onboarding_repository.dart';
-import 'package:opicproject/features/onboarding/data/onboarding_service.dart';
 import 'package:opicproject/features/post/data/post_repository.dart';
 import 'package:opicproject/features/setting/data/setting_repository.dart';
 
@@ -16,11 +15,6 @@ initLocator() {
   //onboarding repository
   locator.registerLazySingleton<OnboardingDataRepository>(
     () => OnboardingDataRepository(),
-  );
-
-  //onboarding service
-  locator.registerLazySingleton<OnboardingService>(
-    () => OnboardingService(locator<OnboardingDataRepository>()),
   );
 
   //feed repository
