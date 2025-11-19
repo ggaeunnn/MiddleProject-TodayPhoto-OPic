@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/core/models/user_model.dart';
-import 'package:opicproject/features/feed/component/feed_buttons.dart';
+import 'package:opicproject/features/feed/ui/component/feed_buttons.dart';
 import 'package:opicproject/features/feed/viewmodel/feed_viewmodel.dart';
 import 'package:opicproject/features/friend/viewmodel/friend_view_model.dart';
 import 'package:provider/provider.dart';

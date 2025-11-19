@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
 import 'package:opicproject/core/models/user_model.dart';
-import 'package:opicproject/features/feed/component/feed_empty_state.dart';
-import 'package:opicproject/features/feed/component/feed_header.dart';
-import 'package:opicproject/features/feed/component/feed_post_grid.dart';
+import 'package:opicproject/features/feed/ui/component/feed_empty_state.dart';
+import 'package:opicproject/features/feed/ui/component/feed_header.dart';
+import 'package:opicproject/features/feed/ui/component/feed_post_grid.dart';
 import 'package:opicproject/features/feed/viewmodel/feed_viewmodel.dart';
 import 'package:provider/provider.dart';
 

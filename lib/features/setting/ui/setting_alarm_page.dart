@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/app_colors.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
-import 'package:opicproject/features/setting/component/switch_row.dart';
 import 'package:opicproject/features/setting/data/alarm_state.dart';
+import 'package:opicproject/features/setting/ui/component/switch_row.dart';
 import 'package:opicproject/features/setting/viewmodel/setting_view_model.dart';
 import 'package:provider/provider.dart';
 

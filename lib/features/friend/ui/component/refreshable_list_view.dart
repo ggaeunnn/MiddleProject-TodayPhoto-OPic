@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:opicproject/features/friend/component/empty_state_view.dart';
+import 'package:opicproject/features/friend/ui/component/empty_state_view.dart';
 
 class RefreshableListView extends StatelessWidget {
   final int itemCount;
