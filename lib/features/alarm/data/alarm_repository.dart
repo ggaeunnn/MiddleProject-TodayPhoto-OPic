@@ -1,12 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:opicproject/core/manager/dio_manager.dart';
-import 'package:opicproject/core/manager/supabase_manager.dart';
 import 'package:opicproject/core/models/alarm_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AlarmRepository {
   final Dio _dio = DioManager.shared.dio;
-  final SupabaseClient _supabase = SupabaseManager.shared.supabase;
+  final SupabaseClient _supabase = Supabase.instance.client;
 
   // 알람 리스트 불러오기
   Future<List<Alarm>> fetchAlarms({
