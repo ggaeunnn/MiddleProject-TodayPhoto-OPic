@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
+import 'package:get_it/get_it.dart';
 import 'package:opicproject/core/models/onboarding_model.dart';
-import 'package:opicproject/features/onboarding/data/onboarding_service.dart';
+import 'package:opicproject/features/onboarding/data/onboarding_repository.dart';
 
 class OnboardingViewModel extends ChangeNotifier {
-  final OnboardingService _service;
+  final OnboardingDataRepository _repository =
+      GetIt.instance<OnboardingDataRepository>();
 
   List<Onboarding> _onboardings = [];
   bool _hasSeenOnboarding = false;
@@ -17,13 +19,13 @@ class OnboardingViewModel extends ChangeNotifier {
   int get currentPage => _currentPage;
   bool get isLastPage => _currentPage == _onboardings.length - 1;
 
-  OnboardingViewModel(this._service) {
+  OnboardingViewModel() {
     _initialize();
   }
 
   //뷰모델 초기화시에 만약 온보딩을 이전에 봤다면 데이터가져오지않음
   void _initialize() async {
-    _hasSeenOnboarding = await _service.checkOnboardingStatus();
+    _hasSeenOnboarding = await _repository.getOnboardingStatus();
 
     if (!_hasSeenOnboarding) {
       await _fetchOnboardingContents();
@@ -35,7 +37,7 @@ class OnboardingViewModel extends ChangeNotifier {
 
   // 온보딩 데이터 가져오기
   Future<void> _fetchOnboardingContents() async {
-    _onboardings = await _service.loadContents();
+    _onboardings = await _repository.fetchOnboardingData();
   }
 
   // 현재 페이지 업데이트
@@ -46,7 +48,7 @@ class OnboardingViewModel extends ChangeNotifier {
 
   // 온보딩 완료 처리
   void completeOnboarding() {
-    _service.markOnboardingCompleted();
+    _repository.saveOnboardingCompleted();
     _hasSeenOnboarding = true;
     notifyListeners();
   }

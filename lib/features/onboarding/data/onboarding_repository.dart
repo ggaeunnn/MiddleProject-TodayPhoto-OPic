@@ -20,7 +20,7 @@ class OnboardingDataRepository {
   }
 
   // 온보딩 완료 상태 저장
-  Future<void> saveOnboardingCompleted(bool completed) async {
+  Future<void> saveOnboardingCompleted() async {
     final prefs = await SharedPreferences.getInstance();
 
     await prefs.setBool(_onboardingKey, true);
