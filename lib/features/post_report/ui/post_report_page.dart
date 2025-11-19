@@ -13,31 +13,35 @@ class PostReportScreen extends StatefulWidget {
 
 class _PostReportScreenState extends State<PostReportScreen> {
   final TextEditingController _reasonController = TextEditingController();
+  bool _isLoading = false;
 
-  Future<void> _submitReport(int postId) async {
-    final reason = _reasonController.text;
+  Future<void> _submitReport() async {
+    final reason = _reasonController.text.trim();
 
     if (reason.isEmpty) {
-      showToast('신고 사유를 입력해주세요.');
+      showToast("신고 사유를 입력해주세요.");
       return;
     }
 
     final userId = AuthManager.shared.userInfo?.id ?? 0;
 
+    setState(() => _isLoading = true);
+
     try {
       await SupabaseManager.shared.supabase.from('post_report').insert({
-        'reported_post_id': postId,
+        'reported_post_id': widget.postId,
         'reporter_id': userId,
         'report_reason': reason,
         'checked_at': DateTime.now().toIso8601String(),
         'is_checked': false,
       });
 
-      showToast('신고가 접수되었습니다.');
+      showToast("신고가 접수되었습니다.");
       Navigator.pop(context);
-    } catch (error) {
-      print('신고 에러 상세: $error');
-      showToast('신고 실패');
+    } catch (e) {
+      showToast("신고 실패");
+    } finally {
+      setState(() => _isLoading = false);
     }
   }
 
@@ -45,18 +49,17 @@ class _PostReportScreenState extends State<PostReportScreen> {
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      backgroundColor: Color(0xfffefefe),
+      backgroundColor: const Color(0xfffefefe),
       child: Padding(
-        padding: EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
               width: double.infinity,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: const [
                   Text("신고하기", style: TextStyle(fontWeight: FontWeight.bold)),
                   SizedBox(height: 15),
                   Text(
@@ -70,43 +73,41 @@ class _PostReportScreenState extends State<PostReportScreen> {
                 ],
               ),
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
+
+            // 입력창
             Container(
-              padding: EdgeInsets.only(left: 15),
-              color: Color(0xFFFCFCF0),
+              padding: const EdgeInsets.only(left: 15),
+              color: const Color(0xFFFCFCF0),
               height: 150,
               child: TextField(
                 controller: _reasonController,
                 maxLines: null,
-                obscureText: false,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: '신고 사유를 자세히 작성해주세요...',
                   border: InputBorder.none,
                 ),
-                keyboardType: TextInputType.text,
               ),
             ),
-            SizedBox(height: 24),
+
+            const SizedBox(height: 24),
+
+            // 버튼 2개
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
-                      _submitReport(widget.postId);
-                    },
+                    onPressed: _isLoading ? null : _submitReport,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xff95b7db),
-                      foregroundColor: Color(0xfffefefe),
-                      padding: EdgeInsets.symmetric(vertical: 14),
+                      backgroundColor: const Color(0xff95b7db),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
                     child: Text(
                       "신고하기",
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                         color: Color(0xfffefefe),
@@ -114,21 +115,18 @@ class _PostReportScreenState extends State<PostReportScreen> {
                     ),
                   ),
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+                    onPressed: () => Navigator.pop(context),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xffe8e8dc),
-                      foregroundColor: Color(0xfffefefe),
-                      padding: EdgeInsets.symmetric(vertical: 14),
+                      backgroundColor: const Color(0xffe8e8dc),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: Text(
+                    child: const Text(
                       "닫기",
                       style: TextStyle(
                         fontSize: 16,

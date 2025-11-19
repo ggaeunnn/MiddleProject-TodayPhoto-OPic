@@ -10,6 +10,7 @@ import 'package:opicproject/features/friend/viewmodel/friend_view_model.dart';
 import 'package:opicproject/features/home/home.dart';
 import 'package:opicproject/features/onboarding/ui/onboarding_screen.dart';
 import 'package:opicproject/features/post/ui/post_detail_page.dart';
+import 'package:opicproject/features/post_report/ui/post_report_page.dart';
 import 'package:opicproject/features/setting/ui/setting_alarm_page.dart';
 import 'package:opicproject/features/setting/ui/setting_page.dart';
 import 'package:opicproject/main_page.dart';
@@ -130,6 +131,13 @@ class GoRouterManager {
                     create: (_) => FeedViewModel(),
                     child: FeedScreen(userId: loginUserId),
                   );
+                },
+              ),
+              GoRoute(
+                path: '/report/:postId',
+                builder: (context, state) {
+                  final postId = int.parse(state.pathParameters['postId']!);
+                  return PostReportScreen(postId: postId);
                 },
               ),
             ],
