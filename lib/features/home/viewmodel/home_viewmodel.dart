@@ -22,8 +22,8 @@ class HomeViewModel extends ChangeNotifier {
   String loginUserName = "친구1";
 
   // postId별로 likes/comments 저장 (중요!)
-  int likes = 0;
-  int comments = 0;
+  Map<int, int> likes = {}; // postId → likeCount
+  Map<int, int> comments = {}; // postId → commentCount
 
   bool get isToday {
     if (todayTopic == null || todayTopic!['uploaded_at'] == null) {
@@ -160,13 +160,13 @@ class HomeViewModel extends ChangeNotifier {
 
   //좋아요 개수
   Future<void> getLikeCount(int postId) async {
-    likes = await homeRepository.getLikeCounts(postId);
+    likes[postId] = await homeRepository.getLikeCounts(postId);
     // notifyListeners() 제거 - PostCard가 setState로 관리
   }
 
   //댓글 개수
   Future<void> getCommentCount(int postId) async {
-    comments = await homeRepository.getCommentCounts(postId);
+    comments[postId] = await homeRepository.getCommentCounts(postId);
     // notifyListeners() 제거 - PostCard가 setState로 관리
   }
 

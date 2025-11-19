@@ -211,8 +211,8 @@ class _PostCardState extends State<PostCard> {
 
     if (mounted) {
       setState(() {
-        likeCount = viewModel.likes;
-        commentCount = viewModel.comments;
+        likeCount = viewModel.likes[postId] ?? 0;
+        commentCount = viewModel.comments[postId] ?? 0;
         _isLoading = false;
       });
     }
