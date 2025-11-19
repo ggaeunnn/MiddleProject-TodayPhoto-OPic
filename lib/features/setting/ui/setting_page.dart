@@ -117,7 +117,7 @@ class SettingScreen extends StatelessWidget {
                   context: context,
                   icon: Icons.report_problem_rounded,
                   iconColor: AppColors.opicSoftBlue,
-                  title: "문의사항",
+                  title: "문의 메일 보내기",
                   titleColor: AppColors.opicBlack,
                   onTap: () => _sendEmail(),
                   showDivider: true,
