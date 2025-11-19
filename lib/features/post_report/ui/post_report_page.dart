@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:opicproject/core/manager/autn_manager.dart';
-import 'package:opicproject/core/manager/supabase_manager.dart';
-import 'package:opicproject/features/post/ui/post_detail_page.dart';
 
 class PostReportScreen extends StatefulWidget {
   final int postId;
@@ -17,32 +14,7 @@ class _PostReportScreenState extends State<PostReportScreen> {
 
   Future<void> _submitReport() async {
     final reason = _reasonController.text.trim();
-
-    if (reason.isEmpty) {
-      showToast("신고 사유를 입력해주세요.");
-      return;
-    }
-
-    final userId = AuthManager.shared.userInfo?.id ?? 0;
-
     setState(() => _isLoading = true);
-
-    try {
-      await SupabaseManager.shared.supabase.from('post_report').insert({
-        'reported_post_id': widget.postId,
-        'reporter_id': userId,
-        'report_reason': reason,
-        'checked_at': DateTime.now().toIso8601String(),
-        'is_checked': false,
-      });
-
-      showToast("신고가 접수되었습니다.");
-      Navigator.pop(context);
-    } catch (e) {
-      showToast("신고 실패");
-    } finally {
-      setState(() => _isLoading = false);
-    }
   }
 
   @override
