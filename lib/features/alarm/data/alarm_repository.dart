@@ -10,7 +10,7 @@ class AlarmRepository {
   // 알람 리스트 불러오기
   Future<List<Alarm>> fetchAlarms({
     required int currentPage,
-    int perPage = 10,
+    int perPage = 20,
     required int loginId,
   }) async {
     final int startIndex = perPage * (currentPage - 1);

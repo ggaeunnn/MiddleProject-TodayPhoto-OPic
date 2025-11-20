@@ -53,26 +53,46 @@ class _AlarmListScreenState extends State<_AlarmListScreen> {
             if (loginUserId == null) {
               return Container(
                 decoration: BoxDecoration(color: AppColors.opicBackground),
-                child: Center(child: Text("로그인 해주세요")),
+                child: const Center(child: Text("로그인 해주세요")),
               );
             }
 
             // 로그인 한 뒤 접근했을 경우
-            return Column(
+            return Stack(
               children: [
-                _buildHeader(context),
-                Expanded(
-                  child: Container(
-                    color: AppColors.opicBackground,
-                    child: viewModel.isLoading && viewModel.alarms.isEmpty
-                        ? Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.opicBlue,
-                            ),
-                          )
-                        : _buildAlarmList(context, viewModel, loginUserId),
-                  ),
+                Column(
+                  children: [
+                    _buildHeader(context),
+                    Expanded(
+                      child: Container(
+                        color: AppColors.opicBackground,
+                        child: viewModel.isLoading && viewModel.alarms.isEmpty
+                            ? Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColors.opicBlue,
+                                ),
+                              )
+                            : _buildAlarmList(context, viewModel, loginUserId),
+                      ),
+                    ),
+                  ],
                 ),
+                // ⭐ 맨 위로 버튼
+                if (viewModel.shouldShowScrollUpButton)
+                  Positioned(
+                    right: 16.0,
+                    bottom: 80.0, // 하단 네비게이션바 위
+                    child: FloatingActionButton(
+                      mini: true,
+                      backgroundColor: AppColors.opicSoftBlue,
+                      onPressed: () => viewModel.moveScrollUp(),
+                      child: Icon(
+                        Icons.arrow_upward,
+                        color: AppColors.opicWhite,
+                        size: 20.0,
+                      ),
+                    ),
+                  ),
               ],
             );
           },
@@ -162,6 +182,18 @@ Widget _buildAlarmList(
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       itemCount: alarmCount,
       itemBuilder: (context, index) {
+        if (index == alarmCount) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Center(
+              child: CircularProgressIndicator(
+                color: AppColors.opicBlue,
+                strokeWidth: 2.0,
+              ),
+            ),
+          );
+        }
+
         final alarm = alarmList[index];
 
         return Container(

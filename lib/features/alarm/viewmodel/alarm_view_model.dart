@@ -34,6 +34,10 @@ class AlarmViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  // 마지막 페이지 여부
+  bool _isLastPage = false;
+  bool get isLastPage => _isLastPage;
+
   // 안 읽은 알람 수
   int _unreadCount = 0;
   int get unreadCount => _unreadCount;
@@ -46,9 +50,7 @@ class AlarmViewModel extends ChangeNotifier {
   void _initializeScrollListener() {
     Timer? debounce;
 
-    // 바닥 감지
     scrollController.addListener(() {
-      // scroll 일어나면 기존 타이머 취소
       if (debounce?.isActive ?? false) debounce!.cancel();
 
       debounce = Timer(const Duration(milliseconds: 300), () {
@@ -67,13 +69,26 @@ class AlarmViewModel extends ChangeNotifier {
         }
       });
 
-      if (scrollController.position.pixels ==
-          scrollController.position.maxScrollExtent) {
+      if (_isScrollNearBottom() && !_isLoading && !_isLastPage) {
+        debugPrint('📜 Scroll Near Bottom - Loading more alarms...');
         if (_loginUserId != null) {
           fetchMoreAlarms(_loginUserId!);
         }
       }
     });
+  }
+
+  bool _isScrollNearBottom() {
+    if (!scrollController.hasClients) return false;
+
+    final position = scrollController.position;
+    final maxScroll = position.maxScrollExtent;
+    final currentScroll = position.pixels;
+
+    // 하단 네비게이션바 높이(약 80px) + 여유 공간(200px) = 280px
+    const bottomThreshold = 280.0;
+
+    return currentScroll >= (maxScroll - bottomThreshold);
   }
 
   void moveScrollUp() {
@@ -111,8 +126,7 @@ class AlarmViewModel extends ChangeNotifier {
       // 중복 체크
       final exists = _alarms.any((alarm) => alarm.id == newAlarm.id);
       if (!exists) {
-        // 최신 알람을 맨 위에 추가
-        _alarms.insert(0, newAlarm);
+        _alarms = [newAlarm, ..._alarms];
         _updateUnreadCount();
         notifyListeners();
       }
@@ -126,14 +140,20 @@ class AlarmViewModel extends ChangeNotifier {
     if (updatedAlarm.isChecked) {
       // 읽음 처리된 경우 리스트에서 제거
       if (index != -1) {
-        _alarms.removeAt(index);
+        _alarms = _alarms
+            .where((alarm) => alarm.id != updatedAlarm.id)
+            .toList();
         _updateUnreadCount();
         notifyListeners();
       }
     } else {
       // 아직 안 읽은 경우 업데이트
       if (index != -1) {
-        _alarms[index] = updatedAlarm;
+        _alarms = [
+          ..._alarms.sublist(0, index),
+          updatedAlarm,
+          ..._alarms.sublist(index + 1),
+        ];
         _updateUnreadCount();
         notifyListeners();
       }
@@ -144,7 +164,7 @@ class AlarmViewModel extends ChangeNotifier {
   void _handleAlarmDelete(int alarmId) {
     final index = _alarms.indexWhere((alarm) => alarm.id == alarmId);
     if (index != -1) {
-      _alarms.removeAt(index);
+      _alarms = _alarms.where((alarm) => alarm.id != alarmId).toList();
       _updateUnreadCount();
       notifyListeners();
     }
@@ -157,10 +177,18 @@ class AlarmViewModel extends ChangeNotifier {
 
     await Future.delayed(const Duration(milliseconds: 500));
     currentPage = 1;
-    _alarms = await _repository.fetchAlarms(
+    _isLastPage = false;
+
+    final fetchedAlarms = await _repository.fetchAlarms(
       currentPage: currentPage,
       loginId: loginUserId,
     );
+
+    _alarms = List.from(fetchedAlarms);
+    if (fetchedAlarms.length < 10) {
+      _isLastPage = true;
+    }
+
     _updateUnreadCount();
 
     _isLoading = false;
@@ -172,12 +200,20 @@ class AlarmViewModel extends ChangeNotifier {
     _isLoading = true;
     _loginUserId = loginUserId;
     currentPage = startIndex;
+    _isLastPage = false;
     notifyListeners();
 
-    _alarms = await _repository.fetchAlarms(
+    final fetchedAlarms = await _repository.fetchAlarms(
       currentPage: startIndex,
       loginId: loginUserId,
     );
+
+    _alarms = List.from(fetchedAlarms);
+
+    if (fetchedAlarms.length < 20) {
+      _isLastPage = true;
+    }
+
     _updateUnreadCount();
 
     _startRealtimeSubscription(loginUserId);
@@ -188,24 +224,35 @@ class AlarmViewModel extends ChangeNotifier {
 
   // 알람 불러오기(다음페이지)
   Future<void> fetchMoreAlarms(int loginUser) async {
-    if (_isLoading) return;
+    if (_isLoading || _isLastPage) return;
 
     _isLoading = true;
     currentPage += 1;
-    final fetchedAlarms = await _repository.fetchAlarms(
-      currentPage: currentPage,
-      loginId: loginUser,
-    );
 
-    if (fetchedAlarms.isNotEmpty) {
-      _alarms.addAll(fetchedAlarms);
-      _updateUnreadCount();
-    } else {
+    try {
+      final fetchedAlarms = await _repository.fetchAlarms(
+        currentPage: currentPage,
+        loginId: loginUser,
+      );
+
+      if (fetchedAlarms.isNotEmpty) {
+        _alarms = [..._alarms, ...fetchedAlarms];
+
+        if (fetchedAlarms.length < 20) {
+          _isLastPage = true;
+        }
+
+        _updateUnreadCount();
+      } else {
+        currentPage -= 1;
+        _isLastPage = true;
+      }
+    } catch (e) {
       currentPage -= 1;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
-
-    _isLoading = false;
-    notifyListeners();
   }
 
   // 특정 알림의 정보 가져오기
@@ -219,7 +266,7 @@ class AlarmViewModel extends ChangeNotifier {
   Future<void> checkAlarm(int loginUserId, int alarmId) async {
     await _repository.checkAlarm(alarmId);
 
-    _alarms.removeWhere((alarm) => alarm.id == alarmId);
+    _alarms = _alarms.where((alarm) => alarm.id != alarmId).toList();
 
     _updateUnreadCount();
     notifyListeners();
