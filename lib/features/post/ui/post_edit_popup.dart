@@ -5,6 +5,8 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:opicproject/core/app_colors.dart';
+import 'package:opicproject/core/event/post_change_event.dart';
+import 'package:opicproject/core/manager/event_manager.dart';
 import 'package:opicproject/features/home/data/home_repository.dart';
 import 'package:opicproject/features/home/viewmodel/home_viewmodel.dart';
 import 'package:opicproject/features/post/ui/post_detail_page.dart';
@@ -170,7 +172,12 @@ class _EditPopupState extends State<EditPopup> {
                                   viewmodel.post?['id'],
                                   newImageUrl,
                                 );
-
+                                EventBusManager.eventBus.fire(
+                                  PostChangeEvent(
+                                    "게시물 수정",
+                                    PostEventType.update,
+                                  ),
+                                );
                                 showToast("게시물 수정이 완료되었습니다.");
                                 context.pop();
                               } else {

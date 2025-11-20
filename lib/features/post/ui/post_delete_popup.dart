@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opicproject/core/app_colors.dart';
+import 'package:opicproject/core/event/post_change_event.dart';
+import 'package:opicproject/core/manager/event_manager.dart';
 import 'package:opicproject/features/feed/viewmodel/feed_viewmodel.dart';
 import 'package:opicproject/features/post/viewmodel/post_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -46,15 +48,24 @@ class DeletePopup extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () async {
                       await context.read<PostViewModel>().deletePost(postId);
-                      try {
+                      EventBusManager.eventBus.fire(
+                        PostChangeEvent(
+                          "게시물 삭제",
+                          PostEventType.delete,
+                          data: postId,
+                        ),
+                      );
+                      /*try {
                         context.read<FeedViewModel>().onPostDeleted(postId);
                       } catch (e) {
                         // FeedViewModel이 없는 경우 (다른 화면에서 접근) 무시
                         debugPrint('FeedViewModel not found: $e');
+                      }*/
+                      if (context.mounted) {
+                        context.pop();
+                        context.go('/home');
+                        _showToast(context, "게시물이 삭제되었습니다.");
                       }
-                      Navigator.pop(context);
-                      context.go('/home');
-                      _showToast(context, "게시물이 삭제되었습니다.");
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xff95b7db),

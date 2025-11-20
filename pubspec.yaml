@@ -50,6 +50,7 @@ dependencies:
   permission_handler: ^11.3.1
   shared_preferences: ^2.5.3
   lottie: ^3.1.0
+  event_bus: ^2.0.1
 
 
 

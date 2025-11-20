@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
+import 'package:opicproject/core/event/post_change_event.dart';
 import 'package:opicproject/core/manager/autn_manager.dart';
+import 'package:opicproject/core/manager/event_manager.dart';
 import 'package:opicproject/core/manager/supabase_manager.dart';
 import 'package:opicproject/features/home/data/home_repository.dart';
 import 'package:opicproject/features/post/data/post_repository.dart';
@@ -10,6 +12,7 @@ import 'package:opicproject/features/post/data/post_repository.dart';
 class HomeViewModel extends ChangeNotifier {
   final PostRepository repository = GetIt.instance<PostRepository>();
   final HomeRepository homeRepository = GetIt.instance<HomeRepository>();
+
   //final HomeRepository topicRepository = HomeRepository.shared;
 
   List<Map<String, dynamic>> topics = [];
@@ -29,12 +32,36 @@ class HomeViewModel extends ChangeNotifier {
   int? topicId;
 
   HomeViewModel({this.topicId}) {
-    if (topicId != null) {
+    /*if (topicId != null) {
       fetchTopicAndPostsById(topicId!);
     } else {
       initHome();
-    }
+    }*/
+    initHome();
+    EventBusManager.eventBus.on<PostChangeEvent>().listen((event) {
+      switch (event.type) {
+        case PostEventType.insert:
+          {
+            fetchPosts();
+            debugPrint("insert 이벤트 발생(HomeViewmodel)");
+          }
+        case PostEventType.update:
+          {
+            fetchPosts();
+            debugPrint("update 이벤트 발생(HomeViewmodel)");
+          }
+        case PostEventType.delete:
+          {
+            fetchPosts();
+            debugPrint("delete 이벤트 발생(HomeViewmodel)");
+          }
+        case PostEventType.topicChange:
+          debugPrint("주제 변경 이벤트 발생(HomeViewmodel)");
+      }
+      notifyListeners();
+    });
   }
+
   bool get isToday {
     if (todayTopic == null || todayTopic!['uploaded_at'] == null) {
       return false;
