@@ -35,13 +35,13 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 
   Future<void> _loadData() async {
     final viewmodel = context.read<PostViewModel>();
-    final homeViewmodel = context.read<HomeViewModel>();
+    //final homeViewmodel = context.read<HomeViewModel>();
     final authManager = context.read<AuthManager>();
     final loginUserId = authManager.userInfo?.id ?? 0;
 
     await Future.wait([
       viewmodel.fetchPostById(widget.postId),
-      homeViewmodel.loadLoginUserInfo(),
+      //homeViewmodel.loadLoginUserInfo(),
       viewmodel.fetchLikeCount(widget.postId),
       viewmodel.ifLikedPost(loginUserId, widget.postId),
     ]);
@@ -51,7 +51,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   Widget build(BuildContext context) {
     final viewmodel = context.watch<PostViewModel>();
     final authManager = context.read<AuthManager>();
-    final homeViewmodel = context.watch<HomeViewModel>();
+    //final homeViewmodel = context.watch<HomeViewModel>();
     final loginUserId = authManager.userInfo?.id ?? 0;
 
     final postWriterUserId = viewmodel.friendUserId ?? 0;

@@ -25,21 +25,21 @@ class _EditPopupState extends State<EditPopup> {
   Future<void> openGallery() async {
     final pickImage = await pick.pickImage(source: ImageSource.gallery);
     if (pickImage != null) {
-      context.read<HomeViewModel>().setImage(File(pickImage.path));
+      context.read<PostViewModel>().setImage(File(pickImage.path));
     }
   }
 
   Future<void> camera() async {
     final pickImage = await pick.pickImage(source: ImageSource.camera);
     if (pickImage != null) {
-      context.read<HomeViewModel>().setImage(File(pickImage.path));
+      context.read<PostViewModel>().setImage(File(pickImage.path));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final viewmodel = context.watch<PostViewModel>();
-    final homeViewmodel = context.watch<HomeViewModel>();
+    //final postViewmodel = context.watch<PostViewModel>();
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       backgroundColor: AppColors.opicWhite,
@@ -78,7 +78,7 @@ class _EditPopupState extends State<EditPopup> {
 
             SizedBox(height: 12),
 
-            homeViewmodel.selectedImage == null
+            viewmodel.selectedImage == null
                 ? (viewmodel.post?['image_url'] != null
                       ? Image.network(
                           viewmodel.post?['image_url'],
@@ -88,7 +88,7 @@ class _EditPopupState extends State<EditPopup> {
                         )
                       : SizedBox())
                 : Image.file(
-                    homeViewmodel.selectedImage!,
+                    viewmodel.selectedImage!,
                     width: double.infinity,
                     height: 350,
                     fit: BoxFit.fill,
@@ -156,13 +156,13 @@ class _EditPopupState extends State<EditPopup> {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: (homeViewmodel.selectedImage == null)
+                    onPressed: (viewmodel.selectedImage == null)
                         ? null
                         : () async {
-                            if (homeViewmodel.selectedImage != null) {
+                            if (viewmodel.selectedImage != null) {
                               final newImageUrl = await repository
                                   .uploadImageToSupabase(
-                                    homeViewmodel.selectedImage!,
+                                    viewmodel.selectedImage!,
                                   );
 
                               if (newImageUrl != null) {
@@ -200,27 +200,25 @@ class _EditPopupState extends State<EditPopup> {
                 ),
                 SizedBox(width: 12),
                 Expanded(
-                  child: Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        context.read<HomeViewModel>().setImage(null);
-                        context.pop();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.opicBackground,
-                        foregroundColor: AppColors.opicWhite,
-                        padding: EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      viewmodel.setImage(null);
+                      context.pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.opicBackground,
+                      foregroundColor: AppColors.opicWhite,
+                      padding: EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Text(
-                        "닫기",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.opicBlack,
-                        ),
+                    ),
+                    child: Text(
+                      "닫기",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.opicBlack,
                       ),
                     ),
                   ),

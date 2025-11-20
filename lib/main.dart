@@ -72,7 +72,6 @@ void main() async {
         ChangeNotifierProvider(create: (context) => AuthViewModel()),
         ChangeNotifierProvider(create: (context) => FriendViewModel()),
         ChangeNotifierProvider(create: (context) => PostViewModel()),
-        ChangeNotifierProvider(create: (context) => HomeViewModel()),
         ChangeNotifierProvider(create: (context) => SettingViewModel()),
         ChangeNotifierProvider(create: (context) => AlarmViewModel()),
       ],

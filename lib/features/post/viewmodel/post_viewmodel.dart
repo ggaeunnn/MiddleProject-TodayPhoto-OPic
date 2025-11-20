@@ -121,4 +121,11 @@ class PostViewModel extends ChangeNotifier {
       showToast("댓글 삭제에 실패했습니다.");
     }
   }
+
+  void setImage(File? image) {
+    selectedImage = image;
+    notifyListeners();
+  }
+
+  //이미지업로드
 }

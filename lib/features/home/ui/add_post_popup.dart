@@ -12,8 +12,8 @@ import 'package:opicproject/features/post/viewmodel/post_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 class addPostPopup extends StatefulWidget {
-  const addPostPopup({super.key});
-
+  const addPostPopup({super.key, required this.viewModel});
+  final HomeViewModel viewModel;
   @override
   State<addPostPopup> createState() => _addPostPopup();
 }
@@ -22,6 +22,13 @@ class _addPostPopup extends State<addPostPopup> {
   File? selectedImage;
   final HomeRepository repository = GetIt.instance<HomeRepository>();
   final pick = ImagePicker();
+  late HomeViewModel viewmodel;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    viewmodel = widget.viewModel;
+  }
 
   Future<void> openGallery() async {
     XFile? pickImage = await pick.pickImage(source: ImageSource.gallery);
@@ -46,8 +53,7 @@ class _addPostPopup extends State<addPostPopup> {
 
   @override
   Widget build(BuildContext context) {
-    final homeViewModel = context.watch<HomeViewModel>();
-    final viewmodel = context.watch<PostViewModel>();
+    final postViewmodel = context.watch<PostViewModel>();
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -76,7 +82,7 @@ class _addPostPopup extends State<addPostPopup> {
                         ),
                       ),
                       Text(
-                        homeViewModel.todayTopic?['content'] ?? "주제 없음",
+                        viewmodel.todayTopic?['content'] ?? "주제 없음",
                         style: TextStyle(color: AppColors.opicSoftBlue),
                       ),
                     ],
@@ -185,13 +191,13 @@ class _addPostPopup extends State<addPostPopup> {
                     onPressed: (selectedImage == null && takePicture == null)
                         ? null
                         : () async {
-                            final viewmodel = context.read<PostViewModel>();
+                            final postViewmodel = context.read<PostViewModel>();
 
                             if (selectedImage == null && takePicture == null) {
                               showToast("이미지를 선택해주세요.");
                               return;
                             }
-                            final topicId = homeViewModel.todayTopic?['id'];
+                            final topicId = viewmodel.todayTopic?['id'];
                             if (topicId == null) {
                               showToast("주제 정보를 불러올 수 없습니다.");
                               return;
@@ -206,8 +212,8 @@ class _addPostPopup extends State<addPostPopup> {
                               showToast("이미지 업로드 실패");
                               return;
                             }
-                            await homeViewModel.createPost(imageUrl, topicId);
-                            await homeViewModel.fetchTopicAndPostsById(topicId);
+                            await viewmodel.createPost(imageUrl, topicId);
+                            await viewmodel.fetchTopicAndPostsById(topicId);
 
                             context.pop();
                             showToast("게시물이 작성되었습니다.");
@@ -220,7 +226,7 @@ class _addPostPopup extends State<addPostPopup> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: homeViewModel.isLoading
+                    child: viewmodel.isLoading
                         ? SizedBox(
                             width: 20,
                             height: 20,

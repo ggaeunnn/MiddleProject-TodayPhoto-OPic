@@ -22,9 +22,19 @@ class HomeViewModel extends ChangeNotifier {
   String loginUserName = "친구1";
 
   // postId별로 likes/comments 저장 (중요!)
+
   Map<int, int> likes = {}; // postId → likeCount
   Map<int, int> comments = {}; // postId → commentCount
 
+  int? topicId;
+
+  HomeViewModel({this.topicId}) {
+    if (topicId != null) {
+      fetchTopicAndPostsById(topicId!);
+    } else {
+      initHome();
+    }
+  }
   bool get isToday {
     if (todayTopic == null || todayTopic!['uploaded_at'] == null) {
       return false;
