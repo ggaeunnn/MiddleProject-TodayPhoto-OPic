@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:opicproject/features/post_report/viewmodel/post_report_viewmodel.dart';
 
 class PostReportScreen extends StatefulWidget {
   final int postId;
@@ -19,6 +20,8 @@ class _PostReportScreenState extends State<PostReportScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final PostReportViewmodel viewmodel = PostReportViewmodel();
+
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       backgroundColor: const Color(0xfffefefe),
@@ -53,7 +56,7 @@ class _PostReportScreenState extends State<PostReportScreen> {
               color: const Color(0xFFFCFCF0),
               height: 150,
               child: TextField(
-                controller: _reasonController,
+                controller: viewmodel.reasonController,
                 maxLines: null,
                 decoration: const InputDecoration(
                   hintText: '신고 사유를 자세히 작성해주세요...',
@@ -69,7 +72,16 @@ class _PostReportScreenState extends State<PostReportScreen> {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: _isLoading ? null : _submitReport,
+                    onPressed: _isLoading
+                        ? null
+                        : () async {
+                            setState(() => _isLoading = true);
+                            await viewmodel.submitReport(
+                              widget.postId,
+                              context,
+                            );
+                            setState(() => _isLoading = false);
+                          },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xff95b7db),
                       padding: const EdgeInsets.symmetric(vertical: 14),
