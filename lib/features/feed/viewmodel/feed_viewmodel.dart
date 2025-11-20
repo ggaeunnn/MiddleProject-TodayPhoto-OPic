@@ -46,6 +46,7 @@ class FeedViewModel extends ChangeNotifier {
 
   // Supabase Realtime 구독
   RealtimeChannel? _postsChannel;
+  RealtimeChannel? _userChannel;
 
   // Getter
   int get currentPage => _paginationManager.currentPage;
@@ -161,6 +162,26 @@ class FeedViewModel extends ChangeNotifier {
           },
         )
         .subscribe();
+
+    _userChannel = supabase
+        .channel('user_changes_$feedUserId')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.update,
+          schema: 'public',
+          table: 'user',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'id',
+            value: feedUserId,
+          ),
+          callback: (payload) {
+            final newRecord = payload.newRecord;
+            if (newRecord.isNotEmpty) {
+              _handleUserInfoChanged(newRecord);
+            }
+          },
+        )
+        .subscribe();
   }
 
   // 게시물 삭제 처리
@@ -169,10 +190,23 @@ class FeedViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  // 유저 정보 처리
+  void _handleUserInfoChanged(Map<String, dynamic> newUserData) {
+    try {
+      final updatedUser = UserInfo.fromJson(newUserData);
+      _feedUser = updatedUser;
+      notifyListeners();
+    } catch (e) {
+      debugPrint('❌ Error updating user info: $e');
+    }
+  }
+
   // Realtime 구독 해제
   void _disposeRealtimeChannel() {
     _postsChannel?.unsubscribe();
+    _userChannel?.unsubscribe();
     _postsChannel = null;
+    _userChannel = null;
   }
 
   // 피드 정보 초기설정 (다른 유저 피드로 이동할 때 이전 유저 정보 남지 않게)
