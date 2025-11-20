@@ -3,6 +3,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:opicproject/core/event/post_change_event.dart';
+import 'package:opicproject/core/manager/event_manager.dart';
 import 'package:opicproject/core/models/post_model.dart';
 import 'package:opicproject/core/models/user_model.dart';
 import 'package:opicproject/features/feed/data/feed_repository.dart';
@@ -61,6 +63,28 @@ class FeedViewModel extends ChangeNotifier {
 
   FeedViewModel() {
     _initializeScrollManager();
+    EventBusManager.eventBus.on<PostChangeEvent>().listen((event) {
+      switch (event.type) {
+        case PostEventType.insert:
+          {
+            debugPrint("insert 이벤트 발생(FeedViewModel)");
+          }
+        case PostEventType.update:
+          {
+            debugPrint("update 이벤트 발생(FeedViewModel)");
+          }
+        case PostEventType.delete:
+          {
+            if (event.data != null && event.data is int) {
+              onPostDeleted(event.data as int);
+            }
+            debugPrint("delete 이벤트 발생(FeedViewModel)");
+          }
+        case PostEventType.topicChange:
+          debugPrint("주제 변경 이벤트 발생(FeedViewModel):아무 작업 하지 않음");
+      }
+      notifyListeners();
+    });
   }
 
   // 스크롤 관련
