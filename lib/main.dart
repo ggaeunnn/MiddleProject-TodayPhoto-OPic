@@ -1,126 +1,86 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get_it/get_it.dart';
+import 'package:opicproject/core/manager/autn_manager.dart';
+import 'package:opicproject/core/manager/firebase_manager.dart';
+import 'package:opicproject/core/manager/go_router_manager.dart';
+import 'package:opicproject/core/manager/supabase_manager.dart';
+import 'package:opicproject/features/alarm/viewmodel/alarm_view_model.dart';
+import 'package:opicproject/features/auth/data/auth_api_repository.dart';
+import 'package:opicproject/features/auth/viewmodel/auth_viewmodel.dart';
+import 'package:opicproject/features/friend/viewmodel/friend_view_model.dart';
+import 'package:opicproject/features/home/viewmodel/home_viewmodel.dart';
+import 'package:opicproject/features/onboarding/viewmodel/onboarding_viewmodel.dart';
+import 'package:opicproject/features/post/viewmodel/post_viewmodel.dart';
+import 'package:opicproject/features/setting/viewmodel/setting_view_model.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'core/manager/locator.dart';
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // 백그라운드 메시지 처리 시 Firebase 초기화 보장
+  await Firebase.initializeApp();
+  await dotenv.load(fileName: "assets/config/.env");
+
+  await SupabaseManager().initialize();
+
+  //백그라운드에서 실행시 앱실행과는 독립된 공간이므로 직접 레포지토리와 매니저를 등록해야함
+  if (!GetIt.instance.isRegistered<AuthRepository>()) {
+    GetIt.instance.registerLazySingleton<AuthRepository>(
+      () => AuthRepository(),
+    );
+
+    GetIt.instance.registerSingleton<AuthManager>(AuthManager());
+  }
+  print("Handling a background message: ${message.messageId}");
+  // TODO: 백그라운드에서 실행시 로직 처리
+}
 
 void main() async {
-  await dotenv.load(fileName: 'assets/config/.env');
-  runApp(MyApp());
-}
+  WidgetsFlutterBinding.ensureInitialized();
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  await dotenv.load(fileName: "assets/config/.env");
 
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
+  //firebase초기화
+  await Firebase.initializeApp();
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  //supabase 초기화
+  await SupabaseManager().initialize();
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
+  //백그라운드 핸들러
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  //매니저 초기화(토큰/리스너 설정,로컬 푸시 설정)
+  await FirebaseManager().initialize();
+  //getIt 로케이터 초기화
+  initLocator();
 
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
+  await [Permission.camera, Permission.photos].request();
 
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: AuthManager.shared),
+        ChangeNotifierProvider(
+          //getIt을 통한 서비스 주입
+          create: (context) => OnboardingViewModel(),
         ),
+        ChangeNotifierProvider(create: (context) => AuthViewModel()),
+        ChangeNotifierProvider(create: (context) => FriendViewModel()),
+        ChangeNotifierProvider(create: (context) => HomeViewModel()),
+        ChangeNotifierProvider(create: (context) => PostViewModel()),
+        ChangeNotifierProvider(create: (context) => SettingViewModel()),
+        ChangeNotifierProvider(create: (context) => AlarmViewModel()),
+      ],
+      child: MaterialApp.router(
+        routerConfig: GoRouterManager.router,
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(fontFamily: 'Pretendard'),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
-  }
+    ),
+  );
 }
-
-//commit
